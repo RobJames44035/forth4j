@@ -27,33 +27,40 @@ class ForthRepl {
     }
 
     void parseAndExecute(String line) {
-        String[] parts = line.split("\\s+")
-        for (String part : parts) {
+        line.split("\\s+").each { part ->
             switch (part) {
+                case ".":
+                    if (stack.isEmpty()) {
+                        println "Error: Stack Underflow."
+                        return
+                    }
+                    println stack.pop()
+                    break
+
                 case "+":
-                    // Check that there are at least two elements on the stack
-                    if (this.stack.size() < 2) {
-                        System.out.println("Error: Not enough elements on the stack for operation '+'")
-                        return // Early return
+                    if (stack.size() < 2) {
+                        println "Error: Not enough elements on the stack for operation '+'"
+                        return
                     }
-                    // Perform the addition
-                    int sum = this.stack.pop() + this.stack.pop()
-                    this.stack.push(sum)
+                    stack.push(stack.pop() + stack.pop())
                     break
+
+                case "DUP":
+                    if (stack.isEmpty()) {
+                        println "Error: Stack Underflow."
+                        return
+                    }
+                    stack.push(stack.peek())
+                    break
+
                 default:
-                    // Assume the part is an integer
                     try {
-                        int value = Integer.parseInt(part)
-                        this.stack.push(value)
-                    } catch (NumberFormatException ignored) {
-                        System.out.println("Unrecognized token: " + part)
-                        return // Early return
+                        stack.push(Integer.parseInt(part))
+                    } catch (NumberFormatException nfe) {
+                        println "Unrecognized token: $part"
                     }
-                    break
             }
         }
-
-        // Print the stack status
-        System.out.println("Stack: " + this.stack)
+        println "Stack: $stack"
     }
 }
