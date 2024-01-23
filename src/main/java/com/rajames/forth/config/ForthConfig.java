@@ -79,12 +79,12 @@ public class ForthConfig {
         return sessionFactory.getObject();
     }
 
-    @Autowired
-    @Bean
-    public HibernateTransactionManager transactionManager(SessionFactory sessionFactory) {
-        HibernateTransactionManager txManager = new HibernateTransactionManager();
-        txManager.setSessionFactory(sessionFactory);
-        return txManager;
+
+    @Autowired @Bean(name = "transactionManager")
+    JpaTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
+        JpaTransactionManager jpaTransactionManager = new JpaTransactionManager();
+        jpaTransactionManager.setEntityManagerFactory(entityManagerFactory);
+        return jpaTransactionManager;
     }
 
     @Autowired
@@ -102,13 +102,5 @@ public class ForthConfig {
         emFactory.setJpaProperties(jpaProperties);
 
         return emFactory;
-    }
-
-    @Autowired
-    @Bean
-    public JpaTransactionManager jpaTransactionManager(EntityManagerFactory entityManagerFactory) {
-        JpaTransactionManager jpaTransactionManager = new JpaTransactionManager();
-        jpaTransactionManager.setEntityManagerFactory(entityManagerFactory);
-        return jpaTransactionManager;
     }
 }
