@@ -1,19 +1,41 @@
 //file:noinspection GroovyAssignabilityCheck
 package com.rajames.forth
 
+import com.rajames.forth.memory.DataStack
+import com.rajames.forth.memory.Memory
+import com.rajames.forth.memory.ReturnStack
+import com.rajames.forth.runtime.Interpreter
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
+
+@Component
 class ForthRepl {
 
-    private Stack<Integer> stack
+    private static final Logger log = LogManager.getLogger(this.class.getName())
+
     private Scanner scanner
 
+    @Autowired
+    private Memory memory
+
+    @Autowired
+    private DataStack dataStack
+
+    @Autowired
+    private ReturnStack returnStack
+
+    @Autowired
+    Interpreter interpreter
+
     ForthRepl() {
-        this.stack = new Stack<>()
         this.scanner = new Scanner(System.in)
     }
 
     void run() {
         while (true) {
-            System.out.print("forth> ")
+            print("forth> ")
             String line = this.scanner.nextLine().trim()
 
             if (line == "exit") {
@@ -21,46 +43,8 @@ class ForthRepl {
                 break
             }
 
-            parseAndExecute(line)
+            interpreter.interpretAndExecute(line)
         }
         this.scanner.close()
-    }
-
-    void parseAndExecute(String line) {
-        line.split("\\s+").each { part ->
-            switch (part) {
-                case ".":
-                    if (stack.isEmpty()) {
-                        println "Error: Stack Underflow."
-                        return
-                    }
-                    println stack.pop()
-                    break
-
-                case "+":
-                    if (stack.size() < 2) {
-                        println "Error: Not enough elements on the stack for operation '+'"
-                        return
-                    }
-                    stack.push(stack.pop() + stack.pop())
-                    break
-
-                case "DUP":
-                    if (stack.isEmpty()) {
-                        println "Error: Stack Underflow."
-                        return
-                    }
-                    stack.push(stack.peek())
-                    break
-
-                default:
-                    try {
-                        stack.push(Integer.parseInt(part))
-                    } catch (NumberFormatException nfe) {
-                        println "Unrecognized token: $part"
-                    }
-            }
-        }
-        println "Stack: $stack"
     }
 }

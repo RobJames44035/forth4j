@@ -1,17 +1,19 @@
 package com.rajames.forth.memory
 
+import org.springframework.stereotype.Component
+
+@Component
 class MemoryAddress {
 
-    private final int address
-    private int value
-
-    MemoryAddress(int address, int value) {
-        this.address = address
-        this.value = value
-    }
+    private Integer address
+    private Integer value
 
     int getAddress() {
         return address
+    }
+
+    void setAddress(Integer address) {
+        this.address = address
     }
 
     int getValue() {

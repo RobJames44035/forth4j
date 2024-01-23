@@ -1,4 +1,7 @@
 package com.rajames.forth.memory
 
-class DataStack extends VirtualStack {
+import org.springframework.stereotype.Component
+
+@Component
+class DataStack extends AbstractStack {
 }

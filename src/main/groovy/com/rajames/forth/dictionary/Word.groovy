@@ -11,14 +11,32 @@ class Word {
     private Long id
 
     @Column(nullable = false)
-    private String name;
+    private String name
 
     @Column(columnDefinition = "TEXT")
     private String behaviorScript
 
+    @Column
+    private Integer argumentCount = 0
+
     @ManyToOne
     @JoinColumn(name = "dictionary_id", nullable = false)
     private Dictionary dictionary
+
+    @OneToMany(mappedBy = "parentWord", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Word> childWords = new ArrayList<>()
+
+    @ManyToOne
+    @JoinColumn(name = "parent_word_id")
+    private Word parentWord
+
+    Integer getArgumentCount() {
+        return argumentCount
+    }
+
+    void setArgumentCount(Integer argumentCount) {
+        this.argumentCount = argumentCount
+    }
 
     Long getId() {
         return id

@@ -1,16 +1,16 @@
 package com.rajames.forth.memory
 
-abstract class VirtualStack implements StackInterface {
+abstract class AbstractStack implements StackInterface {
 
-    protected Stack<Integer> stack = new Stack<>()
+    protected Stack<Object> stack = new Stack<>()
 
     @Override
-    void push(int value) {
+    void push(Object value) {
         stack.push(value)
     }
 
     @Override
-    int pop() {
+    Object pop() {
         if (stack.empty()) {
             println "Warning: Underflow"
             return 0  // Or however you want to handle underflows

@@ -1,12 +1,8 @@
 package com.rajames.forth;
 
-import com.rajames.forth.config.ForthConfig;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-
-import static java.lang.System.exit;
 
 /**
  * forth4j
@@ -20,13 +16,17 @@ public class Forth4J {
         log.info("Here we go!");
 
         try {
-            try (AnnotationConfigApplicationContext ignored =
+            try (AnnotationConfigApplicationContext context =
                          new AnnotationConfigApplicationContext("com.rajames.forth")) {
+
+                // Get ForthRepl from the context
+                ForthRepl repl = context.getBean(ForthRepl.class);
+
+                // Run it
+                repl.run();
             }
-            new ForthRepl().run();
         } catch (Exception e) {
             log.error("Error initializing application", e);
-            return;
         }
 
         log.info("All Done! Bye, bye!!");

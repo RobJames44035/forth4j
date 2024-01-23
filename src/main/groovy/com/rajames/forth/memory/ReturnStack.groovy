@@ -1,4 +1,7 @@
 package com.rajames.forth.memory
 
-class ReturnStack extends VirtualStack {
+import org.springframework.stereotype.Component
+
+@Component
+class ReturnStack extends AbstractStack {
 }

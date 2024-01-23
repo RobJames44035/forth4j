@@ -10,6 +10,7 @@ import javax.persistence.*
 @Entity
 @Table(name = "dictionary")
 public class Dictionary implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;

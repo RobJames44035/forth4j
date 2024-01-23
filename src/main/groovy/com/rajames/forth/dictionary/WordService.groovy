@@ -18,8 +18,12 @@ class WordService {
         this.dictionaryRepository = dictionaryRepository
     }
 
+    Optional<Word> findByName(String name) {
+        return wordRepository.findByName(name)
+    }
+
     @Transactional
-    void addWordToDictionary(String wordName, String behaviorScript, String dictionaryName) {
+    void addWordToDictionary(String wordName, String behaviorScript, String dictionaryName, Integer argumentCount = 0) {
         log.info("Adding ${wordName} to ${dictionaryName} dictionary.")
         try {
             Optional<Dictionary> dictionaryOptional = dictionaryRepository.findByName(dictionaryName) as Optional<Dictionary>;
@@ -32,6 +36,7 @@ class WordService {
                 word.name = wordName
                 word.dictionary = dictionary
                 word.behaviorScript = behaviorScript
+                word.argumentCount = argumentCount
 
                 // Save the new Word to the database
                 wordRepository.save(word)
