@@ -71,7 +71,20 @@
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
             <version>3.4.5</version> <!-- compatible with Java 8+ -->
-        </dependency>    </dependencies>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.26</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.32</version> <!-- Use the version compatible with your SLF4J version -->
+        </dependency>
+
+    </dependencies>
     <build>
         <plugins>
             <plugin>

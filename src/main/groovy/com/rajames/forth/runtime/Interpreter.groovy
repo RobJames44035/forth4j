@@ -36,10 +36,10 @@ class Interpreter {
     Interpreter() {
     }
 
-    void interpretAndExecute(String line) {
+    boolean interpretAndExecute(String line) {
         this.line = line.toLowerCase() as String
         this.tokens = line.tokenize() as Queue<String>
-
+        boolean forthOutput = false
         try {
             log.debug("Interpreting line ${line}.")
             tokens.each { String token ->
@@ -55,28 +55,29 @@ class Interpreter {
                 if (!word) { // Assume it MUST be an integer.
                     dataStack.push(Integer.parseInt(token) as Integer)
                 } else {
-                    executeWord(word)
+                    forthOutput = executeWord(word)
                 }
             }
-        } catch (Exception e) {
-            log.error("TODO ", e)
+        } catch (Exception ignored) {
+            log.error("Invalid Input or Undefined Word")
         }
         log.debug("Interpreted ${line}")
+        return forthOutput
     }
 
-//    TODO
-    private void executeWord(Word word) {
+    private boolean executeWord(Word word) {
         if (word.behaviorScript) {
-            executePrimitiveWord(word)
+            return executePrimitiveWord(word)
         } else {
-            executeComplexWord(word)
+            return executeComplexWord(word)
         }
     }
 
-    private void executePrimitiveWord(Word word) {
+    private boolean executePrimitiveWord(Word word) {
+        boolean forthOutput = false
         String behaviorScript = word?.behaviorScript?.trim()
         if (behaviorScript.startsWith("class")) {
-            log.info("Holding off on this situation")
+            log.error("Holding off on this situation")
         } else {
             GroovyShell shell = new GroovyShell()
             Bindings bindings = new SimpleBindings()
@@ -93,12 +94,17 @@ class Interpreter {
             Object result = script.run()
             if (result) {
                 dataStack.push(result)
+            } else {
+                forthOutput = true
             }
         }
+        return forthOutput
     }
 
-    private static void executeComplexWord(Word word) {
-        log.info("We'll get here.")
+    private boolean executeComplexWord(Word word) {
+        boolean forthOutput = false
+        log.error("We'll get here.")
+        return forthOutput
     }
 
 }

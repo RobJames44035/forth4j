@@ -26,6 +26,8 @@ class Bootstrap implements InitializingBean {
     void afterPropertiesSet() {
         log.info("Bootstrap started...")
         coreName = dictionaryService.createDictionary("Core")
+        wordService.addWordToDictionary("license", "println('See: http://www.apache.org/licenses/LICENSE-2.0)", this.coreName)
+
         wordService.addWordToDictionary("+", "arg1 + arg2", this.coreName, 2)
         wordService.addWordToDictionary(".", "print arg1", this.coreName, 1)
         wordService.addWordToDictionary("cr", "println()", this.coreName)

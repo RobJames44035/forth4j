@@ -34,17 +34,41 @@ class ForthRepl {
     }
 
     void run() {
+        printPreamble()
+
         while (true) {
-            print("forth> ")
             String line = this.scanner.nextLine().trim()
 
-            if (line == "exit") {
-                System.out.println("Goodbye!")
+            if (line == "bye") {
+                println("Goodbye!")
                 break
             }
 
-            interpreter.interpretAndExecute(line)
+            boolean forthOutput = interpreter.interpretAndExecute(line)
+
+            // TODO
+            if (forthOutput) {
+                println()
+            }
+
+            print("\u001B[1A")  // Move cursor up one line
+            print("\u001B[" + (line.length()) + "C")  // Move cursor to the end of existing user input + 2 spaces
+            print(" ok\n")
+
         }
+
         this.scanner.close()
+        System.exit(0)
+    }
+
+    static void printPreamble() {
+        print("\u001B[2J")
+        print("\u001B[H")
+        println("================================================================")
+        println("|      forth4j 1.0.0, Copyright (C) 2024 Robert A. James.      |")
+        println("|          forth4j comes with NO ABSOLUTELY WARRANTY.          |")
+        println("| For details see `http://www.apache.org/licenses/LICENSE-2.0' |")
+        println("================================================================")
+        println("Type `bye' to exit.")
     }
 }
