@@ -25,14 +25,19 @@ class Bootstrap implements InitializingBean {
     @Override
     void afterPropertiesSet() {
         log.info("Bootstrap started...")
-        coreName = dictionaryService.createDictionary("Core")
-        wordService.addWordToDictionary("license", "println('See: http://www.apache.org/licenses/LICENSE-2.0)", this.coreName)
+        println("Bootstrap started...")
 
-        wordService.addWordToDictionary("+", "arg1 + arg2", this.coreName, 2)
-        wordService.addWordToDictionary(".", "print arg1", this.coreName, 1)
-        wordService.addWordToDictionary("cr", "println()", this.coreName)
+        coreName = dictionaryService.createDictionary("Core")
+
+        CoreDefinitions coreDefinitions = new CoreDefinitions(wordService, coreName)
+        coreDefinitions.createCoreDictionary()
+
+//        wordService.addWordToDictionary("+", "arg1 + arg2", this.coreName, 2)
+//        wordService.addWordToDictionary(".", "print arg1", this.coreName, 1)
+//        wordService.addWordToDictionary("cr", "println()", this.coreName)
 
         // more initialization code here...
         log.info("\t...Bootstrap finishes")
+        println("\t...Bootstrap finishes")
     }
 }

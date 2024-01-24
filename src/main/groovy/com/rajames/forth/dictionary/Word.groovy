@@ -23,7 +23,8 @@ class Word {
     @JoinColumn(name = "dictionary_id", nullable = false)
     private Dictionary dictionary
 
-    @OneToMany(mappedBy = "parentWord", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "parentWord", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderColumn(name = "child_order")
     private List<Word> childWords = new ArrayList<>()
 
     @ManyToOne
@@ -68,6 +69,22 @@ class Word {
 
     void setDictionary(Dictionary dictionary) {
         this.dictionary = dictionary
+    }
+
+    List<Word> getChildWords() {
+        return childWords
+    }
+
+    void setChildWords(List<Word> childWords) {
+        this.childWords = childWords
+    }
+
+    Word getParentWord() {
+        return parentWord
+    }
+
+    void setParentWord(Word parentWord) {
+        this.parentWord = parentWord
     }
 
     boolean equals(o) {

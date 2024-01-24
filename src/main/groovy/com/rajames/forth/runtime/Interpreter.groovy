@@ -103,7 +103,8 @@ class Interpreter {
 
     private boolean executeComplexWord(Word word) {
         boolean forthOutput = false
-        log.error("We'll get here.")
+
+        log.error("Complex Words: We'll get here.")
         return forthOutput
     }
 

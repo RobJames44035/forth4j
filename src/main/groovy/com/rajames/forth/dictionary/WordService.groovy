@@ -23,29 +23,45 @@ class WordService {
     }
 
     @Transactional
-    void addWordToDictionary(String wordName, String behaviorScript, String dictionaryName, Integer argumentCount = 0) {
+    Word addWordToDictionary(String wordName, List<Word> words = null, String behaviorScript, String dictionaryName, Integer argumentCount = 0) {
         log.info("Adding ${wordName} to ${dictionaryName} dictionary.")
+        Word word = null
         try {
             Optional<Dictionary> dictionaryOptional = dictionaryRepository.findByName(dictionaryName) as Optional<Dictionary>;
 
             if (dictionaryOptional.isPresent()) {
                 Dictionary dictionary = dictionaryOptional.get();
 
-                // Create a new Word object
-                Word word = new Word()
+                word = new Word()
                 word.name = wordName
                 word.dictionary = dictionary
                 word.behaviorScript = behaviorScript
                 word.argumentCount = argumentCount
+                wordRepository.save(word)
 
-                // Save the new Word to the database
+                if (words) {
+                    words.each { Word childWord ->
+                        Optional<Word> childWordOptional = wordRepository.findByName(childWord.name)
+
+                        if (childWordOptional.isPresent()) {
+                            Word managedChildWord = childWordOptional.get()
+                            managedChildWord.parentWord = word
+                            word.childWords.add(managedChildWord)
+                            wordRepository.save(managedChildWord)
+                        } else {
+                            log.error("Child word with name ${childWord} not found.")
+                        }
+                    }
+                }
+
                 wordRepository.save(word)
             } else {
                 log.error("Dictionary with name ${dictionaryName} does not exist.")
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             log.error("${wordName} was NOT added to ${dictionaryName} dictionary.", e)
         }
         log.info("${wordName} added to ${dictionaryName} dictionary.")
+        return word
     }
 }
