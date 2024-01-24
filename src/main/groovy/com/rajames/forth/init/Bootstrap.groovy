@@ -12,7 +12,6 @@ class Bootstrap implements InitializingBean {
 
     private static final Logger log = LogManager.getLogger(this.class.getName())
 
-
     private final DictionaryService dictionaryService
     private final WordService wordService
     private String coreName
