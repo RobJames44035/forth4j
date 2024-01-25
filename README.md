@@ -18,12 +18,11 @@ _TODO here_: include commands/details for installing prerequisites
 ### Installation
 
 First, clone the repository by running the following command in your terminal:
-bash git clone https://github.com/user/forth4j.git
+bash git clone https://github.com/user/forth4j.git (RobJames44035)
 
-(_TODO here_: replace `user` with your GitHub username)
+[//]: # (Navigate into the `forth4j` directory and run the application.)
 
-Navigate into the `forth4j` directory and run the application.
-bash cd forth4j ./run.sh (This is a TODO)
+[//]: # (bash cd forth4j ./run.sh &#40;This is a TODO&#41;)
 
 ## Using forth4j
 
@@ -40,12 +39,11 @@ our [CONTRIBUTING.md](CONTRIBUTING.md) guide (_TODO here_: create this guide).
 
 ## License
 
-forth4j is licensed under the Apache License 2.0. See the [apache-v2.0.md](apache-v2.0.md) file for more information (
-_TODO here_: include the LICENSE.md file).
+forth4j is licensed under the Apache License 2.0. See the [apache-v2.0.md](apache-v2.0.md) file for more information.
 
 ## Contact
 
-You can reach me at _TODO here_: (your email or other contact method)
+You can reach me at robert.allan.james@gmail.com
 
 ## Acknowledgements
 
