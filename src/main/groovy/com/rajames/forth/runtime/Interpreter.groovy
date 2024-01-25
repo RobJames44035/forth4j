@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component
 
 import javax.script.Bindings
 import javax.script.SimpleBindings
+import java.util.concurrent.ConcurrentLinkedQueue
 
 @Component
 class Interpreter {
@@ -19,7 +20,7 @@ class Interpreter {
     private static final Logger log = LogManager.getLogger(this.class.getName())
 
     String line
-    Queue<String> tokens
+    Queue<String> tokens = new ConcurrentLinkedQueue<>()
 
     @Autowired
     Memory memory
@@ -38,24 +39,29 @@ class Interpreter {
 
     boolean interpretAndExecute(String line) {
         this.line = line.toLowerCase() as String
-        this.tokens = line.tokenize() as Queue<String>
+        this.tokens = new LinkedList<>(line.tokenize())
         boolean forthOutput = false
         try {
             log.debug("Interpreting line ${line}.")
-            tokens.each { String token ->
+            // New
+            while (!tokens.isEmpty()) {
                 Optional<Word> wordOptional = null
                 Word word = null
+                String token = tokens.remove()
 
-                log.debug(token)
                 wordOptional = wordService.findByName(token)
                 if (wordOptional.isPresent()) {
                     word = wordOptional.get()
                 }
-                log.debug(word)
-                if (!word) { // Assume it MUST be an integer.
-                    dataStack.push(Integer.parseInt(token) as Integer)
-                } else {
+
+                if (word != null) {
                     forthOutput = executeWord(word)
+                } else {
+                    try {
+                        dataStack.push(Integer.parseInt(token) as Integer)
+                    } catch (NumberFormatException ignored) {
+                        break
+                    }
                 }
             }
         } catch (Exception ignored) {
@@ -64,6 +70,7 @@ class Interpreter {
         log.debug("Interpreted ${line}")
         return forthOutput
     }
+
 
     private boolean executeWord(Word word) {
         if (word.behaviorScript) {
@@ -81,10 +88,12 @@ class Interpreter {
         } else {
             GroovyShell shell = new GroovyShell()
             Bindings bindings = new SimpleBindings()
+            bindings.put("line", line)
+            bindings.put("tokens", tokens)
             Script script = null
             Integer argumentCount = word.argumentCount
             if (argumentCount == 0) {
-                script = shell.parse(behaviorScript)
+                script = shell.parse(behaviorScript as String, bindings as Binding)
             } else {
                 (0..<argumentCount).each {
                     bindings.put("arg${it + 1}" as String, dataStack.pop())
@@ -93,7 +102,11 @@ class Interpreter {
             }
             Object result = script.run()
             if (result) {
-                dataStack.push(result)
+                if (result instanceof Boolean) {
+                    dataStack.push(result ? -1 : 0)
+                } else {
+                    dataStack.push(result)
+                }
             } else {
                 forthOutput = true
             }
@@ -103,8 +116,13 @@ class Interpreter {
 
     private boolean executeComplexWord(Word word) {
         boolean forthOutput = false
-
-        log.error("Complex Words: We'll get here.")
+        word.childWords.each { Word childWord ->
+            if (childWord.behaviorScript) {
+                forthOutput = executePrimitiveWord(childWord)
+            } else {
+                forthOutput = executeComplexWord(childWord)
+            }
+        }
         return forthOutput
     }
 
