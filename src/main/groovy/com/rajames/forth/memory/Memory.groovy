@@ -16,13 +16,13 @@
 
 package com.rajames.forth.memory
 
-import org.springframework.beans.factory.annotation.Autowired
+
 import org.springframework.stereotype.Component
 
 @Component
 class Memory {
 
-    @Autowired
+//    @Autowired
     protected Map<Integer, MemoryAddress> addressMap = [:]
 
     // Adds or updates a memory address
