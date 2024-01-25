@@ -5,6 +5,7 @@ import com.rajames.forth.memory.DataStack
 import com.rajames.forth.memory.Memory
 import com.rajames.forth.memory.ReturnStack
 import com.rajames.forth.runtime.Interpreter
+import org.apache.groovy.groovysh.Groovysh
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
@@ -39,9 +40,13 @@ class ForthRepl {
         while (true) {
             String line = this.scanner.nextLine().trim()
 
-            if (line == "bye") {
+            if (line == "bye" || line == "exit") {
                 println("Goodbye!")
                 break
+            } else if (line == "gsh") {
+                Groovysh groovysh = new Groovysh()
+                groovysh.run(null, [])
+                continue
             }
 
             boolean forthOutput = interpreter.interpretAndExecute(line)

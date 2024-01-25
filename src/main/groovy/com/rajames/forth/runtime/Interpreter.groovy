@@ -86,6 +86,10 @@ class Interpreter {
         if (behaviorScript.startsWith("class")) {
             log.error("Holding off on this situation")
         } else {
+            String tryS = "try {\n"
+            String catchS = "\n} catch(Exception e) {\ne.printStackTrace()\n}"
+            behaviorScript = tryS + behaviorScript + catchS
+//            println(behaviorScript) // TODO Remove later. IMPORTANT!
             GroovyShell shell = new GroovyShell()
             Bindings bindings = new SimpleBindings()
             bindings.put("line", line)
