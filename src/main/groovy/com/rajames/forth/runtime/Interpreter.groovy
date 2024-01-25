@@ -64,8 +64,8 @@ class Interpreter {
                     }
                 }
             }
-        } catch (Exception ignored) {
-            log.error("Invalid Input or Undefined Word")
+        } catch (Exception e) {
+            log.error("Invalid Input or Undefined Word:\n\t" + e.message, e)
         }
         log.debug("Interpreted ${line}")
         return forthOutput
@@ -86,14 +86,16 @@ class Interpreter {
         if (behaviorScript.startsWith("class")) {
             log.error("Holding off on this situation")
         } else {
-            String tryS = "try {\n"
-            String catchS = "\n} catch(Exception e) {\ne.printStackTrace()\n}"
-            behaviorScript = tryS + behaviorScript + catchS
+
+//            String tryS = "try {\n"
+//            String catchS = "\n} catch(Exception e) {\ne.printStackTrace()\n}"
+//            behaviorScript = tryS + behaviorScript + catchS
 //            println(behaviorScript) // TODO Remove later. IMPORTANT!
             GroovyShell shell = new GroovyShell()
             Bindings bindings = new SimpleBindings()
             bindings.put("line", line)
             bindings.put("tokens", tokens)
+            bindings.put("log", log)
             Script script = null
             Integer argumentCount = word.argumentCount
             if (argumentCount == 0) {

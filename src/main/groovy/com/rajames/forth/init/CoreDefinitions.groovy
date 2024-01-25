@@ -30,16 +30,19 @@ class CoreDefinitions {
         Word lessThanZero = createPrimitiveWord("0<", "arg1 < 0", 1)
         Word dotQuote = createPrimitiveWord(".\"", """
     StringBuilder sb = new StringBuilder()
-    String token
-    while (tokens) { // Loop until no more tokens left
-        token = tokens.remove()
-        if(token.endsWith('\"') || token.equals("\"")) {
-            sb.append(token.replaceAll('\"\$', ''))
+    while (!tokens.isEmpty()) {
+        String token = tokens.remove()
+        if(token == '\"') {
             break
+        } else if(token.endsWith('\"')) {
+            token = token - '\"'
+            sb.append(token).append(' ')
+            break
+        } else {
+            sb.append(token).append(' ')
         }
-        sb.append(token).append(' ')
-    }
-    println(sb.toString().trim())
+   }
+    print(sb.toString())
 """)
 
         // Complex words that are made up of a List<Word> that describes their behavior go here.

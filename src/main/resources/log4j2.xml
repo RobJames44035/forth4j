@@ -2,7 +2,10 @@
 <Configuration status="INFO">
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
-            <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+            <Filters>
+                <!--                <LevelRangeFilter minLevel="ERROR" maxLevel="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>-->
+                <LevelRangeFilter minLevel="ERROR" maxLevel="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
             <PatternLayout pattern="%-5level: %msg%n"/>
         </Console>
         <RollingFile name="RollingFile" fileName="logs/forth4j.log" filePattern="logs/forth4j-%d{yyyy-MM-dd}-%i.log.gz">
