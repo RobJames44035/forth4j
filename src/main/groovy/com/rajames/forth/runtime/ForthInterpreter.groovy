@@ -32,7 +32,7 @@ import javax.script.SimpleBindings
 import java.util.concurrent.ConcurrentLinkedQueue
 
 @Component
-class Interpreter {
+class ForthInterpreter {
 
     private static final Logger log = LogManager.getLogger(this.class.getName())
 
@@ -51,7 +51,7 @@ class Interpreter {
     @Autowired
     WordService wordService
 
-    Interpreter() {
+    ForthInterpreter() {
     }
 
     boolean interpretAndExecute(String line) {
@@ -74,10 +74,12 @@ class Interpreter {
                 if (word != null) {
                     forthOutput = executeWord(word)
                 } else {
+                    // See if it's Integer
                     try {
                         dataStack.push(Integer.parseInt(token) as Integer)
-                    } catch (NumberFormatException ignored) {
-                        break
+                    } catch (NumberFormatException numberFormatException) {
+                        // Token is not a Word or an Integer
+                        throw new ForthException("Token is not a Word or an Integer", numberFormatException)
                     }
                 }
             }
@@ -104,10 +106,10 @@ class Interpreter {
             log.error("Holding off on this situation")
         } else {
 
-//            String tryS = "try {\n"
-//            String catchS = "\n} catch(Exception e) {\ne.printStackTrace()\n}"
-//            behaviorScript = tryS + behaviorScript + catchS
-//            println(behaviorScript) // TODO Remove later. IMPORTANT!
+            String tryS = "try {\n"
+            String catchS = "\n} catch(Exception e) {\ne.printStackTrace()\n}"
+            behaviorScript = tryS + behaviorScript + catchS
+
             GroovyShell shell = new GroovyShell()
             Bindings bindings = new SimpleBindings()
             bindings.put("line", line)
@@ -124,12 +126,10 @@ class Interpreter {
                 script = shell.parse(behaviorScript as String, bindings as Binding)
             }
             Object result = script.run()
-            if (result) {
-                if (result instanceof Boolean) {
-                    dataStack.push(result ? -1 : 0)
-                } else {
-                    dataStack.push(result)
-                }
+            if (result instanceof Boolean) {
+                dataStack.push(result ? -1 : 0)
+            } else if (result) {
+                dataStack.push(result)
             } else {
                 forthOutput = true
             }

@@ -20,7 +20,7 @@ package com.rajames.forth
 import com.rajames.forth.memory.DataStack
 import com.rajames.forth.memory.Memory
 import com.rajames.forth.memory.ReturnStack
-import com.rajames.forth.runtime.Interpreter
+import com.rajames.forth.runtime.ForthInterpreter
 import org.apache.groovy.groovysh.Groovysh
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -44,7 +44,7 @@ class ForthRepl {
     private ReturnStack returnStack
 
     @Autowired
-    Interpreter interpreter
+    ForthInterpreter interpreter
 
     ForthRepl() {
         this.scanner = new Scanner(System.in)

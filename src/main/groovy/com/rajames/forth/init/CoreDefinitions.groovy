@@ -41,26 +41,44 @@ class CoreDefinitions {
     void createCoreDictionary() {
 
         // Primitive words with their behavior described in a Groovy Script
-        Word plus = createPrimitiveWord("+", "arg1 + arg2", 2)
-        Word dot = createPrimitiveWord(".", "print arg1", 1)
-        Word cr = createPrimitiveWord("cr", "println()")
-        Word lessThanZero = createPrimitiveWord("0<", "arg1 < 0", 1)
+        Word plus = createPrimitiveWord("+", "arg1 + arg2", 2)              // Good
+        Word minus = createPrimitiveWord("-", "arg1 - arg2", 2)             // Good
+        Word dot = createPrimitiveWord(".", "print arg1", 1)                // Good
+        Word cr = createPrimitiveWord("cr", "println()")                                  // Good
+        Word emit = createPrimitiveWord("emit", "print((char) arg1)", 1)    // Good
         Word dotQuote = createPrimitiveWord(".\"", """
-    StringBuilder sb = new StringBuilder()
-    while (!tokens.isEmpty()) {
-        String token = tokens.remove()
-        if(token == '\"') {
-            break
-        } else if(token.endsWith('\"')) {
-            token = token - '\"'
-            sb.append(token).append(' ')
-            break
-        } else {
-            sb.append(token).append(' ')
-        }
-   }
-    print(sb.toString())
-""")
+            StringBuilder sb = new StringBuilder()
+            while (!tokens.isEmpty()) {
+                    String token = tokens.remove()
+                    if(token == '\"') {
+                        break
+                    } else if(token.endsWith('\"')) {
+                        token = token - '\"'
+                        sb.append(token).append(' ')
+                        break
+                    } else {
+                        sb.append(token).append(' ')
+                    }
+            }
+            print(sb.toString())
+            """)
+        // Good
+        Word lessThanZero = createPrimitiveWord("0<", "arg1 < 0", 1)        // Good
+        Word equalsZero = createPrimitiveWord("0=", "arg1 == 0", 1)          //Good
+        Word greaterThanZero = createPrimitiveWord("0>", "arg1 > 0", 1)     // Good
+        Word onePlus = createPrimitiveWord("1+", "arg1++", 1)               // Good
+        Word oneMinus = createPrimitiveWord("1-", "arg1 - 1", 1)            // Good
+        Word twoPlus = createPrimitiveWord("2+", "arg1 + 2", 1)             // Good
+        Word twoMinus = createPrimitiveWord("2-", "arg1 - 2", 1)
+        // Good        Word twoTimes = createPrimitiveWord("2*", "arg1 * 2", 1)            // good
+        Word twoDivide = createPrimitiveWord("2/", "arg1 / 2", 1)           // Good
+        Word lessThan = createPrimitiveWord("<", "arg1 < arg2", 2)          // Good
+        Word greaterThan = createPrimitiveWord(">", "arg1 > arg2", 2)       // Good
+        Word equal = createPrimitiveWord("=", "arg1 == arg2", 2)            // Good
+// These words does not appear in the standards I have
+//        Word notEqual = createPrimitiveWord("<>", "arg1 != arg2", 2)
+//        Word nop = createPrimitiveWord("nop", "")
+//        Word noop = createPrimitiveWord("noop", "")
 
         // Complex words that are made up of a List<Word> that describes their behavior go here.
         Word add = createComplexWord("add", [plus, dot, cr], 2) // TODO This is a test word REMOVE
