@@ -69,25 +69,25 @@ public class ForthConfig {
 
     @Bean(name = "dataSource")
     public DataSource dataSource() {
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName(DB_DRIVER);
-        dataSource.setUrl(DB_URL);
-        dataSource.setUsername(DB_USERNAME);
-        dataSource.setPassword(DB_PASSWORD);
+        final DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName(this.DB_DRIVER);
+        dataSource.setUrl(this.DB_URL);
+        dataSource.setUsername(this.DB_USERNAME);
+        dataSource.setPassword(this.DB_PASSWORD);
         return dataSource;
     }
 
     @Autowired
     @Bean
-    public SessionFactory sessionFactory(DataSource dataSource) throws Exception {
-        LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
+    public SessionFactory sessionFactory(final DataSource dataSource) throws Exception {
+        final LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
         sessionFactory.setDataSource(dataSource);
-        sessionFactory.setPackagesToScan(ENTITYMANAGER_PACKAGES_TO_SCAN);
+        sessionFactory.setPackagesToScan(this.ENTITYMANAGER_PACKAGES_TO_SCAN);
 
-        Properties hibernateProperties = new Properties();
-        hibernateProperties.put("hibernate.dialect", HIBERNATE_DIALECT);
-        hibernateProperties.put("hibernate.show_sql", HIBERNATE_SHOW_SQL);
-        hibernateProperties.put("hibernate.hbm2ddl.auto", HIBERNATE_HBM2DDL_AUTO);
+        final Properties hibernateProperties = new Properties();
+        hibernateProperties.put("hibernate.dialect", this.HIBERNATE_DIALECT);
+        hibernateProperties.put("hibernate.show_sql", this.HIBERNATE_SHOW_SQL);
+        hibernateProperties.put("hibernate.hbm2ddl.auto", this.HIBERNATE_HBM2DDL_AUTO);
         sessionFactory.setHibernateProperties(hibernateProperties);
 
         sessionFactory.afterPropertiesSet();
@@ -96,24 +96,24 @@ public class ForthConfig {
 
 
     @Autowired @Bean(name = "transactionManager")
-    JpaTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
-        JpaTransactionManager jpaTransactionManager = new JpaTransactionManager();
+    JpaTransactionManager transactionManager(final EntityManagerFactory entityManagerFactory) {
+        final JpaTransactionManager jpaTransactionManager = new JpaTransactionManager();
         jpaTransactionManager.setEntityManagerFactory(entityManagerFactory);
         return jpaTransactionManager;
     }
 
     @Autowired
     @Bean
-    public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource) {
-        LocalContainerEntityManagerFactoryBean emFactory = new LocalContainerEntityManagerFactoryBean();
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(final DataSource dataSource) {
+        final LocalContainerEntityManagerFactoryBean emFactory = new LocalContainerEntityManagerFactoryBean();
         emFactory.setDataSource(dataSource);
-        emFactory.setPackagesToScan(ENTITYMANAGER_PACKAGES_TO_SCAN);
+        emFactory.setPackagesToScan(this.ENTITYMANAGER_PACKAGES_TO_SCAN);
         emFactory.setPersistenceProviderClass(HibernatePersistenceProvider.class);
 
-        Properties jpaProperties = new Properties();
-        jpaProperties.put("hibernate.dialect", HIBERNATE_DIALECT);
-        jpaProperties.put("hibernate.show_sql", HIBERNATE_SHOW_SQL);
-        jpaProperties.put("hibernate.hbm2ddl.auto", HIBERNATE_HBM2DDL_AUTO);
+        final Properties jpaProperties = new Properties();
+        jpaProperties.put("hibernate.dialect", this.HIBERNATE_DIALECT);
+        jpaProperties.put("hibernate.show_sql", this.HIBERNATE_SHOW_SQL);
+        jpaProperties.put("hibernate.hbm2ddl.auto", this.HIBERNATE_HBM2DDL_AUTO);
         emFactory.setJpaProperties(jpaProperties);
 
         return emFactory;

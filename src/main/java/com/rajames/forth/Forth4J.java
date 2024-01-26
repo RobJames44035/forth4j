@@ -28,20 +28,20 @@ public class Forth4J {
 
     private static final Logger log = LogManager.getLogger(Forth4J.class.getName());
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         log.info("Here we go!");
 
         try {
-            try (AnnotationConfigApplicationContext context =
+            try (final AnnotationConfigApplicationContext context =
                          new AnnotationConfigApplicationContext("com.rajames.forth")) {
 
                 // Get ForthRepl from the context
-                ForthRepl repl = context.getBean(ForthRepl.class);
+                final ForthRepl repl = context.getBean(ForthRepl.class);
 
                 // Run it
                 repl.run();
             }
-        } catch (BeansException beansException) {
+        } catch (final BeansException beansException) {
             log.error("Error initializing application", beansException);
         }
 

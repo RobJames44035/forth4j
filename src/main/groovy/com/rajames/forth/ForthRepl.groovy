@@ -74,7 +74,7 @@ class ForthRepl {
             } catch (Exception ex) {
                 log.error(ex.message)
             }
-            // TODO
+
             if (forthOutput) {
                 println()
             }

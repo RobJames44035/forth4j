@@ -40,7 +40,7 @@ class CoreDefinitions {
     }
 
     Word createComplexWord(String wordName, List<Word> words, Integer argumentCount = 0, Boolean compileOnly = false) {
-        return wordService.addWordToDictionary(wordName, words, null, this.coreName, argumentCount, compileOnly) // TODO
+        return wordService.addWordToDictionary(wordName, words, null, this.coreName, argumentCount, compileOnly)
     }
 
 
