@@ -33,6 +33,11 @@ class CoreDefinitions {
         return wordService.addWordToDictionary(wordName, null, behaviorScript, this.coreName, argumentCount)
     }
 
+    Word createPrimitiveWord(String wordName, File behaviorScriptFile, Integer argumentCount = 0) {
+        String behaviorScript = behaviorScriptFile.text
+        return wordService.addWordToDictionary(wordName, null, behaviorScript, this.coreName, argumentCount)
+    }
+
     Word createComplexWord(String wordName, List<Word> words, Integer argumentCount = 0) {
         return wordService.addWordToDictionary(wordName, words, null, this.coreName, argumentCount) // TODO
     }
@@ -46,23 +51,24 @@ class CoreDefinitions {
         Word dot = createPrimitiveWord(".", "print arg1", 1)                // Good
         Word cr = createPrimitiveWord("cr", "println()")                                  // Good
         Word emit = createPrimitiveWord("emit", "print((char) arg1)", 1)    // Good
-        Word dotQuote = createPrimitiveWord(".\"", """
-            StringBuilder sb = new StringBuilder()
-            while (!tokens.isEmpty()) {
-                    String token = tokens.remove()
-                    if(token == '\"') {
-                        break
-                    } else if(token.endsWith('\"')) {
-                        token = token - '\"'
-                        sb.append(token).append(' ')
-                        break
-                    } else {
-                        sb.append(token).append(' ')
-                    }
-            }
-            print(sb.toString())
-            """)
-        // Good
+//        Word dotQuote = createPrimitiveWord(".\"", """
+//            StringBuilder sb = new StringBuilder()
+//            while (!tokens.isEmpty()) {
+//                    String token = tokens.remove()
+//                    if(token == '\"') {
+//                        break
+//                    } else if(token.endsWith('\"')) {
+//                        token = token - '\"'
+//                        sb.append(token).append(' ')
+//                        break
+//                    } else {
+//                        sb.append(token).append(' ')
+//                    }
+//            }
+//            print(sb.toString())
+//            """)
+//
+        Word dotQuote = createPrimitiveWord(".\"", new File("primitives_groovy/dotQuote.groovy"))
         Word lessThanZero = createPrimitiveWord("0<", "arg1 < 0", 1)        // Good
         Word equalsZero = createPrimitiveWord("0=", "arg1 == 0", 1)          //Good
         Word greaterThanZero = createPrimitiveWord("0>", "arg1 > 0", 1)     // Good
@@ -70,11 +76,13 @@ class CoreDefinitions {
         Word oneMinus = createPrimitiveWord("1-", "arg1 - 1", 1)            // Good
         Word twoPlus = createPrimitiveWord("2+", "arg1 + 2", 1)             // Good
         Word twoMinus = createPrimitiveWord("2-", "arg1 - 2", 1)
-        // Good        Word twoTimes = createPrimitiveWord("2*", "arg1 * 2", 1)            // good
+        Word twoTimes = createPrimitiveWord("2*", "arg1 * 2", 1)            // good
         Word twoDivide = createPrimitiveWord("2/", "arg1 / 2", 1)           // Good
         Word lessThan = createPrimitiveWord("<", "arg1 < arg2", 2)          // Good
         Word greaterThan = createPrimitiveWord(">", "arg1 > arg2", 2)       // Good
         Word equal = createPrimitiveWord("=", "arg1 == arg2", 2)            // Good
+        Word fIf = createPrimitiveWord("if", "", 1)
+        Word fThen = createPrimitiveWord("then", "")
 // These words does not appear in the standards I have
 //        Word notEqual = createPrimitiveWord("<>", "arg1 != arg2", 2)
 //        Word nop = createPrimitiveWord("nop", "")

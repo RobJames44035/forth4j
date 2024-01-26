@@ -40,7 +40,6 @@ class WordService {
 
     @Transactional
     Word addWordToDictionary(String wordName, List<Word> words = null, String behaviorScript, String dictionaryName, Integer argumentCount = 0) {
-        log.info("Adding ${wordName} to ${dictionaryName} dictionary.")
         Word word = null
         try {
             Optional<Dictionary> dictionaryOptional = dictionaryRepository.findByName(dictionaryName) as Optional<Dictionary>
