@@ -36,6 +36,9 @@ class Word {
     @Column
     private Integer argumentCount = 0
 
+    @Column
+    private Boolean compileOnly = false
+
     @ManyToOne
     @JoinColumn(name = "dictionary_id", nullable = false)
     private Dictionary dictionary
@@ -96,6 +99,14 @@ class Word {
 
     void setParentWord(Word parentWord) {
         this.parentWord = parentWord
+    }
+
+    Boolean getCompileOnly() {
+        return compileOnly
+    }
+
+    void setCompileOnly(Boolean compileOnly) {
+        this.compileOnly = compileOnly
     }
 
     boolean equals(o) {

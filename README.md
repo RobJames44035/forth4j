@@ -37,6 +37,10 @@ If you want to exit, you can do so by typing `bye`.
 We welcome any and all contributions. If you're interested in contributing, please read
 our [CONTRIBUTING.md](CONTRIBUTING.md) guide (_TODO here_: create this guide).
 
+## Notes
+
+Some things to consider implementing: [NOTES.md](NOTES.md)
+
 ## License
 
 forth4j is licensed under the Apache License 2.0. See the [apache-v2.0.md](apache-v2.0.md) file for more information.

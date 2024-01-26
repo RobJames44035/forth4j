@@ -39,7 +39,7 @@ class WordService {
     }
 
     @Transactional
-    Word addWordToDictionary(String wordName, List<Word> words = null, String behaviorScript, String dictionaryName, Integer argumentCount = 0) {
+    Word addWordToDictionary(String wordName, List<Word> words = null, String behaviorScript, String dictionaryName, Integer argumentCount = 0, Boolean compileOnly = false) {
         Word word = null
         try {
             Optional<Dictionary> dictionaryOptional = dictionaryRepository.findByName(dictionaryName) as Optional<Dictionary>
@@ -52,6 +52,7 @@ class WordService {
                 word.dictionary = dictionary
                 word.behaviorScript = behaviorScript
                 word.argumentCount = argumentCount
+                word.compileOnly = compileOnly
                 wordRepository.save(word)
 
                 if (words) {

@@ -15,6 +15,7 @@
  */
 
 //file:noinspection GroovyAssignabilityCheck
+//file:noinspection GroovyUnusedAssignment
 package com.rajames.forth
 
 import com.rajames.forth.memory.DataStack
@@ -51,6 +52,9 @@ class ForthRepl {
     }
 
     void run() {
+
+        Boolean forthOutput
+
         printPreamble()
 
         while (true) {
@@ -65,8 +69,11 @@ class ForthRepl {
                 continue
             }
 
-            boolean forthOutput = interpreter.interpretAndExecute(line)
-
+            try {
+                forthOutput = interpreter.interpretAndExecute(line)
+            } catch (Exception ex) {
+                log.error(ex.message)
+            }
             // TODO
             if (forthOutput) {
                 println()
@@ -88,7 +95,7 @@ class ForthRepl {
         println("================================================================")
         println("|      forth4j 1.0.0, Copyright (C) 2024 Robert A. James.      |")
         println("|          forth4j comes with NO ABSOLUTELY WARRANTY.          |")
-        println("| For details see `http://www.apache.org/licenses/LICENSE-2.0' |")
+        println("| For details see `https://www.apache.org/licenses/LICENSE-2.0' |")
         println("================================================================")
         println("Type `bye' to exit.")
     }

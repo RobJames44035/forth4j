@@ -18,6 +18,7 @@ package com.rajames.forth;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.BeansException;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
@@ -40,8 +41,8 @@ public class Forth4J {
                 // Run it
                 repl.run();
             }
-        } catch (Exception e) {
-            log.error("Error initializing application", e);
+        } catch (BeansException beansException) {
+            log.error("Error initializing application", beansException);
         }
 
         log.info("All Done! Bye, bye!!");

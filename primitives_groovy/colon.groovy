@@ -14,24 +14,11 @@
  * limitations under the License.
  */
 
-package com.rajames.forth.runtime
+//import com.rajames.forth.compiler.ForthCompiler
 
-class ForthException extends Exception {
 
-    ForthException() {
-        super()
-    }
 
-    ForthException(String message) {
-        super(message)
-    }
+log.debug("TOKENS: " + tokens + ": " + tokens.class.name)
+log.debug("LINE: " + line)
 
-    ForthException(String message, Throwable cause) {
-        super(message, cause)
-    }
-
-    ForthException(Throwable cause) {
-        super(cause)
-    }
-
-}
+forthCompiler.compileWord(tokens)

@@ -31,6 +31,7 @@ class Bootstrap implements InitializingBean {
 
     private DictionaryService dictionaryService
     private WordService wordService
+
     private String coreName
 
     @Autowired
@@ -52,5 +53,9 @@ class Bootstrap implements InitializingBean {
         // more initialization code here...
         log.info("\t...Bootstrap finished.")
         println("\t...Bootstrap finished.")
+    }
+
+    String getCoreName() {
+        return coreName
     }
 }
