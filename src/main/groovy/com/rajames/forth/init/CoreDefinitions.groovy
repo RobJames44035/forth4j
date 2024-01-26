@@ -51,23 +51,6 @@ class CoreDefinitions {
         Word dot = createPrimitiveWord(".", "print arg1", 1)                // Good
         Word cr = createPrimitiveWord("cr", "println()")                                  // Good
         Word emit = createPrimitiveWord("emit", "print((char) arg1)", 1)    // Good
-//        Word dotQuote = createPrimitiveWord(".\"", """
-//            StringBuilder sb = new StringBuilder()
-//            while (!tokens.isEmpty()) {
-//                    String token = tokens.remove()
-//                    if(token == '\"') {
-//                        break
-//                    } else if(token.endsWith('\"')) {
-//                        token = token - '\"'
-//                        sb.append(token).append(' ')
-//                        break
-//                    } else {
-//                        sb.append(token).append(' ')
-//                    }
-//            }
-//            print(sb.toString())
-//            """)
-//
         Word dotQuote = createPrimitiveWord(".\"", new File("primitives_groovy/dotQuote.groovy"))
         Word lessThanZero = createPrimitiveWord("0<", "arg1 < 0", 1)        // Good
         Word equalsZero = createPrimitiveWord("0=", "arg1 == 0", 1)          //Good
@@ -81,12 +64,9 @@ class CoreDefinitions {
         Word lessThan = createPrimitiveWord("<", "arg1 < arg2", 2)          // Good
         Word greaterThan = createPrimitiveWord(">", "arg1 > arg2", 2)       // Good
         Word equal = createPrimitiveWord("=", "arg1 == arg2", 2)            // Good
-        Word fIf = createPrimitiveWord("if", "", 1)
-        Word fThen = createPrimitiveWord("then", "")
-// These words does not appear in the standards I have
-//        Word notEqual = createPrimitiveWord("<>", "arg1 != arg2", 2)
-//        Word nop = createPrimitiveWord("nop", "")
-//        Word noop = createPrimitiveWord("noop", "")
+        Word If = createPrimitiveWord("if", "", 1)
+        Word Then = createPrimitiveWord("then", "")
+        Word Else = createPrimitiveWord("el;se", "")
 
         // Complex words that are made up of a List<Word> that describes their behavior go here.
         Word add = createComplexWord("add", [plus, dot, cr], 2) // TODO This is a test word REMOVE
