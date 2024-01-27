@@ -39,12 +39,18 @@ class Word {
     @Column
     private Boolean compileOnly = false
 
+    @Column(nullable = true)
+    private Integer stackValue
+
+    @Column(nullable = true, name = "complex_word_order")
+    private Integer complexWordOrder
+
     @ManyToOne
     @JoinColumn(name = "dictionary_id", nullable = false)
     private Dictionary dictionary
 
     @OneToMany(mappedBy = "parentWord", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderColumn(name = "child_order")
+    @OrderColumn(name = "complex_word_order")
     private List<Word> childWords = new ArrayList<>()
 
     @ManyToOne
@@ -107,6 +113,22 @@ class Word {
 
     void setCompileOnly(Boolean compileOnly) {
         this.compileOnly = compileOnly
+    }
+
+    Integer getStackValue() {
+        return stackValue
+    }
+
+    void setStackValue(Integer stackValue) {
+        this.stackValue = stackValue
+    }
+
+    Integer getComplexWordOrder() {
+        return complexWordOrder
+    }
+
+    void setComplexWordOrder(Integer complexWordOrder) {
+        this.complexWordOrder = complexWordOrder
     }
 
     boolean equals(o) {

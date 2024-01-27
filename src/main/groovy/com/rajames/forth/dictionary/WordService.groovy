@@ -34,8 +34,13 @@ class WordService {
         this.dictionaryRepository = dictionaryRepository
     }
 
-    Optional<Word> findByName(String name) {
-        return wordRepository.findByName(name)
+    Word findByName(String name) {
+        Optional<Word> wordOptional = wordRepository.findByName(name)
+        if (wordOptional.isPresent()) {
+            return wordOptional.get()
+        } else {
+            return null
+        }
     }
 
     @Transactional

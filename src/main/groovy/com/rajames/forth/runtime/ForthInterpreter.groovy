@@ -61,27 +61,19 @@ class ForthInterpreter {
         this.tokens = new LinkedList<>(line.tokenize())
         boolean forthOutput = false
         try {
-            log.debug("Interpreting line ${line}.")
-            // New
+            log.trace("Interpreting line ${line}.")
             while (!tokens.isEmpty()) {
-
-                Optional<Word> wordOptional = null
-                Word word = null
                 String token = tokens.remove()
-
-                wordOptional = wordService.findByName(token)
-                if (wordOptional.isPresent()) {
-                    word = wordOptional.get()
-                }
-
+                Word word = wordService.findByName(token)
                 if (word != null) {
+                    if (word.compileOnly) {
+                        throw new ForthInterpreterException("Compile Only.")
+                    }
                     forthOutput = executeWord(word)
                 } else {
-                    // See if it's Integer
                     try {
                         dataStack.push(Integer.parseInt(token) as Integer)
                     } catch (NumberFormatException ignored) {
-                        // Token is not a Word or an Integer
                         throw new ForthInterpreterException("Token is not a Word or Number")
                     }
                 }
@@ -89,7 +81,7 @@ class ForthInterpreter {
         } catch (Exception e) {
             log.error("Invalid Input or Undefined Word:\n\t" + e.message, e)
         }
-        log.debug("Interpreted ${line}")
+        log.trace("Interpreted ${line}")
         return forthOutput
     }
 
@@ -97,8 +89,11 @@ class ForthInterpreter {
     private boolean executeWord(Word word) {
         if (word.behaviorScript) {
             return executePrimitiveWord(word)
-        } else {
+        } else if (word.childWords.size() > 0) {
             return executeComplexWord(word)
+        } else {
+            // Should be unreachable.
+            throw new ForthCompilerException("Nothing to do.")
         }
     }
 
@@ -120,6 +115,7 @@ class ForthInterpreter {
                 bindings.put("tokens", tokens)
                 bindings.put("log", log)
                 bindings.put("forthCompiler", forthCompiler)
+                bindings.put("word", word)
                 Script script = null
                 Integer argumentCount = word.argumentCount
                 if (argumentCount == 0) {

@@ -47,4 +47,14 @@ class DictionaryService {
         log.info("Saved ${name} dictionary.")
         return dictionary?.name
     }
+
+    Dictionary findByName(String name) {
+        Optional<Dictionary> x = dictionaryRepository.findByName(name)
+        if (x.isPresent()) {
+            return x.get()
+        } else {
+            return null
+        }
+    }
+
 }

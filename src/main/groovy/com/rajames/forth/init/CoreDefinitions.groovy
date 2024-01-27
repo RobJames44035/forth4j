@@ -64,7 +64,10 @@ class CoreDefinitions {
         Word twoDivide = createPrimitiveWord("2/", "arg1 / 2", 1)           // Good
         Word lessThan = createPrimitiveWord("<", "arg1 < arg2", 2)          // Good
         Word greaterThan = createPrimitiveWord(">", "arg1 > arg2", 2)       // Good
-        Word equal = createPrimitiveWord("=", "arg1 == arg2", 2)// Good
+        Word equal = createPrimitiveWord("=", "arg1 == arg2", 2)            // Good
+
+        Word literal = createPrimitiveWord("literal", "return word.stackValue", 0, true)
+
         Word colon = createPrimitiveWord(":", new File("${SCRIPTS}/colon.groovy"))
         Word semicolon = createPrimitiveWord(";", new File("${SCRIPTS}/semicolon.groovy"))
 

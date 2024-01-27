@@ -17,9 +17,7 @@
 
 package com.rajames.forth.compiler
 
-
-import com.rajames.forth.dictionary.Word
-import com.rajames.forth.dictionary.WordService
+import com.rajames.forth.dictionary.*
 import com.rajames.forth.init.Bootstrap
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -32,6 +30,15 @@ class ForthCompiler {
     private static final Logger log = LogManager.getLogger(this.class.getName())
 
     @Autowired
+    DictionaryService dictionaryService
+
+    @Autowired
+    DictionaryRepository dictionaryRepository
+
+    @Autowired
+    WordRepository wordRepository
+
+    @Autowired
     WordService wordService
 
     @Autowired
@@ -39,42 +46,54 @@ class ForthCompiler {
 
 
     Word compileWord(LinkedList<String> tokens) {
-        log.debug("Entering compiler")
-        String dictionaryName = bootstrap.coreName
-        Integer argumentCount = 0
-        Word newWord = null
-        String wordName = tokens.remove()
-        ArrayList<Word> words = []
+        log.trace("Entering compiler")
+        // Fail Fast
         if (!tokens.contains(";")) {
             tokens.clear()
             throw new ForthCompilerException("No ending semicolon")
         }
+
+        Integer argumentCount = 0
+        Word newWord = new Word()
+        newWord.name = tokens.remove()
+        newWord.dictionary = dictionaryService.findByName(bootstrap.coreName)
+        wordRepository.save(newWord)
+
+        int ct = 0
         while (!tokens.isEmpty()) {
             String token = tokens.remove()
             if (token != ";") {
-                Optional<Word> optionalWord = wordService.findByName(token)
-                Word word
-                if (optionalWord.isPresent()) {
-                    word = optionalWord.get()
-                }
+                Word word = wordService.findByName(token)
+
                 if (word != null) {
-                    words.add(word)
+                    newWord.childWords.add(word)
+                    word.parentWord = newWord
+                    newWord.complexWordOrder = ct
                 } else {
                     try {
-                        Integer num = Integer.parseInt(token)
                         // handle the fact this is a number, not a word
-                        // this could involve creating a new Word that represents
-                        // pushing this number onto the stack and adding it to the words list
-                    } catch (NumberFormatException e) {
-                        throw new ForthCompilerException("", e)
+                        Integer num = Integer.parseInt(token)
+                        Word literal = wordService.findByName("literal")
+
+                        Word wordLiteral = new Word()
+                        wordLiteral.complexWordOrder = ct
+                        wordLiteral.name = literal.name + "_" + newWord.name + "_" + num + "_" + "_" + ct
+                        wordLiteral.behaviorScript = literal.behaviorScript
+                        wordLiteral.stackValue = num
+                        wordLiteral.compileOnly = true
+                        wordLiteral.dictionary = dictionaryService.findByName(bootstrap.coreName)
+                        wordLiteral.parentWord = newWord
+                        newWord.childWords.add(wordLiteral)
+                        wordRepository.save(wordLiteral)
+
+                    } catch (NumberFormatException ignored) {
                     }
                 }
             } else {
-                // we have reached the end.
                 break
             }
-            // now we have all the information we need to build the word
+            ct++
         }
-        return newWord
+        return wordRepository.save(newWord)
     }
 }

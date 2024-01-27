@@ -14,11 +14,4 @@
  * limitations under the License.
  */
 
-//import com.rajames.forth.compiler.ForthCompiler
-
-
-
-log.debug("TOKENS: " + tokens + ": " + tokens.class.name)
-log.debug("LINE: " + line)
-
 forthCompiler.compileWord(tokens)
