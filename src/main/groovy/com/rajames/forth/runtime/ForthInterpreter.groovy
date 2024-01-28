@@ -39,6 +39,9 @@ class ForthInterpreter {
     private static final Logger log = LogManager.getLogger(this.class.getName())
 
     String line
+    Word word
+    String token
+
     Queue<String> tokens = new ConcurrentLinkedQueue<>()
 
     @Autowired
@@ -63,8 +66,8 @@ class ForthInterpreter {
         try {
             log.trace("Interpreting line ${line}.")
             while (!tokens.isEmpty()) {
-                String token = tokens.remove()
-                Word word = wordService.findByName(token)
+                this.token = tokens.remove()
+                this.word = wordService.findByName(token)
                 if (word != null) {
                     if (word.compileOnly) {
                         throw new ForthInterpreterException("Compile Only.")
@@ -74,7 +77,7 @@ class ForthInterpreter {
                     try {
                         dataStack.push(Integer.parseInt(token) as Integer)
                     } catch (NumberFormatException ignored) {
-//                        throw new ForthInterpreterException("Token is not a Word or Number")
+
                     }
                 }
             }
@@ -89,7 +92,7 @@ class ForthInterpreter {
     private boolean executeWord(Word word) {
         if (word.runtimeClass != null) {
             return executePrimitiveWord(word)
-        } else if (word.childWords.size() > 0) {
+        } else if (word.forthWords.size() > 0) {
             return executeComplexWord(word)
         } else {
             // Should be unreachable.
@@ -151,9 +154,9 @@ class ForthInterpreter {
     private boolean executeComplexWord(Word word) {
         boolean forthOutput = false
         def w = word
-        word.childWords.each { Word childWord ->
+        word.forthWords.each { Word childWord ->
             if (childWord != null) {
-                if (childWord?.behaviorScript) {
+                if (childWord?.runtimeClass) {
                     forthOutput = executePrimitiveWord(childWord)
                 } else {
                     forthOutput = executeComplexWord(childWord)

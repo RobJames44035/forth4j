@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
-package com.rajames.forth.dictionary
+package runtime
 
-import org.springframework.data.repository.CrudRepository
-import org.springframework.stereotype.Repository
+import com.rajames.forth.runtime.AbstractRuntime
+import com.rajames.forth.runtime.ForthInterpreter
 
-@Repository
-interface WordRepository extends CrudRepository<Word, String> {
-    Optional<Word> findFirstByNameOrderByCreateDateTimeDesc(String name)
+class Colon extends AbstractRuntime {
+
+    @Override
+    Object execute(ForthInterpreter interpreter) {
+        // Code goes here
+        interpreter.forthCompiler.compileWord(interpreter.tokens as LinkedList)
+        return null
+    }
 }

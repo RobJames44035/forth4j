@@ -79,18 +79,17 @@ class CoreDefinitions {
         Word lessThan = createPrimitiveWord("<", "LessThan", null, 2)
         Word greaterThan = createPrimitiveWord(">", "GreaterThan", null, 2)
         Word equal = createPrimitiveWord("=", "Equal", null, 2)
-
-//        Word literal = createPrimitiveWord("literal", new File("${SCRIPTS}/literal.groovy"), 0, true)
-//        Word colon = createPrimitiveWord(":", new File("${SCRIPTS}/colon.groovy"))
-//        Word semicolon = createPrimitiveWord(";", new File("${SCRIPTS}/semicolon.groovy"))
+        Word colon = createPrimitiveWord(":", "Colon")
+        Word semicolon = createPrimitiveWord(";")
+        Word literal = createPrimitiveWord("literal", "Literal", null, 0, true)
 
 
 //        Word ifWord = createPrimitiveWord("if", new File("${RUNTIME}/if.groovy"), 1, true)
 //        Word elseWord = createPrimitiveWord("else", new File("${RUNTIME}/else.groovy"), 1, true)
 //        Word thenWord = createPrimitiveWord("then", new File("${RUNTIME}/then.groovy"), 1, true)
-//
-//        // Complex words that are made up of a List<Word> that describes their behavior go here.
-//        Word add = createComplexWord("add", [plus, dot, cr], 2) // TODO This is a test word REMOVE
-//        Word sub = createComplexWord("sub", [minus, dot, cr], 2) // TODO This is a test word REMOVE
+
+        // Complex words that are made up of a List<Word> that describes their behavior go here.
+        Word add = createComplexWord("add", [plus, dot, cr], 2) // TODO This is a test word REMOVE
+        Word sub = createComplexWord("sub", [minus, dot, cr], 2) // TODO This is a test word REMOVE
     }
 }

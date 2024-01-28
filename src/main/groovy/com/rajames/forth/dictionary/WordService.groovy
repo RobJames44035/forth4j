@@ -37,7 +37,12 @@ class WordService {
     }
 
     Word findByName(String name) {
-        return wordRepository.findFirstByNameOrderByCreateDateTimeDesc(name)
+        Optional<Word> optional = wordRepository.findFirstByNameOrderByCreateDateTimeDesc(name)
+        if (optional.isPresent()) {
+            return optional.get()
+        } else {
+            return null
+        }
     }
 
     Word save(Word word) {

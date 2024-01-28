@@ -14,12 +14,21 @@
  * limitations under the License.
  */
 
-package com.rajames.forth.dictionary
+package runtime
 
-import org.springframework.data.repository.CrudRepository
-import org.springframework.stereotype.Repository
+import com.rajames.forth.runtime.AbstractRuntime
+import com.rajames.forth.runtime.ForthInterpreter
 
-@Repository
-interface WordRepository extends CrudRepository<Word, String> {
-    Optional<Word> findFirstByNameOrderByCreateDateTimeDesc(String name)
+class Literal extends AbstractRuntime {
+
+    @Override
+    Object execute(ForthInterpreter interpreter) {
+        // Code goes here
+        if (interpreter.word.name.startsWith("_int")) {
+            interpreter.dataStack.push(interpreter.word.stackValue)
+        } else if (interpreter.word.name.startsWith("_str")) {
+            print(interpreter.word.stringLiteral)
+        }
+        return null
+    }
 }

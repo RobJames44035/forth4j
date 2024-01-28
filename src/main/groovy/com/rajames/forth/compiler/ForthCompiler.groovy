@@ -68,7 +68,7 @@ class ForthCompiler {
                 Word word = wordService.findByName(token)
 
                 if (word != null) {
-                    newWord.childWords.add(word)
+                    newWord.forthWords.add(word)
                     word.parentWord = newWord
                     newWord.complexWordOrder = ct
                     wordRepository.save(newWord)
@@ -80,12 +80,12 @@ class ForthCompiler {
                         Word wordLiteral = new Word()
                         wordLiteral.complexWordOrder = ct
                         wordLiteral.name = "int_${literal.name}_${ct}"
-                        wordLiteral.behaviorScript = literal.behaviorScript
+                        wordLiteral.runtimeClass = literal.runtimeClass
                         wordLiteral.stackValue = num
                         wordLiteral.compileOnly = true
                         wordLiteral.dictionary = dictionaryService.findByName(bootstrap.coreName)
                         wordLiteral.parentWord = newWord
-                        newWord.childWords.add(wordLiteral)
+                        newWord.forthWords.add(wordLiteral)
                         wordRepository.save(wordLiteral)
                     } catch (NumberFormatException ignored) {
                         // String literal
@@ -93,12 +93,12 @@ class ForthCompiler {
                         Word wordLiteral = new Word()
                         wordLiteral.complexWordOrder = ct
                         wordLiteral.name = "str_${literal.name}_${ct}"
-                        wordLiteral.behaviorScript = literal.behaviorScript
+                        wordLiteral.runtimeClass = literal.runtimeClass
                         wordLiteral.stringLiteral = token
                         wordLiteral.compileOnly = true
                         wordLiteral.dictionary = dictionaryService.findByName(bootstrap.coreName)
                         wordLiteral.parentWord = newWord
-                        newWord.childWords.add(wordLiteral)
+                        newWord.forthWords.add(wordLiteral)
                         wordRepository.save(wordLiteral)
                     }
                 }
