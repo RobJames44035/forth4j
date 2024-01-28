@@ -27,11 +27,17 @@ class Word {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id
 
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createDateTime
+
     @Column(nullable = false)
     private String name
 
-    @Column(columnDefinition = "TEXT")
-    private String behaviorScript
+    @Column(columnDefinition = "TEXT", nullable = true)
+    private String runtimeClass
+
+    @Column(columnDefinition = "TEXT", nullable = true)
+    private String compileClass
 
     @Column
     private Integer argumentCount = 0
@@ -42,6 +48,9 @@ class Word {
     @Column(nullable = true)
     private Integer stackValue
 
+    @Column(nullable = true)
+    private String stringLiteral
+
     @Column(nullable = true, name = "complex_word_order")
     private Integer complexWordOrder
 
@@ -51,11 +60,16 @@ class Word {
 
     @OneToMany(mappedBy = "parentWord", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderColumn(name = "complex_word_order")
-    private List<Word> childWords = new ArrayList<>()
+    private List<Word> forthWords = new ArrayList<>()
 
     @ManyToOne
     @JoinColumn(name = "parent_word_id")
     private Word parentWord
+
+    @PrePersist
+    void onCreate() {
+        this.setCreateDateTime(new Date())
+    }
 
     Integer getArgumentCount() {
         return argumentCount
@@ -78,25 +92,16 @@ class Word {
         this.name = name
     }
 
-    String getBehaviorScript() {
-        return behaviorScript
-    }
-
-    void setBehaviorScript(String behaviorScript) {
-        this.behaviorScript = behaviorScript
-    }
-
-
     void setDictionary(Dictionary dictionary) {
         this.dictionary = dictionary
     }
 
-    List<Word> getChildWords() {
-        return childWords
+    List<Word> getForthWords() {
+        return forthWords
     }
 
-    void setChildWords(List<Word> childWords) {
-        this.childWords = childWords
+    void setForthWords(List<Word> forthWords) {
+        this.forthWords = forthWords
     }
 
     Word getParentWord() {
@@ -131,6 +136,38 @@ class Word {
         this.complexWordOrder = complexWordOrder
     }
 
+    String getStringLiteral() {
+        return stringLiteral
+    }
+
+    void setStringLiteral(String stringLiteral) {
+        this.stringLiteral = stringLiteral
+    }
+
+    String getRuntimeClass() {
+        return runtimeClass
+    }
+
+    void setRuntimeClass(String runtimeClass) {
+        this.runtimeClass = runtimeClass
+    }
+
+    String getCompileClass() {
+        return compileClass
+    }
+
+    void setCompileClass(String compileClass) {
+        this.compileClass = compileClass
+    }
+
+    Date getCreateDateTime() {
+        return createDateTime
+    }
+
+    void setCreateDateTime(Date createDateTime) {
+        this.createDateTime = createDateTime
+    }
+
     boolean equals(o) {
         if (this.is(o)) return true
         if (o == null || getClass() != o.class) return false
@@ -148,5 +185,9 @@ class Word {
         result = (id != null ? id.hashCode() : 0)
         result = 31 * result + (name != null ? name.hashCode() : 0)
         return result
+    }
+
+    String toString() {
+        return this.name
     }
 }

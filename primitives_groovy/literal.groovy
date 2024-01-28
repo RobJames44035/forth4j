@@ -13,7 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-log.info("colon.groovy")
-forthCompiler.compileWord(tokens)
-return null
+log.info("literal.groovy")
+log.debug("TOKENS: " + tokens)
+log.debug("LINE: " + line)
+if(word.name.startsWith("int_")) {
+    return word.stackValue
+} else if(word.name.startsWith("str_")) {
+    print(word.stringLiteral)
+}

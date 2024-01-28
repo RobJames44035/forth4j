@@ -74,12 +74,12 @@ class ForthInterpreter {
                     try {
                         dataStack.push(Integer.parseInt(token) as Integer)
                     } catch (NumberFormatException ignored) {
-                        throw new ForthInterpreterException("Token is not a Word or Number")
+//                        throw new ForthInterpreterException("Token is not a Word or Number")
                     }
                 }
             }
         } catch (Exception e) {
-            log.error("Invalid Input or Undefined Word:\n\t" + e.message, e)
+            log.error("Invalid Input or Undefined Word: ${tokens}\n\t" + e.message, e)
         }
         log.trace("Interpreted ${line}")
         return forthOutput
@@ -87,7 +87,7 @@ class ForthInterpreter {
 
 
     private boolean executeWord(Word word) {
-        if (word.behaviorScript) {
+        if (word.runtimeClass != null) {
             return executePrimitiveWord(word)
         } else if (word.childWords.size() > 0) {
             return executeComplexWord(word)
@@ -100,13 +100,18 @@ class ForthInterpreter {
     private boolean executePrimitiveWord(Word word) {
         Boolean forthOutput = false
         try {
-            String behaviorScript = word?.behaviorScript?.trim()
-            if (behaviorScript.startsWith("class")) {
-                log.error("Holding off on this situation")
-            } else {
+            String runtimeClass = word?.runtimeClass?.trim()
+            String compileClass = word?.compileClass?.trim()
+            if (runtimeClass != null) {
+                // This is where EVERYTHING will be done
 
+                def classLoader = new GroovyClassLoader()
+                Class groovyClass = classLoader.parseClass(runtimeClass)
+                RunTime instance = groovyClass.getDeclaredConstructor().newInstance() as RunTime
+                instance.execute(this)
+            } else {
                 String tryS = "try {\n"
-                String catchS = "\n} catch(Exception e) { log.error(e.message, e) }"
+                String catchS = "\n} catch(Exception e) { log.error('this.word.name: ' + e.message) }"
                 behaviorScript = tryS + behaviorScript + catchS
 
                 GroovyShell shell = new GroovyShell()
@@ -145,14 +150,16 @@ class ForthInterpreter {
 
     private boolean executeComplexWord(Word word) {
         boolean forthOutput = false
+        def w = word
         word.childWords.each { Word childWord ->
-            if (childWord.behaviorScript) {
-                forthOutput = executePrimitiveWord(childWord)
-            } else {
-                forthOutput = executeComplexWord(childWord)
+            if (childWord != null) {
+                if (childWord?.behaviorScript) {
+                    forthOutput = executePrimitiveWord(childWord)
+                } else {
+                    forthOutput = executeComplexWord(childWord)
+                }
             }
         }
         return forthOutput
     }
-
 }

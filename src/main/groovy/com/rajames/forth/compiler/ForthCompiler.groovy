@@ -23,8 +23,10 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 
 @Component
+@Transactional
 class ForthCompiler {
 
     private static final Logger log = LogManager.getLogger(this.class.getName())
@@ -44,7 +46,7 @@ class ForthCompiler {
     @Autowired
     Bootstrap bootstrap
 
-
+    @Transactional
     Word compileWord(LinkedList<String> tokens) {
         log.trace("Entering compiler")
         // Fail Fast
@@ -69,15 +71,15 @@ class ForthCompiler {
                     newWord.childWords.add(word)
                     word.parentWord = newWord
                     newWord.complexWordOrder = ct
+                    wordRepository.save(newWord)
                 } else {
                     try {
-                        // handle the fact this is a number, not a word
+                        // handle the fact this is a number, not a dictionary word.
                         Integer num = Integer.parseInt(token)
                         Word literal = wordService.findByName("literal")
-
                         Word wordLiteral = new Word()
                         wordLiteral.complexWordOrder = ct
-                        wordLiteral.name = literal.name + "_" + newWord.name + "_" + num + "_" + "_" + ct
+                        wordLiteral.name = "int_${literal.name}_${ct}"
                         wordLiteral.behaviorScript = literal.behaviorScript
                         wordLiteral.stackValue = num
                         wordLiteral.compileOnly = true
@@ -85,8 +87,19 @@ class ForthCompiler {
                         wordLiteral.parentWord = newWord
                         newWord.childWords.add(wordLiteral)
                         wordRepository.save(wordLiteral)
-
                     } catch (NumberFormatException ignored) {
+                        // String literal
+                        Word literal = wordService.findByName("literal")
+                        Word wordLiteral = new Word()
+                        wordLiteral.complexWordOrder = ct
+                        wordLiteral.name = "str_${literal.name}_${ct}"
+                        wordLiteral.behaviorScript = literal.behaviorScript
+                        wordLiteral.stringLiteral = token
+                        wordLiteral.compileOnly = true
+                        wordLiteral.dictionary = dictionaryService.findByName(bootstrap.coreName)
+                        wordLiteral.parentWord = newWord
+                        newWord.childWords.add(wordLiteral)
+                        wordRepository.save(wordLiteral)
                     }
                 }
             } else {
@@ -94,6 +107,6 @@ class ForthCompiler {
             }
             ct++
         }
-        return wordRepository.save(newWord)
+        return newWord
     }
 }

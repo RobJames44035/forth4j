@@ -16,12 +16,14 @@
 
 package com.rajames.forth.dictionary
 
+import com.rajames.forth.compiler.ForthCompilerException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
+@Transactional
 class WordService {
 
     private static final Logger log = LogManager.getLogger(this.class.getName())
@@ -35,16 +37,24 @@ class WordService {
     }
 
     Word findByName(String name) {
-        Optional<Word> wordOptional = wordRepository.findByName(name)
-        if (wordOptional.isPresent()) {
-            return wordOptional.get()
-        } else {
-            return null
+        return wordRepository.findFirstByNameOrderByCreateDateTimeDesc(name)
+    }
+
+    Word save(Word word) {
+        return wordRepository.save(word)
+    }
+
+    void deleteWordFromDictionary(Word deleteMe) {
+        Word word = findByName(deleteMe.name)
+        if (word != null) {
+            wordRepository.delete(word)
         }
     }
 
-    @Transactional
-    Word addWordToDictionary(String wordName, List<Word> words = null, String behaviorScript, String dictionaryName, Integer argumentCount = 0, Boolean compileOnly = false) {
+    Word addWordToDictionary(String wordName, String dictionaryName,
+                             List<Word> complexWords = null,
+                             String runtimeClass = null, String compileClass = null,
+                             Integer argumentCount = 0, Boolean compileOnly = false) {
         Word word = null
         try {
             Optional<Dictionary> dictionaryOptional = dictionaryRepository.findByName(dictionaryName) as Optional<Dictionary>
@@ -55,34 +65,33 @@ class WordService {
                 word = new Word()
                 word.name = wordName
                 word.dictionary = dictionary
-                word.behaviorScript = behaviorScript
+                word.runtimeClass = runtimeClass
+                word.compileClass = compileClass
                 word.argumentCount = argumentCount
                 word.compileOnly = compileOnly
-                wordRepository.save(word)
+                save(word)
 
-                if (words) {
-                    words.each { Word childWord ->
-                        Optional<Word> childWordOptional = wordRepository.findByName(childWord.name)
-
-                        if (childWordOptional.isPresent()) {
-                            Word managedChildWord = childWordOptional.get()
-                            managedChildWord.parentWord = word
-                            word.childWords.add(managedChildWord)
-                            wordRepository.save(managedChildWord)
+                if (complexWords) {
+                    complexWords.each { Word childWord ->
+                        Word forthWord = findByName(childWord.name)
+                        if (word != null) {
+                            forthWord.parentWord = word
+                            word.forthWords.add(forthWord)
+                            save(forthWord)
                         } else {
-                            log.error("Child word with name ${childWord} not found.")
+                            throw new ForthCompilerException("Word ${childWord} not found.")
                         }
                     }
                 }
 
-                wordRepository.save(word)
+                save(word)
             } else {
-                log.error("Dictionary with name ${dictionaryName} does not exist.")
+                throw new ForthCompilerException("Dictionary with name ${dictionaryName} does not exist.")
             }
         } catch (Exception e) {
-            log.error("${wordName} was NOT added to ${dictionaryName} dictionary.", e)
+            throw new ForthCompilerException("${wordName} was NOT added to ${dictionaryName} dictionary.", e)
         }
-        log.info("${wordName} added to ${dictionaryName} dictionary.")
+        log.debug("${wordName} added to ${dictionaryName} dictionary.")
         return word
     }
 }

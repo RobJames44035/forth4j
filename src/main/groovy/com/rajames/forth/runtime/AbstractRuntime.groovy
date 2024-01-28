@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
-log.info("colon.groovy")
-forthCompiler.compileWord(tokens)
-return null
+package com.rajames.forth.runtime
+
+abstract class AbstractRuntime implements RunTime {
+
+    ForthInterpreter interpreter
+
+}

@@ -14,6 +14,21 @@
  * limitations under the License.
  */
 
-log.info("colon.groovy")
-forthCompiler.compileWord(tokens)
-return null
+package runtime
+
+import com.rajames.forth.runtime.AbstractRuntime
+import com.rajames.forth.runtime.ForthInterpreter
+
+import java.util.concurrent.ConcurrentLinkedDeque
+
+class DotQuote extends AbstractRuntime {
+    @Override
+    Object execute(ForthInterpreter interpreter) {
+        ConcurrentLinkedDeque<String> tokens = interpreter.tokens
+        while (!tokens.isEmpty()) {
+            String token = tokens.remove()
+            print(token.replaceAll("\"", "") + " ")
+        }
+        return null
+    }
+}

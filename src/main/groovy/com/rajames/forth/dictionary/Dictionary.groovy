@@ -36,7 +36,7 @@ class Dictionary implements Serializable {
     @Column(unique=true)
     private String name
 
-    @OneToMany(mappedBy = "dictionary", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "dictionary", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<Word> words
 
 
@@ -73,6 +73,10 @@ class Dictionary implements Serializable {
         result = (id != null ? id.hashCode() : 0)
         result = 31 * result + (name != null ? name.hashCode() : 0)
         return result
+    }
+
+    String toString() {
+        return this.name
     }
 }
 

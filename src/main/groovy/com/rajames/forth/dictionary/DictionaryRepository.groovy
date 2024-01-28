@@ -22,4 +22,6 @@ import org.springframework.stereotype.Repository
 @Repository
 interface DictionaryRepository extends CrudRepository<Dictionary, Integer> {
     Optional<Dictionary> findByName(String name);
+
+    List<Dictionary> findAllByOrderById();
 }

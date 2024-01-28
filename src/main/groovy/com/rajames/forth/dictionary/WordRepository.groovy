@@ -21,5 +21,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface WordRepository extends CrudRepository<Word, String> {
-    Optional<Word> findByName(String name)
+    Word findFirstByNameOrderByCreateDateTimeDesc(String name)
 }

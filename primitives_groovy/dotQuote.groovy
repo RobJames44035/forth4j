@@ -13,18 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-StringBuilder sb = new StringBuilder()
-while (!tokens.isEmpty()) {
-    String token = tokens.remove()
-    if (token == '"') {
-        break
-    } else if (token.endsWith('"')) {
-        token = token - '"'
-        sb.append(token).append(' ')
-        break
-    } else {
-        sb.append(token).append(' ')
+log.info("dotQuote.groovy")
+log.debug("TOKENS: " + tokens)
+log.debug("LINE: " + line)
+if(word.stringLiteral == null) {
+    StringBuilder sb = new StringBuilder()
+    while (!tokens.isEmpty()) {
+        String token = tokens.remove()
+        if (token == '"') {
+            break
+        } else if (token.endsWith('"')) {
+            token = token - '"'
+            sb.append(token).append(' ')
+            break
+        } else {
+            sb.append(token).append(' ')
+        }
     }
+    print(sb.toString())
+} else {
+    println("TODO")
 }
-print(sb.toString())
