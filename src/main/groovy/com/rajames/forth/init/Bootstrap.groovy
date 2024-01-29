@@ -50,6 +50,13 @@ class Bootstrap implements InitializingBean {
 
         coreName = dictionaryService.createDictionary("Core")
 
+        /*
+            Eventually we will have all the core definitions available in the CoreFourth4j.sql file.
+            Since this file will be a bundled resource we will be able to use it in CoreDefinitions to load the Db.
+
+            In the future we will be adding FORTH words to save and load from the running system as well as specifying
+            a commandline option to select a named database to load on startup.
+        */
         CoreDefinitions coreDefinitions = new CoreDefinitions(wordService, coreName, databaseBackupService)
         coreDefinitions.createCoreDictionary()
 

@@ -66,9 +66,9 @@ class CoreDefinitions {
         // Primitive words with their behavior described in a Groovy Script
         Word noop = createPrimitiveWord("noop")
         Word nop = createPrimitiveWord("nop")
-        Word plus = createPrimitiveWord("+", "Plus", null, 2, false)
-        Word minus = createPrimitiveWord("-", "Minus", null, 2, false)
-        Word dot = createPrimitiveWord(".", "Dot", null, 2, false)
+        Word plus = createPrimitiveWord("+", "Plus", null, 2)
+        Word minus = createPrimitiveWord("-", "Minus", null, 2)
+        Word dot = createPrimitiveWord(".", "Dot", null, 2)
         Word cr = createPrimitiveWord("cr", "Cr")
         Word emit = createPrimitiveWord("emit", "Emit", null, 1)
         Word dotQuote = createPrimitiveWord(".\"", "DotQuote", "Noop")
