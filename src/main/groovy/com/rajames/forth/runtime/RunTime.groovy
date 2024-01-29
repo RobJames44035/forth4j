@@ -16,7 +16,9 @@
 
 package com.rajames.forth.runtime
 
+import com.rajames.forth.dictionary.Word
+
 interface RunTime {
 
-    Object execute(ForthInterpreter interpreter)
+    Object execute(ForthInterpreter interpreter, Word word)
 }

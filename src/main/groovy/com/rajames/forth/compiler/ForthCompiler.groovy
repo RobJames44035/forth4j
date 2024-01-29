@@ -19,6 +19,7 @@ package com.rajames.forth.compiler
 
 import com.rajames.forth.dictionary.*
 import com.rajames.forth.init.Bootstrap
+import com.rajames.forth.runtime.ForthInterpreter
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
@@ -46,6 +47,12 @@ class ForthCompiler {
     @Autowired
     Bootstrap bootstrap
 
+    @Autowired
+    ForthInterpreter interpreter
+
+
+    Word word
+
     @Transactional
     Word compileWord(LinkedList<String> tokens) {
         log.trace("Entering compiler")
@@ -65,9 +72,16 @@ class ForthCompiler {
         while (!tokens.isEmpty()) {
             String token = tokens.remove()
             if (token != ";") {
-                Word word = wordService.findByName(token)
-
+                word = wordService.findByName(token)
+                String runtimeClass = word?.runtimeClass?.trim()
+                String compileClass = word?.compileClass?.trim()
                 if (word != null) {
+                    if (word.compileClass != null && !word.compileClass.isEmpty()) {
+                        def classLoader = new GroovyClassLoader()
+                        Class groovyClass = classLoader.parseClass(compileClass)
+                        CompileTime compileTime = groovyClass.getDeclaredConstructor().newInstance() as CompileTime
+                        def x = compileTime.execute(this, interpreter)
+                    }
                     newWord.forthWords.add(word)
                     word.parentWord = newWord
                     newWord.complexWordOrder = ct

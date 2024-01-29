@@ -28,9 +28,12 @@ class CoreDefinitions {
     private final WordService wordService
     private String coreName
 
-    CoreDefinitions(WordService wordService, String dictionaryName) {
+    private DatabaseBackupService databaseBackupService
+
+    CoreDefinitions(WordService wordService, String dictionaryName, DatabaseBackupService databaseBackupService) {
         this.wordService = wordService
         this.coreName = dictionaryName
+        this.databaseBackupService = databaseBackupService
     }
 
     Word createPrimitiveWord(String wordName, String runtimeClass = null, String compileClass = null, Integer argumentCount = 0, Boolean compileOnly = false) {
@@ -61,12 +64,14 @@ class CoreDefinitions {
     void createCoreDictionary() {
 
         // Primitive words with their behavior described in a Groovy Script
+        Word noop = createPrimitiveWord("noop")
+        Word nop = createPrimitiveWord("nop")
         Word plus = createPrimitiveWord("+", "Plus", null, 2, false)
         Word minus = createPrimitiveWord("-", "Minus", null, 2, false)
         Word dot = createPrimitiveWord(".", "Dot", null, 2, false)
         Word cr = createPrimitiveWord("cr", "Cr")
         Word emit = createPrimitiveWord("emit", "Emit", null, 1)
-        Word dotQuote = createPrimitiveWord(".\"", "DotQuote")
+        Word dotQuote = createPrimitiveWord(".\"", "DotQuote", "Noop")
         Word lessThanZero = createPrimitiveWord("0<", "LessThanZero", null, 1)
         Word equalZero = createPrimitiveWord("0=", "EqualZero", null, 1)
         Word greaterThanZero = createPrimitiveWord("0=", "GreaterThanZero", null, 1)
@@ -80,7 +85,7 @@ class CoreDefinitions {
         Word greaterThan = createPrimitiveWord(">", "GreaterThan", null, 2)
         Word equal = createPrimitiveWord("=", "Equal", null, 2)
         Word colon = createPrimitiveWord(":", "Colon")
-        Word semicolon = createPrimitiveWord(";")
+        Word semicolon = createPrimitiveWord(";", null, "Noop")
         Word literal = createPrimitiveWord("literal", "Literal", null, 0, true)
 
 
@@ -91,5 +96,7 @@ class CoreDefinitions {
         // Complex words that are made up of a List<Word> that describes their behavior go here.
         Word add = createComplexWord("add", [plus, dot, cr], 2) // TODO This is a test word REMOVE
         Word sub = createComplexWord("sub", [minus, dot, cr], 2) // TODO This is a test word REMOVE
+
+        databaseBackupService.backupDatabase("/home/rajames/PROJECTS/forth4j/src/main/resources", "CoreForth4j.sql")
     }
 }

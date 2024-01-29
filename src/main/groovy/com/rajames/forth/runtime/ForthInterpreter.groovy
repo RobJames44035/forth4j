@@ -29,8 +29,6 @@ import org.apache.logging.log4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
-import javax.script.Bindings
-import javax.script.SimpleBindings
 import java.util.concurrent.ConcurrentLinkedQueue
 
 @Component
@@ -105,43 +103,14 @@ class ForthInterpreter {
         try {
             String runtimeClass = word?.runtimeClass?.trim()
             String compileClass = word?.compileClass?.trim()
-            if (runtimeClass != null) {
-                // This is where EVERYTHING will be done
-
+            if (runtimeClass != null && !word.runtimeClass.isEmpty()) {
                 def classLoader = new GroovyClassLoader()
                 Class groovyClass = classLoader.parseClass(runtimeClass)
-                RunTime instance = groovyClass.getDeclaredConstructor().newInstance() as RunTime
-                instance.execute(this)
-            } else {
-                String tryS = "try {\n"
-                String catchS = "\n} catch(Exception e) { log.error('this.word.name: ' + e.message) }"
-                behaviorScript = tryS + behaviorScript + catchS
-
-                GroovyShell shell = new GroovyShell()
-                Bindings bindings = new SimpleBindings()
-                bindings.put("line", line)
-                bindings.put("tokens", tokens)
-                bindings.put("log", log)
-                bindings.put("forthCompiler", forthCompiler)
-                bindings.put("word", word)
-                Script script = null
-                Integer argumentCount = word.argumentCount
-                if (argumentCount == 0) {
-                    script = shell.parse(behaviorScript as String, bindings as Binding)
-                } else {
-                    (0..<argumentCount).each {
-                        bindings.put("arg${it + 1}" as String, dataStack.pop())
-                    }
-                    script = shell.parse(behaviorScript as String, bindings as Binding)
-                }
-                Object result = script.run()
-                if (result instanceof Boolean) {
-                    dataStack.push(result ? -1 : 0)
-                } else if (result) {
-                    dataStack.push(result)
-                } else {
-                    forthOutput = true
-                }
+                RunTime runTime = groovyClass.getDeclaredConstructor().newInstance() as RunTime
+                forthOutput = runTime.execute(this, word)
+                if (forthOutput == null) {
+                    forthOutput = false
+                } // edge cases here
             }
         } catch (ForthInterpreterException interpreterException) {
             log.error(interpreterException.message)

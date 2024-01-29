@@ -16,6 +16,7 @@
 
 package runtime
 
+import com.rajames.forth.dictionary.Word
 import com.rajames.forth.runtime.AbstractRuntime
 import com.rajames.forth.runtime.ForthInterpreter
 
@@ -23,7 +24,7 @@ import java.util.concurrent.ConcurrentLinkedDeque
 
 class DotQuote extends AbstractRuntime {
     @Override
-    Object execute(ForthInterpreter interpreter) {
+    Object execute(ForthInterpreter interpreter, Word word) {
         ConcurrentLinkedDeque<String> tokens = interpreter.tokens
         while (!tokens.isEmpty()) {
             String token = tokens.remove()

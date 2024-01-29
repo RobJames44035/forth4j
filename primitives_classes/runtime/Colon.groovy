@@ -16,13 +16,14 @@
 
 package runtime
 
+import com.rajames.forth.dictionary.Word
 import com.rajames.forth.runtime.AbstractRuntime
 import com.rajames.forth.runtime.ForthInterpreter
 
 class Colon extends AbstractRuntime {
 
     @Override
-    Object execute(ForthInterpreter interpreter) {
+    Object execute(ForthInterpreter interpreter, Word word) {
         // Code goes here
         interpreter.forthCompiler.compileWord(interpreter.tokens as LinkedList)
         return null

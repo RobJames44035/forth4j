@@ -16,12 +16,13 @@
 
 package runtime
 
+import com.rajames.forth.dictionary.Word
 import com.rajames.forth.runtime.AbstractRuntime
 import com.rajames.forth.runtime.ForthInterpreter
 
 class Emit extends AbstractRuntime {
     @Override
-    Object execute(ForthInterpreter interpreter) {
+    Object execute(ForthInterpreter interpreter, Word word) {
         print((char) interpreter.dataStack.pop())
         return null
     }

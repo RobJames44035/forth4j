@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package runtime
+package compiler
 
+import com.rajames.forth.compiler.AbstractCompile
+import com.rajames.forth.compiler.ForthCompiler
 import com.rajames.forth.dictionary.Word
-import com.rajames.forth.runtime.AbstractRuntime
 import com.rajames.forth.runtime.ForthInterpreter
 
-class Minus extends AbstractRuntime {
-
+class Noop extends AbstractCompile {
 
     @Override
-    Object execute(ForthInterpreter interpreter, Word word) {
-        interpreter.dataStack.push(interpreter.dataStack.pop() - interpreter.dataStack.pop())
+    Object execute(ForthCompiler compiler, ForthInterpreter interpreter) {
+        // compile a NOOP rather than ."
+        Word noop = compiler.wordService.findByName("noop")
+        compiler.word = noop
         return null
     }
 }

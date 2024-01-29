@@ -16,18 +16,26 @@
 
 package runtime
 
+import com.rajames.forth.dictionary.Word
 import com.rajames.forth.runtime.AbstractRuntime
 import com.rajames.forth.runtime.ForthInterpreter
 
 class Literal extends AbstractRuntime {
 
     @Override
-    Object execute(ForthInterpreter interpreter) {
+    Object execute(ForthInterpreter interpreter, Word word) {
+
         // Code goes here
-        if (interpreter.word.name.startsWith("_int")) {
-            interpreter.dataStack.push(interpreter.word.stackValue)
-        } else if (interpreter.word.name.startsWith("_str")) {
-            print(interpreter.word.stringLiteral)
+        if (word.name.startsWith("int_")) {
+            Word lit = word
+            Integer arg = lit.stackValue
+            interpreter.dataStack.push(arg)
+        } else if (word.name.startsWith("str_")) {
+            Word lit = word
+            String string = lit.stringLiteral
+            if (string != "\"") {
+                print(word.stringLiteral.replaceAll("\"", "") + " ")
+            }
         }
         return null
     }

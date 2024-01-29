@@ -16,13 +16,14 @@
 
 package runtime
 
+import com.rajames.forth.dictionary.Word
 import com.rajames.forth.runtime.AbstractRuntime
 import com.rajames.forth.runtime.ForthInterpreter
 
 class TwoPlus extends AbstractRuntime {
 
     @Override
-    Object execute(ForthInterpreter interpreter) {
+    Object execute(ForthInterpreter interpreter, Word word) {
         interpreter.dataStack.push(interpreter.dataStack.pop() + 2)
         return null
     }

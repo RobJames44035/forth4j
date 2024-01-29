@@ -34,10 +34,13 @@ class Bootstrap implements InitializingBean {
 
     private String coreName
 
+    private DatabaseBackupService databaseBackupService
+
     @Autowired
-    Bootstrap(DictionaryService dictionaryService, WordService wordService) {
+    Bootstrap(DictionaryService dictionaryService, WordService wordService, DatabaseBackupService databaseBackupService) {
         this.dictionaryService = dictionaryService
         this.wordService = wordService
+        this.databaseBackupService = databaseBackupService
     }
 
     @Override
@@ -47,7 +50,7 @@ class Bootstrap implements InitializingBean {
 
         coreName = dictionaryService.createDictionary("Core")
 
-        CoreDefinitions coreDefinitions = new CoreDefinitions(wordService, coreName)
+        CoreDefinitions coreDefinitions = new CoreDefinitions(wordService, coreName, databaseBackupService)
         coreDefinitions.createCoreDictionary()
 
         // more initialization code here...
