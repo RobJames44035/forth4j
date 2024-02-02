@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentLinkedDeque
 class DotQuote extends AbstractRuntime {
     @Override
     Object execute(ForthInterpreter interpreter, Word word) {
-        ConcurrentLinkedDeque<String> tokens = interpreter.tokens
+        ConcurrentLinkedDeque<String> tokens = interpreter.nonWords
         while (!tokens.isEmpty()) {
             String token = tokens.remove()
             print(token.replaceAll("\"", "") + " ")
