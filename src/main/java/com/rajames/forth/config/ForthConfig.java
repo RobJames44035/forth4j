@@ -16,7 +16,6 @@
 
 package com.rajames.forth.config;
 
-import org.hibernate.SessionFactory;
 import org.hibernate.jpa.HibernatePersistenceProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,12 +25,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.util.Properties;
@@ -68,6 +65,18 @@ public class ForthConfig {
     @Value("${entitymanager.packagesToScan}")
     private String ENTITYMANAGER_PACKAGES_TO_SCAN;
 
+    @Value("hibernate.connection.autocommit")
+    private String HIBERNATE_CONNECTION_AUTOCOMMIT;
+
+    @Value("hibernate.cache.use_second_level_cache")
+    private String HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE;
+
+    @Value("hibernate.cache.use_query_cache")
+    private String HIBERNATE_CACHE_USE_QUERY_CACHE;
+
+    @Value("hibernate.enable_lazy_load_no_trans")
+    private String HIBERNATE_ENABLE_LAZY_LOAD_NO_TRANS;
+
     @Bean(name = "dataSource")
     public DataSource dataSource() {
         final DriverManagerDataSource dataSource = new DriverManagerDataSource();
@@ -78,22 +87,28 @@ public class ForthConfig {
         return dataSource;
     }
 
-    @Autowired
-    @Bean
-    public SessionFactory sessionFactory(final DataSource dataSource) throws Exception {
-        final LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
-        sessionFactory.setDataSource(dataSource);
-        sessionFactory.setPackagesToScan(this.ENTITYMANAGER_PACKAGES_TO_SCAN);
-
-        final Properties hibernateProperties = new Properties();
-        hibernateProperties.put("hibernate.dialect", this.HIBERNATE_DIALECT);
-        hibernateProperties.put("hibernate.show_sql", this.HIBERNATE_SHOW_SQL);
-        hibernateProperties.put("hibernate.hbm2ddl.auto", this.HIBERNATE_HBM2DDL_AUTO);
-        sessionFactory.setHibernateProperties(hibernateProperties);
-
-        sessionFactory.afterPropertiesSet();
-        return sessionFactory.getObject();
-    }
+//    @Autowired
+//    @Bean
+//    public SessionFactory sessionFactory(final DataSource dataSource) throws Exception {
+//        final LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
+//        sessionFactory.setDataSource(dataSource);
+//        sessionFactory.setPackagesToScan(this.ENTITYMANAGER_PACKAGES_TO_SCAN);
+//
+//        final Properties hibernateProperties = new Properties();
+//
+//        hibernateProperties.put("hibernate.dialect", this.HIBERNATE_DIALECT);
+//        hibernateProperties.put("hibernate.show_sql", this.HIBERNATE_SHOW_SQL);
+//        hibernateProperties.put("hibernate.hbm2ddl.auto", this.HIBERNATE_HBM2DDL_AUTO);
+//        hibernateProperties.put("hibernate.connection.autocommit", this.HIBERNATE_CONNECTION_AUTOCOMMIT);
+//        hibernateProperties.put("hibernate.cache.use_second_level_cache", this.HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE);
+//        hibernateProperties.put("hibernate.cache.use_query_cache", this.HIBERNATE_CACHE_USE_QUERY_CACHE);
+//        hibernateProperties.put("hibernate.enable_lazy_load_no_trans", this.HIBERNATE_ENABLE_LAZY_LOAD_NO_TRANS);
+//
+//        sessionFactory.setHibernateProperties(hibernateProperties);
+//
+//        sessionFactory.afterPropertiesSet();
+//        return sessionFactory.getObject();
+//    }
 
 
     @Autowired
@@ -116,18 +131,17 @@ public class ForthConfig {
         jpaProperties.put("hibernate.dialect", this.HIBERNATE_DIALECT);
         jpaProperties.put("hibernate.show_sql", this.HIBERNATE_SHOW_SQL);
         jpaProperties.put("hibernate.hbm2ddl.auto", this.HIBERNATE_HBM2DDL_AUTO);
+        jpaProperties.put("hibernate.connection.autocommit", this.HIBERNATE_CONNECTION_AUTOCOMMIT);
+        jpaProperties.put("hibernate.cache.use_second_level_cache", this.HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE);
+        jpaProperties.put("hibernate.cache.use_query_cache", this.HIBERNATE_CACHE_USE_QUERY_CACHE);
+        jpaProperties.put("hibernate.enable_lazy_load_no_trans", this.HIBERNATE_ENABLE_LAZY_LOAD_NO_TRANS);
+
         emFactory.setJpaProperties(jpaProperties);
 
         return emFactory;
     }
-
-    @Bean
-    public EntityManager entityManager(final EntityManagerFactory entityManagerFactory) {
-        return entityManagerFactory.createEntityManager();
-    }
-
-//    @Bean(initMethod = "start", destroyMethod = "stop")
-//    public Server h2Server() throws SQLException {
-//        return Server.createTcpServer("-tcp", "-tcpAllowOthers", "-tcpPort", "9092");
+//    @Bean
+//    public EntityManager entityManager(final EntityManagerFactory entityManagerFactory) {
+//        return entityManagerFactory.createEntityManager();
 //    }
 }

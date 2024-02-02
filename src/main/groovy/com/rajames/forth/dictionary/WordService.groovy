@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 import javax.persistence.EntityManager
+import javax.persistence.PersistenceContext
 
 @Service
 @Transactional
@@ -34,15 +35,16 @@ class WordService {
     private final WordRepository wordRepository
     private final DictionaryRepository dictionaryRepository
 
+    @PersistenceContext
+    private EntityManager entityManager
+
     @Autowired
-    WordService(WordRepository wordRepository, DictionaryRepository dictionaryRepository, EntityManager entityManager) {
+    WordService(WordRepository wordRepository, DictionaryRepository dictionaryRepository/*, EntityManager entityManager*/) {
         this.wordRepository = wordRepository
         this.dictionaryRepository = dictionaryRepository
-        this.entityManager = entityManager
     }
 
-    EntityManager entityManager
-
+    @Transactional
     Word findByName(String name) {
         log.trace("WordService.findByName(String '${name}')")
         Optional<Word> optional = wordRepository.findFirstByNameOrderByCreateDateTimeDesc(name)
@@ -57,18 +59,21 @@ class WordService {
         }
     }
 
+    @Transactional
     Word save(Word word) {
         log.trace("WordService: Word before 'save(word)' word?.name = '${word?.name}' word?.forthWords = ${word?.forthWords}")
         Word retrievedWord = wordRepository.save(word)
         log.trace("WordService: Word after 'save(word)' retrievedWord?.name = '${retrievedWord?.name}' retrievedWord?.forthWords = ${retrievedWord?.forthWords}")
-        wordRepository.flush()
+        entityManager.flush()
         return retrievedWord
     }
 
+    @Transactional
     Boolean isSaved(Word word) {
         return entityManager.contains(word)
     }
 
+    @Transactional
     void deleteWordFromDictionary(Word deleteMe) {
         Word word = findByName(deleteMe.name)
         if (word != null) {
@@ -76,8 +81,9 @@ class WordService {
         }
     }
 
+    @Transactional
     Word addWordToDictionary(String wordName, String dictionaryName,
-                             List<Word> complexWords = null,
+                             List<String> complexWords = null,
                              String runtimeClass = null, String compileClass = null,
                              Integer argumentCount = 0, Boolean compileOnly = false) {
         Word word = null
@@ -97,11 +103,11 @@ class WordService {
                 save(word)
 
                 if (complexWords) {
-                    complexWords.each { Word childWord ->
-                        Word forthWord = findByName(childWord.name)
+                    complexWords.each { String childWord ->
+                        Word forthWord = findByName(childWord)
                         if (word != null && forthWord != null) {
                             forthWord.parentWord = word
-                            word.forthWords.add(forthWord)
+                            word.forthWords.add(forthWord.name)
                         } else {
                             throw new ForthCompilerException("Word ${childWord} not found.")
                         }

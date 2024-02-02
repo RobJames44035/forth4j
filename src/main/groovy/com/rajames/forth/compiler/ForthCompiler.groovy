@@ -23,12 +23,13 @@ import com.rajames.forth.init.DatabaseBackupService
 import com.rajames.forth.runtime.ForthInterpreter
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import org.hibernate.Session
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
 import java.util.concurrent.ConcurrentLinkedQueue
+
+//import org.hibernate.Session
 
 @Component
 @Transactional
@@ -36,7 +37,7 @@ class ForthCompiler {
 
     private static final Logger log = LogManager.getLogger(this.class.getName())
 
-    List<Word> forthWordsBuffer = new ArrayList<>()
+    List<String> forthWordsBuffer = new ArrayList<>()
 
     @Autowired
     DictionaryService dictionaryService
@@ -57,9 +58,6 @@ class ForthCompiler {
     ForthInterpreter interpreter
 
     @Autowired
-    Session session
-
-    @Autowired
     DatabaseBackupService databaseBackupService
 
     Word newWord
@@ -68,16 +66,14 @@ class ForthCompiler {
 
     Stack<String> ctrlFlowStack = new Stack<>()
 
-    Integer loopCounter = 0
-
     @Transactional
-    void compileWord(
+    Word compileWord(
             ConcurrentLinkedQueue<Word> words,
             ConcurrentLinkedQueue<Integer> arguments,
             ConcurrentLinkedQueue<String> nonWords
     ) {
         log.trace("Entering compiler")
-
+        Word afterSave = null
         try {
             this.dictionary = dictionaryService.findByName(bootstrap.coreName)
             this.literal = wordService.findByName("literal")
@@ -98,10 +94,8 @@ class ForthCompiler {
                 wordLiteral.dictionary = this.dictionary
                 wordLiteral.parentWord = newWord
                 wordService.save(wordLiteral)
-
-                forthWordsBuffer.add(wordLiteral)
+                forthWordsBuffer.add(wordLiteral.name)
             }
-
             Boolean output
             while (!words.isEmpty()) {
                 Word nextWordToCompile = words.remove()
@@ -114,26 +108,20 @@ class ForthCompiler {
                         CompileTime compileTime = groovyClass.getDeclaredConstructor().newInstance() as CompileTime
                         output = compileTime.execute(this.newWord, this, this.interpreter)
                         if (output) {
-                            if (!wordService.isSaved(nextWordToCompile)) {
-                                wordService.save(nextWordToCompile)
-                            }
-                            forthWordsBuffer.add(nextWordToCompile)
-//                            this.newWord.forthWords.add(nextWordToCompile)
-//                            wordRepository.save(this.newWord)
+                            forthWordsBuffer.add(nextWordToCompile.name)
                         }
                     } else {
-                        forthWordsBuffer.add(nextWordToCompile)
+                        forthWordsBuffer.add(nextWordToCompile.name)
                     }
                 }
             }
             this.newWord.forthWords = forthWordsBuffer
-
-            log.debug("Compiler: Word before 'wordService.save(this.newWord)' this?.newWord?.name = ${this?.newWord?.name} this?.newWord?.forthWords = ${this?.newWord?.forthWords}")
-            Word afterSave = wordService.save(this.newWord)
-            log.debug("Compiler: Word after 'wordService.save(this.newWord)' afterSave?.name = ${afterSave?.name} afterSave?.forthWords = ${afterSave?.forthWords}")
-
+            afterSave = wordService.save(this.newWord)
+            log.trace("Compiler: Word after 'wordService.save(this.newWord)' afterSave?.name = ${afterSave?.name} afterSave?.forthWords = ${afterSave?.forthWords}")
+            log.trace("Exiting Compiler")
         } catch (Exception e) {
             log.error(e.message, e)
         }
+        return afterSave
     }
 }

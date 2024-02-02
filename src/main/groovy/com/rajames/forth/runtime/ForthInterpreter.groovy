@@ -39,7 +39,6 @@ class ForthInterpreter {
     String line
     Word word
     String token
-    String noWord
 
     Queue<String> tokens = new ConcurrentLinkedQueue<>()
     Queue<Word> words = new ConcurrentLinkedQueue<>()
@@ -70,9 +69,9 @@ class ForthInterpreter {
                 this.token = tokens.remove()
 
                 this.word = null
-//                log.debug("Interpreter: Word before 'wordService.findByName(${token})' this?.word?.name = ${this?.word?.name} this?.word?.forthWords = ${this?.word?.forthWords}")
+                log.trace("Interpreter: Word before 'wordService.findByName(${token})' this?.word?.name = ${this?.word?.name} this?.word?.forthWords = ${this?.word?.forthWords}")
                 this.word = wordService.findByName(token)
-//                log.debug("Interpreter: Word after 'wordService.findByName(${token})' this?.word?.name = ${this?.word?.name} this?.word?.forthWords = ${this?.word?.forthWords}")
+                log.trace("Interpreter: Word after 'wordService.findByName(${token})' this?.word?.name = ${this?.word?.name} this?.word?.forthWords = ${this?.word?.forthWords}")
 
                 if (word != null) {
                     words.add(word)
@@ -135,13 +134,13 @@ class ForthInterpreter {
 
     private boolean executeComplexWord(Word word) {
         boolean forthOutput = false
-//        log.debug("Interpreter output: " + wordService?.findByName(this?.word?.name as String)?.forthWords)
-        word.forthWords.each { Word childWord ->
-            if (childWord != null) {
-                if (childWord?.runtimeClass) {
-                    forthOutput = executePrimitiveWord(childWord)
+        word.forthWords.each { String childWord ->
+            Word child = wordService.findByName(childWord)
+            if (child != null) {
+                if (child?.runtimeClass) {
+                    forthOutput = executePrimitiveWord(child)
                 } else {
-                    forthOutput = executeComplexWord(childWord)
+                    forthOutput = executeComplexWord(child)
                 }
             }
         }

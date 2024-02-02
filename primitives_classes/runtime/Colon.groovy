@@ -20,10 +20,14 @@ import com.rajames.forth.compiler.ForthCompilerException
 import com.rajames.forth.dictionary.Word
 import com.rajames.forth.runtime.AbstractRuntime
 import com.rajames.forth.runtime.ForthInterpreter
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 
 import java.util.concurrent.ConcurrentLinkedQueue
 
 class Colon extends AbstractRuntime {
+
+    private static final Logger log = LogManager.getLogger(this.class.getName())
 
     @Override
     Object execute(ForthInterpreter interpreter, Word word) {
@@ -42,7 +46,9 @@ class Colon extends AbstractRuntime {
             arguments.add(argument)
         }
 
-        interpreter.forthCompiler.compileWord(words, arguments, nonWords)
+        Word w = interpreter.forthCompiler.compileWord(words, arguments, nonWords)
+        w = interpreter.wordService.findByName(w.name)
+        log.trace("Colon: Word after 'interpreter.wordService.findByName(w.name)' this?.word?.name = ${w?.name} this?.word?.forthWords = ${w?.forthWords}")
         return null
     }
 }

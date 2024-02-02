@@ -58,9 +58,10 @@ class Word implements Serializable {
     @JoinColumn(name = "dictionary_id", nullable = false)
     private Dictionary dictionary
 
-    @OneToMany(mappedBy = "parentWord", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderColumn(name = "complex_word_order")
-    private List<Word> forthWords = new ArrayList<>()
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "forthWords", joinColumns = @JoinColumn(name = "word_id"))
+    @Column(name = "forth_word_name")
+    private List<String> forthWords = new ArrayList<String>()
 
     @ManyToOne
     @JoinColumn(name = "parent_word_name")
@@ -79,11 +80,11 @@ class Word implements Serializable {
         return id
     }
 
-    List<Word> getForthWords() {
+    List<String> getForthWords() {
         return forthWords
     }
 
-    void setForthWords(List<Word> forthWords) {
+    void setForthWords(List<String> forthWords) {
         this.forthWords.clear()
         if (forthWords != null) {
             this.forthWords.addAll(forthWords)

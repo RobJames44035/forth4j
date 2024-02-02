@@ -25,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional
 import java.util.concurrent.ConcurrentLinkedQueue
 
 class DotQuoteC extends AbstractCompile {
-// : plus 1 1 + ." Hello World " . cr ;
+
     @Override
     @Transactional
     Boolean execute(Word word, ForthCompiler compiler, ForthInterpreter interpreter) {
@@ -47,15 +47,12 @@ class DotQuoteC extends AbstractCompile {
             wordLiteral.parentWord = compiler.newWord
             compiler.wordService.save(wordLiteral)
 
-            compiler.forthWordsBuffer.add(wordLiteral)
-//                word.forthWords.add(wordLiteral)
-//                compiler.wordService.save(word)
+            compiler.forthWordsBuffer.add(wordLiteral.name)
             if (stringLiteral.endsWith("\"")) {
                 break
             }
         }
-//        compiler.newWord.forthWords.add(nextWord)
-        compiler.forthWordsBuffer.add(nextWord)
+        compiler.forthWordsBuffer.add(nextWord.name)
         return false
     }
 }

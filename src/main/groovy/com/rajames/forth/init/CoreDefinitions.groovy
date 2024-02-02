@@ -57,9 +57,9 @@ class CoreDefinitions {
         }
     }
 
-    Word createComplexWord(String wordName, List<Word> words, Integer argumentCount = 0, Boolean compileOnly = false) {
+    Word createComplexWord(String wordName, List<String> words, Integer argumentCount = 0, Boolean compileOnly = false) {
         try {
-            return wordService.addWordToDictionary(wordName, coreName, words, null, null, argumentCount, compileOnly)
+            return wordService.addWordToDictionary(wordName, coreName, words as List<String>, null, null, argumentCount, compileOnly)
         } catch (Exception e) {
             throw new ForthCompilerException("Could not create complex word ${wordName}.", e)
         }
@@ -97,21 +97,25 @@ class CoreDefinitions {
         Word literal = createPrimitiveWord("literal", "Literal", null, 0, true)
 
 
-//        Word ifWord = createPrimitiveWord("if", "If", "IfC", 1, true)
-//        Word elseWord = createPrimitiveWord("else")
-//        Word thenWord = createPrimitiveWord("then", null, "ThenC", 0, true)
+        Word ifWord = createPrimitiveWord("if", null, null, 1, true)
+        Word elseWord = createPrimitiveWord("else")
+        Word thenWord = createPrimitiveWord("then")
+
 //        Word doWord = createPrimitiveWord("do")
 //        Word loopWord = createPrimitiveWord("loop")
 //        Word plusLoopWord = createPrimitiveWord("+loop)
+
 //        Word beginWord = createPrimitiveWord("begin")
-//        Word untilWord = createPrimitiveWord("until")
+//        Word againWord = createPrimitiveWord("again")
+//        Word whileWord = createPrimitiveWord("while")
+//        Word repeatWord = createPrimitiveWord("repeat")
 
         // Complex words that are made up of a List<Word> that describes their behavior go here.
 
-        Word add = createComplexWord("add", [plus, cr, dot, cr], 2)
+        Word add = createComplexWord("add", [plus.name, cr.name, dot.name, cr.name], 2)
 //        log.debug("CoreDefinitions: createComplexWord(\"add\", [plus, cr, dot, cr], 2, false): complexWord.name = ${add} complexWord?.forthWords = ${add?.forthWords}")
 
-        Word sub = createComplexWord("sub", [minus, cr, dot, cr], 2)
+        Word sub = createComplexWord("sub", [minus.name, cr.name, dot.name, cr.name], 2)
 //        log.debug("CoreDefinitions: createComplexWord(\"sub\", [minus, cr, dot, cr], 2, false): complexWord.name = ${sub} complexWord?.forthWords = ${sub?.forthWords}")
 
 
