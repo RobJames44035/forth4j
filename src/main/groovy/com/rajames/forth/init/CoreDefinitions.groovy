@@ -97,9 +97,9 @@ class CoreDefinitions {
         Word literal = createPrimitiveWord("literal", "Literal", null, 0, true)
 
 
-        Word ifWord = createPrimitiveWord("if", null, null, 1, true)
+        Word ifWord = createPrimitiveWord("if", null, "IfC", 1, true)
         Word elseWord = createPrimitiveWord("else")
-        Word thenWord = createPrimitiveWord("then")
+        Word thenWord = createPrimitiveWord("then", null, "ThenC")
 
 //        Word doWord = createPrimitiveWord("do")
 //        Word loopWord = createPrimitiveWord("loop")
