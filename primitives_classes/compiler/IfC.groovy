@@ -50,7 +50,7 @@ class IfC extends AbstractCompile {
                     tokens[ifIndex] = jumpTo
                 }
             }
-            currentIndex++;
+            currentIndex++
         }
 
         // Check if we have any unmatched IFs
