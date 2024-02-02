@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package compiler
+package runtime
 
-import com.rajames.forth.compiler.AbstractCompile
-import com.rajames.forth.compiler.ForthCompiler
 import com.rajames.forth.dictionary.Word
+import com.rajames.forth.runtime.AbstractRuntime
 import com.rajames.forth.runtime.ForthInterpreter
 
-class Semicolon extends AbstractCompile {
+class Dump extends AbstractRuntime {
 
     @Override
-    Object execute(ForthCompiler compiler, ForthInterpreter interpreter) {
-        // compile a NOOP rather than ."
-        Word noop = compiler.wordService.findByName("noop")
-        compiler.word = noop
+    Object execute(ForthInterpreter interpreter, Word word) {
+        Word dumpWord = interpreter?.words?.remove()
+        println(dumpWord.toString())
         return null
     }
 }

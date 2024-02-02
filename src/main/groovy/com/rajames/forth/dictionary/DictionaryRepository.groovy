@@ -16,11 +16,11 @@
 
 package com.rajames.forth.dictionary
 
-import org.springframework.data.repository.CrudRepository
+import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface DictionaryRepository extends CrudRepository<Dictionary, Integer> {
+interface DictionaryRepository extends JpaRepository<Dictionary, Integer> {
     Optional<Dictionary> findByName(String name);
 
     List<Dictionary> findAllByOrderById();

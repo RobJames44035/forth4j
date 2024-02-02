@@ -16,33 +16,33 @@
 
 package runtime
 
-import com.rajames.forth.compiler.ForthCompilerException
 import com.rajames.forth.dictionary.Word
 import com.rajames.forth.runtime.AbstractRuntime
 import com.rajames.forth.runtime.ForthInterpreter
 
 import java.util.concurrent.ConcurrentLinkedQueue
 
-class Colon extends AbstractRuntime {
-
+class If extends AbstractRuntime {
+//    : ?full 12 = if ." It's full " then ;
     @Override
     Object execute(ForthInterpreter interpreter, Word word) {
-        // Fail Fast
-        if (interpreter.words.stream().noneMatch(w -> w.getName().equals(";"))) {
-            interpreter.words.clear()
-            throw new ForthCompilerException("No ending semicolon")
+
+        if (interpreter.dataStack.pop() != 0) {
+            // execute tp to else or then
+            ConcurrentLinkedQueue<Word> parentDefinition = interpreter.word.forthWords as ConcurrentLinkedQueue
+            while (!parentDefinition.isEmpty()) {
+                if (parentDefinition.remove() == word) {
+                    break
+                }
+            }
+            while (!parentDefinition.isEmpty()) {
+                Word next = parentDefinition.remove()
+                if (next.name == "else" || next.name == "then") {
+                    break
+                }
+                interpreter.executeWord(next)
+            }
         }
-
-        ConcurrentLinkedQueue<String> nonWords = interpreter.nonWords
-        ConcurrentLinkedQueue<Word> words = interpreter.words
-        ConcurrentLinkedQueue<Integer> arguments = new ConcurrentLinkedQueue<>()
-
-        while (interpreter.dataStack.size() > 0) {
-            Integer argument = interpreter.dataStack.pop() as Integer
-            arguments.add(argument)
-        }
-
-        interpreter.forthCompiler.compileWord(words, arguments, nonWords)
         return null
     }
 }

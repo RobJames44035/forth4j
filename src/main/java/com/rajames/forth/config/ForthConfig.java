@@ -31,6 +31,7 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.util.Properties;
@@ -95,7 +96,8 @@ public class ForthConfig {
     }
 
 
-    @Autowired @Bean(name = "transactionManager")
+    @Autowired
+    @Bean(name = "transactionManager")
     JpaTransactionManager transactionManager(final EntityManagerFactory entityManagerFactory) {
         final JpaTransactionManager jpaTransactionManager = new JpaTransactionManager();
         jpaTransactionManager.setEntityManagerFactory(entityManagerFactory);
@@ -118,4 +120,14 @@ public class ForthConfig {
 
         return emFactory;
     }
+
+    @Bean
+    public EntityManager entityManager(final EntityManagerFactory entityManagerFactory) {
+        return entityManagerFactory.createEntityManager();
+    }
+
+//    @Bean(initMethod = "start", destroyMethod = "stop")
+//    public Server h2Server() throws SQLException {
+//        return Server.createTcpServer("-tcp", "-tcpAllowOthers", "-tcpPort", "9092");
+//    }
 }

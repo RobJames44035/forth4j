@@ -14,6 +14,17 @@
  * limitations under the License.
  */
 
-log.info("colon.groovy")
-forthCompiler.compileWord(tokens)
-return null
+package compiler
+
+import com.rajames.forth.compiler.AbstractCompile
+import com.rajames.forth.compiler.ForthCompiler
+import com.rajames.forth.dictionary.Word
+import com.rajames.forth.runtime.ForthInterpreter
+
+class SemiColonC extends AbstractCompile {
+
+    @Override
+    Boolean execute(Word newWord, ForthCompiler compiler, ForthInterpreter interpreter) {
+        return false
+    }
+}

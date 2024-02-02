@@ -39,8 +39,11 @@ class ForthInterpreter {
     String line
     Word word
     String token
+    String noWord
 
     Queue<String> tokens = new ConcurrentLinkedQueue<>()
+    Queue<Word> words = new ConcurrentLinkedQueue<>()
+    Queue<String> nonWords = new ConcurrentLinkedQueue<>()
 
     @Autowired
     Memory memory
@@ -58,43 +61,54 @@ class ForthInterpreter {
     ForthCompiler forthCompiler
 
     boolean interpretAndExecute(String line) {
-        this.line = line.toLowerCase() as String
+        this.line = line.toLowerCase().trim() as String
         this.tokens = new LinkedList<>(line.tokenize())
         boolean forthOutput = false
         try {
             log.trace("Interpreting line ${line}.")
             while (!tokens.isEmpty()) {
                 this.token = tokens.remove()
+
+                this.word = null
+//                log.debug("Interpreter: Word before 'wordService.findByName(${token})' this?.word?.name = ${this?.word?.name} this?.word?.forthWords = ${this?.word?.forthWords}")
                 this.word = wordService.findByName(token)
+//                log.debug("Interpreter: Word after 'wordService.findByName(${token})' this?.word?.name = ${this?.word?.name} this?.word?.forthWords = ${this?.word?.forthWords}")
+
                 if (word != null) {
-                    if (word.compileOnly) {
-                        throw new ForthInterpreterException("Compile Only.")
-                    }
-                    forthOutput = executeWord(word)
+                    words.add(word)
                 } else {
                     try {
                         dataStack.push(Integer.parseInt(token) as Integer)
                     } catch (NumberFormatException ignored) {
-
+                        nonWords.add(token)
                     }
                 }
             }
         } catch (Exception e) {
             log.error("Invalid Input or Undefined Word: ${tokens}\n\t" + e.message, e)
         }
+
+        while (!words.isEmpty()) {
+            Word exec = words.remove()
+            forthOutput = executeWord(exec)
+        }
+
         log.trace("Interpreted ${line}")
         return forthOutput
     }
 
 
-    private boolean executeWord(Word word) {
+    boolean executeWord(Word word) {
+        if (word.compileOnly) {
+            throw new ForthInterpreterException("Compile Only.")
+        }
         if (word.runtimeClass != null) {
             return executePrimitiveWord(word)
         } else if (word.forthWords.size() > 0) {
             return executeComplexWord(word)
         } else {
             // Should be unreachable.
-            throw new ForthCompilerException("Nothing to do.")
+            return false
         }
     }
 
@@ -102,7 +116,6 @@ class ForthInterpreter {
         Boolean forthOutput = false
         try {
             String runtimeClass = word?.runtimeClass?.trim()
-            String compileClass = word?.compileClass?.trim()
             if (runtimeClass != null && !word.runtimeClass.isEmpty()) {
                 def classLoader = new GroovyClassLoader()
                 Class groovyClass = classLoader.parseClass(runtimeClass)
@@ -115,14 +128,14 @@ class ForthInterpreter {
         } catch (ForthInterpreterException interpreterException) {
             log.error(interpreterException.message)
         } catch (ForthCompilerException compilerException) {
-            log.error(compilerException.message)
+            log.error(compilerException.message, compilerException)
         }
         return forthOutput
     }
 
     private boolean executeComplexWord(Word word) {
         boolean forthOutput = false
-        def w = word
+//        log.debug("Interpreter output: " + wordService?.findByName(this?.word?.name as String)?.forthWords)
         word.forthWords.each { Word childWord ->
             if (childWord != null) {
                 if (childWord?.runtimeClass) {

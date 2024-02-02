@@ -19,8 +19,11 @@ package com.rajames.forth.dictionary
 import com.rajames.forth.compiler.ForthCompilerException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+
+import javax.persistence.EntityManager
 
 @Service
 @Transactional
@@ -31,22 +34,39 @@ class WordService {
     private final WordRepository wordRepository
     private final DictionaryRepository dictionaryRepository
 
-    WordService(WordRepository wordRepository, DictionaryRepository dictionaryRepository) {
+    @Autowired
+    WordService(WordRepository wordRepository, DictionaryRepository dictionaryRepository, EntityManager entityManager) {
         this.wordRepository = wordRepository
         this.dictionaryRepository = dictionaryRepository
+        this.entityManager = entityManager
     }
 
+    EntityManager entityManager
+
     Word findByName(String name) {
+        log.trace("WordService.findByName(String '${name}')")
         Optional<Word> optional = wordRepository.findFirstByNameOrderByCreateDateTimeDesc(name)
+        log.trace("WordService: Optional<Word> optional = ${optional}")
         if (optional.isPresent()) {
-            return optional.get()
+            Word word = optional.get()
+            log.trace("WordService: Word word = optional.get() name = '${word.name}' forthWords = ${word.forthWords}")
+            return word
         } else {
+            log.trace("NOT FOUND!")
             return null
         }
     }
 
     Word save(Word word) {
-        return wordRepository.save(word)
+        log.trace("WordService: Word before 'save(word)' word?.name = '${word?.name}' word?.forthWords = ${word?.forthWords}")
+        Word retrievedWord = wordRepository.save(word)
+        log.trace("WordService: Word after 'save(word)' retrievedWord?.name = '${retrievedWord?.name}' retrievedWord?.forthWords = ${retrievedWord?.forthWords}")
+        wordRepository.flush()
+        return retrievedWord
+    }
+
+    Boolean isSaved(Word word) {
+        return entityManager.contains(word)
     }
 
     void deleteWordFromDictionary(Word deleteMe) {
@@ -79,10 +99,9 @@ class WordService {
                 if (complexWords) {
                     complexWords.each { Word childWord ->
                         Word forthWord = findByName(childWord.name)
-                        if (word != null) {
+                        if (word != null && forthWord != null) {
                             forthWord.parentWord = word
                             word.forthWords.add(forthWord)
-                            save(forthWord)
                         } else {
                             throw new ForthCompilerException("Word ${childWord} not found.")
                         }
@@ -96,7 +115,7 @@ class WordService {
         } catch (Exception e) {
             throw new ForthCompilerException("${wordName} was NOT added to ${dictionaryName} dictionary.", e)
         }
-        log.debug("${wordName} added to ${dictionaryName} dictionary.")
+        log.trace("${wordName} added to ${dictionaryName} dictionary.")
         return word
     }
 }

@@ -33,12 +33,22 @@ class Dictionary implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id
 
+//    @Version
+//    private int version
+//
+//    @Temporal(TemporalType.TIMESTAMP)
+//    private Date createDateTime
+//
     @Column(unique=true)
     private String name
 
     @OneToMany(mappedBy = "dictionary", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Set<Word> words
+    private List<Word> vocabulary
 
+//    @PrePersist
+//    void onCreate() {
+//        this.setCreateDateTime(new Date())
+//    }
 
     String getName() {
         return name
@@ -48,35 +58,23 @@ class Dictionary implements Serializable {
         this.name = name
     }
 
-    Set<Word> getWords() {
-        return words
+    List<Word> getWordList() {
+        return vocabulary
     }
 
-    void setWords(Set<Word> words) {
-        this.words = words
+    void setWordList(List<Word> wordList) {
+        this.vocabulary.clear()
+        if (wordList != null) {
+            this.vocabulary.addAll(wordList)
+        }
     }
 
-    boolean equals(o) {
-        if (this.is(o)) return true
-        if (o == null || getClass() != o.class) return false
-
-        java.util.Dictionary that = (java.util.Dictionary) o
-
-        if (id != that.id) return false
-        if (name != that.name) return false
-
-        return true
+    Date getCreateDateTime() {
+        return createDateTime
     }
 
-    int hashCode() {
-        int result
-        result = (id != null ? id.hashCode() : 0)
-        result = 31 * result + (name != null ? name.hashCode() : 0)
-        return result
-    }
-
-    String toString() {
-        return this.name
+    void setCreateDateTime(Date createDateTime) {
+        this.createDateTime = createDateTime
     }
 }
 

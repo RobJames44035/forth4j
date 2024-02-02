@@ -20,8 +20,13 @@ package com.rajames.forth.init
 import com.rajames.forth.compiler.ForthCompilerException
 import com.rajames.forth.dictionary.Word
 import com.rajames.forth.dictionary.WordService
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 
 class CoreDefinitions {
+
+    private static final Logger log = LogManager.getLogger(this.class.getName())
+
     public static final String RUNTIME = "primitives_classes/runtime"
     public static final String COMPILE = "primitives_classes/compiler"
 
@@ -63,15 +68,18 @@ class CoreDefinitions {
 
     void createCoreDictionary() {
 
-        // Primitive words with their behavior described in a Groovy Script
+        // Non-Standard words
         Word noop = createPrimitiveWord("noop")
         Word nop = createPrimitiveWord("nop")
+        Word dump = createPrimitiveWord("defdump", "Dump")
+
+        // Primitive words with their behavior described in a Groovy Script
         Word plus = createPrimitiveWord("+", "Plus", null, 2)
         Word minus = createPrimitiveWord("-", "Minus", null, 2)
         Word dot = createPrimitiveWord(".", "Dot", null, 2)
         Word cr = createPrimitiveWord("cr", "Cr")
         Word emit = createPrimitiveWord("emit", "Emit", null, 1)
-        Word dotQuote = createPrimitiveWord(".\"", "DotQuote", "Noop")
+        Word dotQuote = createPrimitiveWord(".\"", "DotQuote", "DotQuoteC")
         Word lessThanZero = createPrimitiveWord("0<", "LessThanZero", null, 1)
         Word equalZero = createPrimitiveWord("0=", "EqualZero", null, 1)
         Word greaterThanZero = createPrimitiveWord("0=", "GreaterThanZero", null, 1)
@@ -85,17 +93,27 @@ class CoreDefinitions {
         Word greaterThan = createPrimitiveWord(">", "GreaterThan", null, 2)
         Word equal = createPrimitiveWord("=", "Equal", null, 2)
         Word colon = createPrimitiveWord(":", "Colon")
-        Word semicolon = createPrimitiveWord(";", null, "Noop")
+        Word semicolon = createPrimitiveWord(";", null, "SemiColonC")
         Word literal = createPrimitiveWord("literal", "Literal", null, 0, true)
 
 
-//        Word ifWord = createPrimitiveWord("if", new File("${RUNTIME}/if.groovy"), 1, true)
-//        Word elseWord = createPrimitiveWord("else", new File("${RUNTIME}/else.groovy"), 1, true)
-//        Word thenWord = createPrimitiveWord("then", new File("${RUNTIME}/then.groovy"), 1, true)
+//        Word ifWord = createPrimitiveWord("if", "If", "IfC", 1, true)
+//        Word elseWord = createPrimitiveWord("else")
+//        Word thenWord = createPrimitiveWord("then", null, "ThenC", 0, true)
+//        Word doWord = createPrimitiveWord("do")
+//        Word loopWord = createPrimitiveWord("loop")
+//        Word plusLoopWord = createPrimitiveWord("+loop)
+//        Word beginWord = createPrimitiveWord("begin")
+//        Word untilWord = createPrimitiveWord("until")
 
         // Complex words that are made up of a List<Word> that describes their behavior go here.
-        Word add = createComplexWord("add", [plus, dot, cr], 2) // TODO This is a test word REMOVE
-        Word sub = createComplexWord("sub", [minus, dot, cr], 2) // TODO This is a test word REMOVE
+
+        Word add = createComplexWord("add", [plus, cr, dot, cr], 2)
+//        log.debug("CoreDefinitions: createComplexWord(\"add\", [plus, cr, dot, cr], 2, false): complexWord.name = ${add} complexWord?.forthWords = ${add?.forthWords}")
+
+        Word sub = createComplexWord("sub", [minus, cr, dot, cr], 2)
+//        log.debug("CoreDefinitions: createComplexWord(\"sub\", [minus, cr, dot, cr], 2, false): complexWord.name = ${sub} complexWord?.forthWords = ${sub?.forthWords}")
+
 
         databaseBackupService.backupDatabase("/home/rajames/PROJECTS/forth4j/src/main/resources", "CoreForth4j.sql")
     }

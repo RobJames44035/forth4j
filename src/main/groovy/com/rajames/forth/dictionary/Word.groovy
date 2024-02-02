@@ -20,12 +20,15 @@ package com.rajames.forth.dictionary
 import javax.persistence.*
 
 @Entity
-@Table(name = "word")
-class Word {
+@Table(name = "word", indexes = [@Index(name = "word_name_index", columnList = "name")])
+class Word implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id
+
+    @Version
+    private int version
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date createDateTime
@@ -51,9 +54,6 @@ class Word {
     @Column(nullable = true)
     private String stringLiteral
 
-    @Column(nullable = true, name = "complex_word_order")
-    private Integer complexWordOrder
-
     @ManyToOne
     @JoinColumn(name = "dictionary_id", nullable = false)
     private Dictionary dictionary
@@ -63,16 +63,12 @@ class Word {
     private List<Word> forthWords = new ArrayList<>()
 
     @ManyToOne
-    @JoinColumn(name = "parent_word_id")
+    @JoinColumn(name = "parent_word_name")
     private Word parentWord
 
     @PrePersist
     void onCreate() {
         this.setCreateDateTime(new Date())
-    }
-
-    Integer getArgumentCount() {
-        return argumentCount
     }
 
     void setArgumentCount(Integer argumentCount) {
@@ -83,6 +79,16 @@ class Word {
         return id
     }
 
+    List<Word> getForthWords() {
+        return forthWords
+    }
+
+    void setForthWords(List<Word> forthWords) {
+        this.forthWords.clear()
+        if (forthWords != null) {
+            this.forthWords.addAll(forthWords)
+        }
+    }
 
     String getName() {
         return name
@@ -94,14 +100,6 @@ class Word {
 
     void setDictionary(Dictionary dictionary) {
         this.dictionary = dictionary
-    }
-
-    List<Word> getForthWords() {
-        return forthWords
-    }
-
-    void setForthWords(List<Word> forthWords) {
-        this.forthWords = forthWords
     }
 
     Word getParentWord() {
@@ -126,14 +124,6 @@ class Word {
 
     void setStackValue(Integer stackValue) {
         this.stackValue = stackValue
-    }
-
-    Integer getComplexWordOrder() {
-        return complexWordOrder
-    }
-
-    void setComplexWordOrder(Integer complexWordOrder) {
-        this.complexWordOrder = complexWordOrder
     }
 
     String getStringLiteral() {
@@ -188,6 +178,19 @@ class Word {
     }
 
     String toString() {
-        return this.name
+        StringBuilder sb = new StringBuilder("\n${this.name}:\n")
+        if (this.forthWords.size() > 0) {
+            sb.append("\n\tCompiled Definition: ").append(this.forthWords)
+        } else {
+            if (this.runtimeClass) {
+                sb.append("\n\tRuntime Behavior: Scripted & available.")
+            }
+            if (this.compileClass) {
+                sb.append("\n\tCompiler Behavior: Scripted & available.")
+            }
+            sb.append("\n\tStack expectancy: ").append(this.argumentCount)
+            sb.append("\n\tCompiler word: ").append((this.compileOnly))
+        }
+        return sb.toString()
     }
 }

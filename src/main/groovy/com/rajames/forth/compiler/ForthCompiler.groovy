@@ -19,18 +19,24 @@ package com.rajames.forth.compiler
 
 import com.rajames.forth.dictionary.*
 import com.rajames.forth.init.Bootstrap
+import com.rajames.forth.init.DatabaseBackupService
 import com.rajames.forth.runtime.ForthInterpreter
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import org.hibernate.Session
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
+
+import java.util.concurrent.ConcurrentLinkedQueue
 
 @Component
 @Transactional
 class ForthCompiler {
 
     private static final Logger log = LogManager.getLogger(this.class.getName())
+
+    List<Word> forthWordsBuffer = new ArrayList<>()
 
     @Autowired
     DictionaryService dictionaryService
@@ -50,77 +56,84 @@ class ForthCompiler {
     @Autowired
     ForthInterpreter interpreter
 
+    @Autowired
+    Session session
 
-    Word word
+    @Autowired
+    DatabaseBackupService databaseBackupService
+
+    Word newWord
+    Word literal
+    Dictionary dictionary
+
+    Stack<String> ctrlFlowStack = new Stack<>()
+
+    Integer loopCounter = 0
 
     @Transactional
-    Word compileWord(LinkedList<String> tokens) {
+    void compileWord(
+            ConcurrentLinkedQueue<Word> words,
+            ConcurrentLinkedQueue<Integer> arguments,
+            ConcurrentLinkedQueue<String> nonWords
+    ) {
         log.trace("Entering compiler")
-        // Fail Fast
-        if (!tokens.contains(";")) {
-            tokens.clear()
-            throw new ForthCompilerException("No ending semicolon")
-        }
 
-        Integer argumentCount = 0
-        Word newWord = new Word()
-        newWord.name = tokens.remove()
-        newWord.dictionary = dictionaryService.findByName(bootstrap.coreName)
-        wordRepository.save(newWord)
+        try {
+            this.dictionary = dictionaryService.findByName(bootstrap.coreName)
+            this.literal = wordService.findByName("literal")
+            this.newWord = new Word()
+            this.newWord.name = nonWords.remove()
+            this.newWord.dictionary = dictionary
+            this.wordService.save(this.newWord)
 
-        int ct = 0
-        while (!tokens.isEmpty()) {
-            String token = tokens.remove()
-            if (token != ";") {
-                word = wordService.findByName(token)
-                String runtimeClass = word?.runtimeClass?.trim()
-                String compileClass = word?.compileClass?.trim()
-                if (word != null) {
-                    if (word.compileClass != null && !word.compileClass.isEmpty()) {
+            while (!arguments.isEmpty()) {
+                Integer argument = arguments.remove()
+                String uniqueId = UUID.randomUUID().toString().replaceAll("-", "")
+
+                Word wordLiteral = new Word()
+                wordLiteral.name = "int_${literal.name}_${uniqueId}"
+                wordLiteral.runtimeClass = literal.runtimeClass
+                wordLiteral.stackValue = argument
+                wordLiteral.compileOnly = true
+                wordLiteral.dictionary = this.dictionary
+                wordLiteral.parentWord = newWord
+                wordService.save(wordLiteral)
+
+                forthWordsBuffer.add(wordLiteral)
+            }
+
+            Boolean output
+            while (!words.isEmpty()) {
+                Word nextWordToCompile = words.remove()
+                if (nextWordToCompile) {
+                    output = true
+                    String compileClass = nextWordToCompile?.compileClass?.trim()
+                    if (compileClass != null && !compileClass.isEmpty()) {
                         def classLoader = new GroovyClassLoader()
                         Class groovyClass = classLoader.parseClass(compileClass)
                         CompileTime compileTime = groovyClass.getDeclaredConstructor().newInstance() as CompileTime
-                        def x = compileTime.execute(this, interpreter)
-                    }
-                    newWord.forthWords.add(word)
-                    word.parentWord = newWord
-                    newWord.complexWordOrder = ct
-                    wordRepository.save(newWord)
-                } else {
-                    try {
-                        // handle the fact this is a number, not a dictionary word.
-                        Integer num = Integer.parseInt(token)
-                        Word literal = wordService.findByName("literal")
-                        Word wordLiteral = new Word()
-                        wordLiteral.complexWordOrder = ct
-                        wordLiteral.name = "int_${literal.name}_${ct}"
-                        wordLiteral.runtimeClass = literal.runtimeClass
-                        wordLiteral.stackValue = num
-                        wordLiteral.compileOnly = true
-                        wordLiteral.dictionary = dictionaryService.findByName(bootstrap.coreName)
-                        wordLiteral.parentWord = newWord
-                        newWord.forthWords.add(wordLiteral)
-                        wordRepository.save(wordLiteral)
-                    } catch (NumberFormatException ignored) {
-                        // String literal
-                        Word literal = wordService.findByName("literal")
-                        Word wordLiteral = new Word()
-                        wordLiteral.complexWordOrder = ct
-                        wordLiteral.name = "str_${literal.name}_${ct}"
-                        wordLiteral.runtimeClass = literal.runtimeClass
-                        wordLiteral.stringLiteral = token
-                        wordLiteral.compileOnly = true
-                        wordLiteral.dictionary = dictionaryService.findByName(bootstrap.coreName)
-                        wordLiteral.parentWord = newWord
-                        newWord.forthWords.add(wordLiteral)
-                        wordRepository.save(wordLiteral)
+                        output = compileTime.execute(this.newWord, this, this.interpreter)
+                        if (output) {
+                            if (!wordService.isSaved(nextWordToCompile)) {
+                                wordService.save(nextWordToCompile)
+                            }
+                            forthWordsBuffer.add(nextWordToCompile)
+//                            this.newWord.forthWords.add(nextWordToCompile)
+//                            wordRepository.save(this.newWord)
+                        }
+                    } else {
+                        forthWordsBuffer.add(nextWordToCompile)
                     }
                 }
-            } else {
-                break
             }
-            ct++
+            this.newWord.forthWords = forthWordsBuffer
+
+            log.debug("Compiler: Word before 'wordService.save(this.newWord)' this?.newWord?.name = ${this?.newWord?.name} this?.newWord?.forthWords = ${this?.newWord?.forthWords}")
+            Word afterSave = wordService.save(this.newWord)
+            log.debug("Compiler: Word after 'wordService.save(this.newWord)' afterSave?.name = ${afterSave?.name} afterSave?.forthWords = ${afterSave?.forthWords}")
+
+        } catch (Exception e) {
+            log.error(e.message, e)
         }
-        return newWord
     }
 }

@@ -92,11 +92,11 @@ class ForthRepl {
     static void printPreamble() {
         print("\u001B[2J")
         print("\u001B[H")
-        println("================================================================")
-        println("|      forth4j 1.0.0, Copyright (C) 2024 Robert A. James.      |")
-        println("|          forth4j comes with NO ABSOLUTELY WARRANTY.          |")
+        println("=================================================================")
+        println("|      forth4j 1.0.0, Copyright (C) 2024 Robert A. James.       |")
+        println("|          forth4j comes with NO ABSOLUTELY WARRANTY.           |")
         println("| For details see `https://www.apache.org/licenses/LICENSE-2.0' |")
-        println("================================================================")
+        println("=================================================================")
         println("Type `bye' to exit.")
     }
 }

@@ -18,15 +18,31 @@ package compiler
 
 import com.rajames.forth.compiler.AbstractCompile
 import com.rajames.forth.compiler.ForthCompiler
+import com.rajames.forth.compiler.ForthCompilerException
 import com.rajames.forth.dictionary.Word
 import com.rajames.forth.runtime.ForthInterpreter
 
-class Noop extends AbstractCompile {
-
+class IfC extends AbstractCompile {
+//    : ?full 12 = if ." It's full " then ;
     @Override
     Boolean execute(Word newWord, ForthCompiler compiler, ForthInterpreter interpreter) {
-        Word noop = compiler.wordService.findByName("noop")
-        newWord.forthWords.add(noop)
+        for (word in interpreter.words) {
+            if (word.name == "if" || word.name == "else") {
+                compiler.ctrlFlowStack.push(word.name)
+            } else if (word.name == "then") {
+                if (compiler.ctrlFlowStack.isEmpty()) {
+                    throw new ForthCompilerException("Unmatched THEN")
+                }
+            }
+            String wordPopped = compiler.ctrlFlowStack.pop()
+            if (wordPopped == "else" && compiler.ctrlFlowStack.isEmpty()) {
+                throw new ForthCompilerException("Unmatched ELSE")
+            }
+            if (!compiler.ctrlFlowStack.isEmpty()) {
+                throw new ForthCompilerException("Unmatched IF or ELSE")
+            }
+        }
+
         return false
     }
 }
