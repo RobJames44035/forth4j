@@ -41,17 +41,33 @@ class CoreDefinitions {
         this.databaseBackupService = databaseBackupService
     }
 
+    static String getRuntimeContent(String runtimeClass) {
+        String runtimeBasePath = "primitives_classes/runtime"
+        getGroovyFileContent(runtimeBasePath, runtimeClass)
+    }
+
+    static String getCompileContent(String compileClass) {
+        String compileBasePath = "primitives_classes/compiler"
+        getGroovyFileContent(compileBasePath, compileClass)
+    }
+
+    // helper method to retrieve content of Groovy files
+    private static String getGroovyFileContent(String basePath, String className) {
+        String retVal = null
+        if (className != null) {
+            String myResourceName = basePath + "/" + className + ".groovy"//"${basePath}/${className}.groovy"
+            URL foo = CoreDefinitions.class.getClassLoader().getResource(myResourceName)
+            String x = foo.text
+            retVal = x
+        }
+        return retVal
+    }
+
     Word createPrimitiveWord(String wordName, String runtimeClass = null, String compileClass = null, Integer argumentCount = 0, Boolean compileOnly = false) {
         try {
-            File runtime = null
-            File compile = null
-            if (null != runtimeClass) {
-                runtime = new File("${RUNTIME}/${runtimeClass}.groovy")
-            }
-            if (null != compileClass) {
-                compile = new File("${COMPILE}/${compileClass}.groovy")
-            }
-            return wordService.addWordToDictionary(wordName, coreName, null, runtime?.text, compile?.text, argumentCount, compileOnly)
+            String runtimeContent = getRuntimeContent(runtimeClass)
+            String compileContent = getCompileContent(compileClass)
+            return wordService.addWordToDictionary(wordName, coreName, null, runtimeContent, compileContent, argumentCount, compileOnly)
         } catch (Exception e) {
             throw new ForthCompilerException("Could not create primitive word ${wordName}.", e)
         }
