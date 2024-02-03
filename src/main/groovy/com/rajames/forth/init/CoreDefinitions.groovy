@@ -55,10 +55,8 @@ class CoreDefinitions {
     private static String getGroovyFileContent(String basePath, String className) {
         String retVal = null
         if (className != null) {
-            String myResourceName = basePath + "/" + className + ".groovy"//"${basePath}/${className}.groovy"
-            URL foo = CoreDefinitions.class.getClassLoader().getResource(myResourceName)
-            String x = foo.text
-            retVal = x
+            String myResourceName = basePath + "/" + className + ".groovy"
+            retVal = CoreDefinitions.class.getClassLoader().getResource(myResourceName).text
         }
         return retVal
     }
