@@ -72,56 +72,69 @@ class ForthCompiler {
             ConcurrentLinkedQueue<Integer> arguments,
             ConcurrentLinkedQueue<String> nonWords
     ) {
-        log.trace("Entering compiler")
-        Word afterSave = null
+        Word newForthWord = null
+
         try {
-            this.dictionary = dictionaryService.findByName(bootstrap.coreName)
-            this.literal = wordService.findByName("literal")
-            this.newWord = new Word()
-            this.newWord.name = nonWords.remove()
-            this.newWord.dictionary = dictionary
-            this.wordService.save(this.newWord)
+            setupForCompilerRun(nonWords)
+            compileArgumentLiterals(arguments)
 
-            while (!arguments.isEmpty()) {
-                Integer argument = arguments.remove()
-                String uniqueId = UUID.randomUUID().toString().replaceAll("-", "")
+            newForthWord = doCompile(words)
 
-                Word wordLiteral = new Word()
-                wordLiteral.name = "int_${literal.name}_${uniqueId}"
-                wordLiteral.runtimeClass = literal.runtimeClass
-                wordLiteral.stackValue = argument
-                wordLiteral.compileOnly = true
-                wordLiteral.dictionary = this.dictionary
-                wordLiteral.parentWord = newWord
-                wordService.save(wordLiteral)
-                forthWordsBuffer.add(wordLiteral.name)
-            }
-            Boolean output
-            while (!words.isEmpty()) {
-                Word nextWordToCompile = words.remove()
-                if (nextWordToCompile) {
-                    output = true
-                    String compileClass = nextWordToCompile?.compileClass?.trim()
-                    if (compileClass != null && !compileClass.isEmpty()) {
-                        def classLoader = new GroovyClassLoader()
-                        Class groovyClass = classLoader.parseClass(compileClass)
-                        CompileTime compileTime = groovyClass.getDeclaredConstructor().newInstance() as CompileTime
-                        output = compileTime.execute(this.newWord, this, this.interpreter)
-                        if (output) {
-                            forthWordsBuffer.add(nextWordToCompile.name)
-                        }
-                    } else {
-                        forthWordsBuffer.add(nextWordToCompile.name)
-                    }
-                }
-            }
-            this.newWord.forthWords = forthWordsBuffer
-            afterSave = wordService.save(this.newWord)
-            log.trace("Compiler: Word after 'wordService.save(this.newWord)' afterSave?.name = ${afterSave?.name} afterSave?.forthWords = ${afterSave?.forthWords}")
-            log.trace("Exiting Compiler")
+            newForthWord.forthWords = forthWordsBuffer
+            newForthWord = wordService.save(this.newWord)
+
         } catch (Exception e) {
             log.error(e.message, e)
         }
-        return afterSave
+        return newForthWord
+    }
+
+    private Word doCompile(ConcurrentLinkedQueue<Word> words) {
+        Boolean output
+        while (!words.isEmpty()) {
+            Word nextWordToCompile = words.remove()
+            if (nextWordToCompile) {
+                output = true
+                String compileClass = nextWordToCompile?.compileClass?.trim()
+                if (compileClass != null && !compileClass.isEmpty()) {
+                    def classLoader = new GroovyClassLoader()
+                    Class groovyClass = classLoader.parseClass(compileClass)
+                    CompileTime compileTime = groovyClass.getDeclaredConstructor().newInstance() as CompileTime
+                    output = compileTime.execute(this.newWord, this, this.interpreter)
+                    if (output) {
+                        forthWordsBuffer.add(nextWordToCompile.name)
+                    }
+                } else {
+                    forthWordsBuffer.add(nextWordToCompile.name)
+                }
+            }
+        }
+        return this.newWord
+    }
+
+    private void setupForCompilerRun(ConcurrentLinkedQueue<String> nonWords) {
+        this.dictionary = dictionaryService.findByName(bootstrap.coreName)
+        this.literal = wordService.findByName("literal")
+        this.newWord = new Word()
+        this.newWord.name = nonWords.remove()
+        this.newWord.dictionary = dictionary
+        this.wordService.save(this.newWord)
+    }
+
+    private void compileArgumentLiterals(ConcurrentLinkedQueue<Integer> arguments) {
+        while (!arguments.isEmpty()) {
+            Integer argument = arguments.remove()
+            String uniqueId = UUID.randomUUID().toString().replaceAll("-", "")
+
+            Word wordLiteral = new Word()
+            wordLiteral.name = "int_${literal.name}_${uniqueId}"
+            wordLiteral.runtimeClass = literal.runtimeClass
+            wordLiteral.stackValue = argument
+            wordLiteral.compileOnly = true
+            wordLiteral.dictionary = this.dictionary
+            wordLiteral.parentWord = newWord
+            wordService.save(wordLiteral)
+            forthWordsBuffer.add(wordLiteral.name)
+        }
     }
 }
