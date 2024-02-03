@@ -155,7 +155,7 @@ class ForthInterpreter {
     /**
      * A FORTH "word" may or may noy have a primitive runtime behavior/action. If the runtimeClass exists
      * in the words definition The class (thus the behavior) will be instantiated and the RunTime interface
-     * execute() method will be invoked.
+     * execute method will be invoked.
      * @param word The primitive word to execute.
      * @return The boolean flag for REPL.
      */
