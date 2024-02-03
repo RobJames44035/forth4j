@@ -99,4 +99,8 @@ class ForthRepl {
         println("=================================================================")
         println("Type `bye' to exit.")
     }
+
+    static void printPreamble2() {
+        println(ForthRepl.class.getClassLoader().getResource("preamble.txt").text)
+    }
 }
