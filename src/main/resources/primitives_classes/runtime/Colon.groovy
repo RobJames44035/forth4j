@@ -46,9 +46,8 @@ class Colon extends AbstractRuntime {
             arguments.add(argument)
         }
 
-        Word w = interpreter.forthCompiler.compileWord(words, arguments, nonWords)
-        w = interpreter.wordService.findByName(w.name)
-        log.trace("Colon: Word after 'interpreter.wordService.findByName(w.name)' this?.word?.name = ${w?.name} this?.word?.forthWords = ${w?.forthWords}")
+        // Invoke the compiler
+        interpreter.forthCompiler.compileWord(words, arguments, nonWords)
         return null
     }
 }

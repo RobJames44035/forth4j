@@ -70,6 +70,9 @@ class Word implements Serializable {
     @JoinColumn(name = "parent_word_name")
     private Word parentWord
 
+    @Transient
+    private boolean isReturned = false
+
     @PrePersist
     void onCreate() {
         this.setCreateDateTime(new Date())
@@ -169,6 +172,14 @@ class Word implements Serializable {
 
     void setControlWord(Boolean controlWord) {
         this.controlWord = controlWord
+    }
+
+    boolean getIsReturned() {
+        return isReturned
+    }
+
+    void setIsReturned(boolean isReturned) {
+        this.isReturned = isReturned
     }
 
 //////////////////////////////////////// END GETTERS & SETTERS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\

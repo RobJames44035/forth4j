@@ -39,6 +39,7 @@ class ForthInterpreter {
     String line
     Word word
     String token
+    Integer instructionPointer
 
     Queue<String> tokens = new ConcurrentLinkedQueue<>()
     Queue<Word> words = new ConcurrentLinkedQueue<>()
@@ -59,19 +60,63 @@ class ForthInterpreter {
     @Autowired
     ForthCompiler forthCompiler
 
+
+    /**
+     * Main entry point from the REPL
+     * @param line The line from REPL we are executing
+     * @return A boolean flag to indicate if we print a blank line after execution or not.
+     * The return value may be removed in the future when REPL is modified to better handle ANSI escape codes.
+     * making for a "prettier UI."
+     */
     boolean interpretAndExecute(String line) {
+
         this.line = line.toLowerCase().trim() as String
         this.tokens = new LinkedList<>(line.tokenize())
         boolean forthOutput = false
+
+        configureForthInterpreter()
+
+        return execution()
+    }
+
+    /**
+     * execution is the responsable method for executing all the forth words from a line of input.
+     * @return see interpretAndExecute() for more
+     */
+    private Boolean execution() {
+        Boolean forthOutput = null
+        instructionPointer = 0
+        while (!words.isEmpty()) {
+            Word exec = words.poll()
+            forthOutput = executeWord(exec)
+
+            if (exec.controlWord) {
+                returnStack.push(instructionPointer)
+            } else {
+                instructionPointer++
+            }
+
+            // Case when a return operation occurred:
+            // Assuming here a flag inside `Word` class `isReturned`, which would indicate
+            // if it was a word that returned (e.g., RET or ;)
+            if (exec.isReturned && !returnStack.isEmpty()) {
+                instructionPointer = returnStack.pop() as Integer
+            }
+        }
+        return forthOutput
+    }
+    /**
+     * When we enter the interpreter with a line from REPL it needs to be broken out into
+     * a number of things to prepare it for execution:
+     * We iterate through all of the tokens in the line and set interpreter fields accordingly.
+     *
+     */
+    private void configureForthInterpreter() {
         try {
-            log.trace("Interpreting line ${line}.")
             while (!tokens.isEmpty()) {
                 this.token = tokens.remove()
 
-                this.word = null
-                log.trace("Interpreter: Word before 'wordService.findByName(${token})' this?.word?.name = ${this?.word?.name} this?.word?.forthWords = ${this?.word?.forthWords}")
                 this.word = wordService.findByName(token)
-                log.trace("Interpreter: Word after 'wordService.findByName(${token})' this?.word?.name = ${this?.word?.name} this?.word?.forthWords = ${this?.word?.forthWords}")
 
                 if (word != null) {
                     words.add(word)
@@ -83,20 +128,16 @@ class ForthInterpreter {
                     }
                 }
             }
-        } catch (Exception e) {
-            log.error("Invalid Input or Undefined Word: ${tokens}\n\t" + e.message, e)
+        } catch (Exception ignored) {
+//            log.error("Invalid Input or Undefined Word: ${tokens}\n\t" + e.message, e)
         }
-
-        while (!words.isEmpty()) {
-            Word exec = words.remove()
-            forthOutput = executeWord(exec)
-        }
-
-        log.trace("Interpreted ${line}")
-        return forthOutput
     }
 
-
+    /**
+     * This is called in the execution() method to actually execute a FORTH "WORD:
+     * @param word This is the word we will be executing.
+     * @return the forthOutput flag for REPL.
+     */
     boolean executeWord(Word word) {
         if (word.compileOnly) {
             throw new ForthInterpreterException("Compile Only.")
@@ -111,6 +152,13 @@ class ForthInterpreter {
         }
     }
 
+    /**
+     * A FORTH "word" may or may noy have a primitive runtime behavior/action. If the runtimeClass exists
+     * in the words definition The class (thus the behavior) will be instantiated and the RunTime interface
+     * execute() method will be invoked.
+     * @param word The primitive word to execute.
+     * @return The boolean flag for REPL.
+     */
     private boolean executePrimitiveWord(Word word) {
         Boolean forthOutput = false
         try {
@@ -132,6 +180,13 @@ class ForthInterpreter {
         return forthOutput
     }
 
+    /**
+     * A complex/compound word is a List<String> of other words
+     * already existing in the system. Since both primitive and complex/compound words may make up the definition
+     * of any word this method is recursive. It will "unwind" itself until all "primitive" words are executed.
+     * @param word the complex/compound word to execute.
+     * @return same old boolean flag for REPL.
+     */
     private boolean executeComplexWord(Word word) {
         boolean forthOutput = false
         word.forthWords.each { String childWord ->

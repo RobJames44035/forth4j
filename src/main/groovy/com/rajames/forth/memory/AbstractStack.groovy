@@ -45,6 +45,11 @@ abstract class AbstractStack implements StackInterface {
         return stack.size()
     }
 
+    @Override
+    boolean isEmpty() {
+        return stack.empty
+    }
+
     // Additional stack operations as you need...
 }
 

@@ -71,6 +71,12 @@ class ForthRepl {
 
             try {
                 forthOutput = interpreter.interpretAndExecute(line)
+                interpreter.nonWords.clear()
+                interpreter.tokens.clear()
+                interpreter.words.clear()
+                interpreter.nonWords.clear()
+                interpreter.token = null
+                interpreter.instructionPointer = 0
             } catch (Exception ex) {
                 log.error(ex.message)
             }

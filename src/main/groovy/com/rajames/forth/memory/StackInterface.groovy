@@ -22,4 +22,6 @@ interface StackInterface {
     Object pop()
     void clear()
     int size()
+
+    boolean isEmpty()
 }
