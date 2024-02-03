@@ -48,6 +48,9 @@ class Word implements Serializable {
     @Column
     private Boolean compileOnly = false
 
+    @Column
+    private Boolean controlWord = false
+
     @Column(nullable = true)
     private Integer stackValue
 
@@ -72,6 +75,7 @@ class Word implements Serializable {
         this.setCreateDateTime(new Date())
     }
 
+////////////////////////////////////////// GETTERS & SETTERS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     void setArgumentCount(Integer argumentCount) {
         this.argumentCount = argumentCount
     }
@@ -159,6 +163,15 @@ class Word implements Serializable {
         this.createDateTime = createDateTime
     }
 
+    Boolean getControlWord() {
+        return controlWord
+    }
+
+    void setControlWord(Boolean controlWord) {
+        this.controlWord = controlWord
+    }
+
+//////////////////////////////////////// END GETTERS & SETTERS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     boolean equals(o) {
         if (this.is(o)) return true
         if (o == null || getClass() != o.class) return false
