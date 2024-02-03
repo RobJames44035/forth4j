@@ -20,6 +20,7 @@ package com.rajames.forth.init
 import com.rajames.forth.compiler.ForthCompilerException
 import com.rajames.forth.dictionary.Word
 import com.rajames.forth.dictionary.WordService
+import com.rajames.forth.util.DatabaseBackupService
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 

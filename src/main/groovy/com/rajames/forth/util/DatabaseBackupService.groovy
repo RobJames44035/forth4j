@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.rajames.forth.init
+package com.rajames.forth.util
 
 import org.h2.tools.RunScript
 import org.h2.tools.Script
