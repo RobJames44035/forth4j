@@ -14,19 +14,33 @@
  * limitations under the License.
  */
 
-package runtime
+package primitives_classes.runtime
 
 import com.rajames.forth.dictionary.Word
 import com.rajames.forth.runtime.AbstractRuntime
 import com.rajames.forth.runtime.ForthInterpreter
 
 class If extends AbstractRuntime {
-
-
+// : test 5 = if ." Five " else ." Not Fove " then ;
     @Override
-    Object execute(ForthInterpreter interpreter, Word word) {
-        Integer number = interpreter.dataStack.pop() as Integer
+    Object execute(ForthInterpreter interpreter, Word word, Word parentWord) {
+        Integer conditionValue = interpreter.dataStack.pop() as Integer
+        parentWord.executionIndex = word.executionIndex + 1; // Move to next word following 'if'
 
+        if (conditionValue == 0) {
+            // If condition is not met, skip words until 'else' or 'then' is found
+            while (parentWord.forthWords.size() > parentWord.executionIndex) {
+                Word nxtWord = interpreter.wordService.findByName(parentWord.forthWords.get(parentWord.executionIndex))
+                if (nxtWord.name.equals("else") || nxtWord.name.equals("then")) {
+                    if (nxtWord.name.equals("else")) {
+                        // Match found, push conditionValue back onto the stack for 'else' statement
+                        interpreter.dataStack.push(conditionValue)
+                    }
+                    break
+                }
+                parentWord.executionIndex++
+            }
+        }
         return null
     }
 }

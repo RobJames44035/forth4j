@@ -23,7 +23,7 @@ import com.rajames.forth.runtime.ForthInterpreter
 class GreaterThan extends AbstractRuntime {
 
     @Override
-    Object execute(ForthInterpreter interpreter, Word word) {
+    Object execute(ForthInterpreter interpreter, Word word, Word parentWord) {
         interpreter.dataStack.push((interpreter.dataStack.pop() > interpreter.dataStack.pop()) ? -1 : 0)
         return null
     }

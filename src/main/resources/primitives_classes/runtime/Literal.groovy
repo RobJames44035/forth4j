@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package runtime
+package primitives_classes.runtime
 
 import com.rajames.forth.dictionary.Word
 import com.rajames.forth.runtime.AbstractRuntime
@@ -23,7 +23,7 @@ import com.rajames.forth.runtime.ForthInterpreter
 class Literal extends AbstractRuntime {
 
     @Override
-    Object execute(ForthInterpreter interpreter, Word word) {
+    Object execute(ForthInterpreter interpreter, Word word, Word parentWord) {
 
         // Code goes here
         if (word.name.startsWith("int_")) {

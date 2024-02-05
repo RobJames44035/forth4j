@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package runtime
+package primitives_classes.runtime
 
 import com.rajames.forth.dictionary.Word
 import com.rajames.forth.runtime.AbstractRuntime
@@ -23,7 +23,7 @@ import com.rajames.forth.runtime.ForthInterpreter
 class TwoMinus extends AbstractRuntime {
 
     @Override
-    Object execute(ForthInterpreter interpreter, Word word) {
+    Object execute(ForthInterpreter interpreter, Word word, Word parentWord) {
         interpreter.dataStack.push(interpreter.dataStack.pop() - 2)
         return null
     }

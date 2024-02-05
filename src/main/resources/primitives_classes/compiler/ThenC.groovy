@@ -14,16 +14,33 @@
  * limitations under the License.
  */
 
-package compiler
+package primitives_classes.compiler
 
-import com.rajames.forth.compiler.AbstractCompile
+import com.rajames.forth.compiler.AbstractCompilerDirective
 import com.rajames.forth.compiler.ForthCompiler
 import com.rajames.forth.dictionary.Word
 import com.rajames.forth.runtime.ForthInterpreter
 
-class ThenC extends AbstractCompile {
+class ThenC extends AbstractCompilerDirective {
     @Override
     Boolean execute(Word newWord, ForthCompiler compiler, ForthInterpreter interpreter) {
+//        this.compiler = compiler
+//        this.interpreter = interpreter
+//
+//        while(!this.interpreter.tokensCopy.isEmpty()) {
+//            String token = this.interpreter.tokensCopy.remove()
+//            Word word = this.compiler.wordService.findByName(token)
+//
+//            if(!token.equals("if") && !token.equals("else") && !token.equals("then") && word) {
+//                this.compiler.forthWordsBuffer.add(word.name)
+//                if(word.compileClass){
+//                    def classLoader = new GroovyClassLoader()
+//                    Class groovyClass = classLoader.parseClass(word.compileClass)
+//                    CompilerDirective compileTime = groovyClass.getDeclaredConstructor().newInstance() as CompilerDirective
+//                    def output = compileTime.execute(this.compiler.newWord, this.compiler, this.interpreter)
+//                }
+//            }
+//        }
         return false
     }
 }

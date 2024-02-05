@@ -14,12 +14,22 @@
  * limitations under the License.
  */
 
-package com.rajames.forth.compiler
+package primitives_classes.runtime
 
 import com.rajames.forth.dictionary.Word
+import com.rajames.forth.runtime.AbstractRuntime
 import com.rajames.forth.runtime.ForthInterpreter
 
-interface CompileTime {
+class Then extends AbstractRuntime {
 
-    Boolean execute(Word newWord, ForthCompiler compiler, ForthInterpreter interpreter)
+    @Override
+    Object execute(ForthInterpreter interpreter, Word word, Word parentWord) {
+
+        if (!interpreter.returnStack.isEmpty()) {
+            interpreter.instructionPointer = interpreter.returnStack.pop() as Integer
+        }
+
+        // The common case is that forthOutput is null at the end of a word execution
+        return null;
+    }
 }

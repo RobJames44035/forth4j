@@ -20,5 +20,5 @@ import com.rajames.forth.dictionary.Word
 
 interface RunTime {
 
-    Object execute(ForthInterpreter interpreter, Word word)
+    Object execute(ForthInterpreter interpreter, Word word, Word parentWord)
 }

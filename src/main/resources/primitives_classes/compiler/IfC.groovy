@@ -14,51 +14,109 @@
  * limitations under the License.
  */
 
-package compiler
-//    : ?full 12 = if ." It's full " then ." Hello World" ;
+package primitives_classes.compiler
+//    : ?full 12 = if ." It's full " else ." NOT full " then ." Finished! " ;
+//    : ?full 12 = if ." It's full " then ;
 
-import com.rajames.forth.compiler.AbstractCompile
+import com.rajames.forth.compiler.AbstractCompilerDirective
+import com.rajames.forth.compiler.CompilerDirective
 import com.rajames.forth.compiler.ForthCompiler
 import com.rajames.forth.compiler.ForthCompilerException
 import com.rajames.forth.dictionary.Word
 import com.rajames.forth.runtime.ForthInterpreter
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 
-class IfC extends AbstractCompile {
+class IfC extends AbstractCompilerDirective {
+
+    private static final Logger log = LogManager.getLogger(this.class.getName())
+
+    ForthCompiler compiler
+    ForthInterpreter interpreter
     @Override
     Boolean execute(Word newWord, ForthCompiler compiler, ForthInterpreter interpreter) {
+        this.compiler = compiler
+        this.interpreter = interpreter
 
-        List<String> tokens = newWord.getForthWords()
-        Stack<Integer> ctrlFlowStack = new Stack<>()
-        int currentIndex = 0
+        // Fast Fail
+        if (interpreter.words.stream().noneMatch(w -> w.getName().equals("then"))) {
+            interpreter.words.clear()
+            interpreter.nonWords.clear()
+            interpreter
+            throw new ForthCompilerException("No matching 'THEN for 'IF")
+        }
+        runup()
 
-        for (token in compiler.forthWordsBuffer) {
-            Word word = interpreter.wordService.findByName(token)
-            if (word != null) {
-                if (word.name == "if") {
-                    // When we see an IF, we add a placeholder (use a unique string)
-                    // where we'll later put a jump instruction
-                    tokens[currentIndex] = "<placeholder for jump if false>"
-                    // push the current index onto the control flow stack
-                    ctrlFlowStack.push(currentIndex)
-                } else if (word.name == "then") {
-                    if (ctrlFlowStack.size() == 0) {
-                        throw new ForthCompilerException("Mismatched THEN")
+        while (!this.interpreter.tokensCopy.isEmpty()) {
+            String token = this.interpreter.tokensCopy.remove()
+            Word thenWord = this.compiler.wordService.findByName("then")
+            Word elseWord = this.compiler.wordService.findByName("else")
+            if (token == thenWord.name || token == elseWord.name) {
+                if (token == thenWord.name) {
+                    this.compiler.forthWordsBuffer.add(thenWord.name)
+                    this.interpreter.words.remove()
+                    break
+                }
+                if (token == elseWord.name) {
+                    def classLoader = new GroovyClassLoader()
+                    Class groovyClass = classLoader.parseClass(elseWord.compileClass)
+                    CompilerDirective compileTime = groovyClass.getDeclaredConstructor().newInstance() as CompilerDirective
+                    def output = compileTime.execute(this.compiler.newWord, this.compiler, this.interpreter)
+                    break
+                }
+            } else {
+                Word word = this.compiler.wordService.findByName(token)
+                try {
+                    this.interpreter.words.remove()
+                } catch (Exception ignored) {
+                    break
+                }
+
+                if (word) {
+                    this.compiler.forthWordsBuffer.add(word.name)
+                    if (word.compileClass) {
+                        def classLoader = new GroovyClassLoader()
+                        Class groovyClass = classLoader.parseClass(word.compileClass)
+                        CompilerDirective compileTime = groovyClass.getDeclaredConstructor().newInstance() as CompilerDirective
+                        def output = compileTime.execute(this.compiler.newWord, this.compiler, this.interpreter)
                     }
-                    // We've encountered a THEN. Replace the jump placeholder with a real jump location
-                    int ifIndex = ctrlFlowStack.pop()
-                    String jumpTo = Integer.toString(currentIndex)
-                    tokens[ifIndex] = jumpTo
                 }
             }
-            currentIndex++
         }
-
-        // Check if we have any unmatched IFs
-        if (!ctrlFlowStack.isEmpty()) {
-            throw new ForthCompilerException("Unmatched IF")
-        }
-
-        newWord.setForthWords(tokens)
         return false
+    }
+
+    private void runup() {
+        // remove all tokens from the tokensCopy up to "if"
+        while (!this.interpreter.tokensCopy.isEmpty()) {
+            String token = this.interpreter.tokensCopy.remove()
+            Word ifWord = this.compiler.wordService.findByName("if")
+            if (ifWord.name == token) {
+                // add "if" to the list of forthWordsBuffer
+                this.compiler.forthWordsBuffer.add(ifWord.name)
+                break
+            }
+        }
+    }
+
+    private Word compileLiteral(String token) {
+        Word wordLiteral = new Word()
+        String uniqueId = UUID.randomUUID().toString().replaceAll("-", "")
+        try {
+            // Integer literals
+            Integer i = Integer.parseInt(token)
+            wordLiteral.name = "int_${this.compiler.literal.name}_${uniqueId}"
+            wordLiteral.stackValue = i
+        } catch (NumberFormatException ignored) {
+            // string literal
+            wordLiteral.name = "str_${this.compiler.literal.name}_${uniqueId}"
+            wordLiteral.stringLiteral = token
+        }
+        wordLiteral.runtimeClass = this.compiler.literal.runtimeClass
+        wordLiteral.compileOnly = true
+        wordLiteral.dictionary = this.compiler.dictionary
+        wordLiteral.parentWord = this.compiler.newWord
+        this.compiler.wordService.save(wordLiteral)
+        return wordLiteral
     }
 }

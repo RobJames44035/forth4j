@@ -16,7 +16,8 @@
 
 package compiler
 
-import com.rajames.forth.compiler.AbstractCompile
+
+import com.rajames.forth.compiler.AbstractCompilerDirective
 import com.rajames.forth.compiler.ForthCompiler
 import com.rajames.forth.dictionary.Word
 import com.rajames.forth.runtime.ForthInterpreter
@@ -24,14 +25,18 @@ import org.springframework.transaction.annotation.Transactional
 
 import java.util.concurrent.ConcurrentLinkedQueue
 
-class DotQuoteC extends AbstractCompile {
+class DotQuoteC extends AbstractCompilerDirective {
 
     @Override
     @Transactional
     Boolean execute(Word word, ForthCompiler compiler, ForthInterpreter interpreter) {
         ConcurrentLinkedQueue<Word> words = interpreter.words
         ConcurrentLinkedQueue<String> nonWords = interpreter.nonWords
-        Word nextWord = words.remove()
+        Word nextWord = null
+        try {
+            nextWord = words.remove()
+        } catch (Exception ignored) {
+        }
         while (!nonWords.isEmpty()) {
             String stringLiteral = nonWords.remove()
             if (stringLiteral == "\"") {
@@ -52,7 +57,9 @@ class DotQuoteC extends AbstractCompile {
                 break
             }
         }
-        compiler.forthWordsBuffer.add(nextWord.name)
+        if (nextWord != null) {
+            compiler.forthWordsBuffer.add(nextWord.name)
+        }
         return false
     }
 }

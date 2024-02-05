@@ -24,7 +24,7 @@ class Dot extends AbstractRuntime {
 
 
     @Override
-    Object execute(ForthInterpreter interpreter, Word word) {
+    Object execute(ForthInterpreter interpreter, Word word, Word parentWord) {
         print(interpreter.dataStack.pop())
         return null
     }

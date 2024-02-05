@@ -16,12 +16,13 @@
 
 package compiler
 
-import com.rajames.forth.compiler.AbstractCompile
+
+import com.rajames.forth.compiler.AbstractCompilerDirective
 import com.rajames.forth.compiler.ForthCompiler
 import com.rajames.forth.dictionary.Word
 import com.rajames.forth.runtime.ForthInterpreter
 
-class SemiColonC extends AbstractCompile {
+class SemiColonC extends AbstractCompilerDirective {
 
     @Override
     Boolean execute(Word newWord, ForthCompiler compiler, ForthInterpreter interpreter) {

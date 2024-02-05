@@ -31,6 +31,9 @@ import org.springframework.stereotype.Component
 
 import java.util.concurrent.ConcurrentLinkedQueue
 
+/**
+ * The forth4j interpreter.
+ */
 @Component
 class ForthInterpreter {
 
@@ -42,8 +45,10 @@ class ForthInterpreter {
     Integer instructionPointer
 
     Queue<String> tokens = new ConcurrentLinkedQueue<>()
+    Queue<String> tokensCopy = new ConcurrentLinkedQueue<>()
     Queue<Word> words = new ConcurrentLinkedQueue<>()
     Queue<String> nonWords = new ConcurrentLinkedQueue<>()
+    Queue<String> numbers = new ConcurrentLinkedQueue<>()
 
     @Autowired
     Memory memory
@@ -88,7 +93,7 @@ class ForthInterpreter {
         instructionPointer = 0
         while (!words.isEmpty()) {
             Word exec = words.poll()
-            forthOutput = executeWord(exec)
+            forthOutput = executeWord(exec, exec.parentWord)
 
             if (exec.controlWord) {
                 returnStack.push(instructionPointer)
@@ -99,7 +104,7 @@ class ForthInterpreter {
             // Case when a return operation occurred:
             // Assuming here a flag inside `Word` class `isReturned`, which would indicate
             // if it was a word that returned (e.g., RET or ;)
-            if (exec.isReturned && !returnStack.isEmpty()) {
+            if (exec.returned && !returnStack.isEmpty()) {
                 instructionPointer = returnStack.pop() as Integer
             }
         }
@@ -112,6 +117,9 @@ class ForthInterpreter {
      *
      */
     private void configureForthInterpreter() {
+
+
+        tokensCopy = tokens.clone() as Queue<String>
         try {
             while (!tokens.isEmpty()) {
                 this.token = tokens.remove()
@@ -122,7 +130,9 @@ class ForthInterpreter {
                     words.add(word)
                 } else {
                     try {
-                        dataStack.push(Integer.parseInt(token) as Integer)
+                        Integer i = Integer.parseInt(token)
+                        dataStack.push(i as Integer)
+                        numbers.add(token)
                     } catch (NumberFormatException ignored) {
                         nonWords.add(token)
                     }
@@ -138,17 +148,18 @@ class ForthInterpreter {
      * @param word This is the word we will be executing.
      * @return the forthOutput flag for REPL.
      */
-    boolean executeWord(Word word) {
+    boolean executeWord(Word word, Word parentWord) {
         if (word.compileOnly) {
-            throw new ForthInterpreterException("Compile Only.")
+            throw new ForthInterpreterException("Compile Only.");
         }
+
         if (word.runtimeClass != null) {
-            return executePrimitiveWord(word)
+            return executePrimitiveWord(word, parentWord)
         } else if (word.forthWords.size() > 0) {
-            return executeComplexWord(word)
+            return executeComplexWord(word, parentWord)
         } else {
             // Should be unreachable.
-            return false
+            return false;
         }
     }
 
@@ -159,7 +170,7 @@ class ForthInterpreter {
      * @param word The primitive word to execute.
      * @return The boolean flag for REPL.
      */
-    private boolean executePrimitiveWord(Word word) {
+    private boolean executePrimitiveWord(Word word, Word parentWord) {
         Boolean forthOutput = false
         try {
             String runtimeClass = word?.runtimeClass?.trim()
@@ -167,7 +178,7 @@ class ForthInterpreter {
                 def classLoader = new GroovyClassLoader()
                 Class groovyClass = classLoader.parseClass(runtimeClass)
                 RunTime runTime = groovyClass.getDeclaredConstructor().newInstance() as RunTime
-                forthOutput = runTime.execute(this, word)
+                forthOutput = runTime.execute(this, word, parentWord)
                 if (forthOutput == null) {
                     forthOutput = false
                 } // edge cases here
@@ -187,18 +198,25 @@ class ForthInterpreter {
      * @param word the complex/compound word to execute.
      * @return same old boolean flag for REPL.
      */
-    private boolean executeComplexWord(Word word) {
-        boolean forthOutput = false
-        word.forthWords.each { String childWord ->
-            Word child = wordService.findByName(childWord)
-            if (child != null) {
-                if (child?.runtimeClass) {
-                    forthOutput = executePrimitiveWord(child)
-                } else {
-                    forthOutput = executeComplexWord(child)
-                }
+    boolean executeComplexWord(Word word, Word parentWord) {
+        word.executionIndex = 0
+        Boolean output = false
+        while (word.executionIndex < word.forthWords.size()) {
+
+            Word nextWord = wordService.findByName(word.forthWords.get(word.executionIndex)) as Word
+
+            if (nextWord.forthWords.size() > 0) {
+                output = executeComplexWord(nextWord, word)
+            } else if (nextWord.runtimeClass != null) {
+                output = executePrimitiveWord(nextWord, word)
             }
+
+            word.executionIndex++
         }
-        return forthOutput
+
+        // Reset index after executing this word
+        word.executionIndex = 0
+        return output
     }
+
 }

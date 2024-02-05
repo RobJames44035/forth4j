@@ -85,7 +85,7 @@ class WordService {
     Word addWordToDictionary(String wordName, String dictionaryName,
                              List<String> complexWords = null,
                              String runtimeClass = null, String compileClass = null,
-                             Integer argumentCount = 0, Boolean compileOnly = false) {
+                             Integer argumentCount = 0, Boolean compileOnly = false, Boolean controlWord = false) {
         Word word = null
         try {
             Optional<Dictionary> dictionaryOptional = dictionaryRepository.findByName(dictionaryName) as Optional<Dictionary>
@@ -100,6 +100,7 @@ class WordService {
                 word.compileClass = compileClass
                 word.argumentCount = argumentCount
                 word.compileOnly = compileOnly
+                word.controlWord = controlWord
                 save(word)
 
                 if (complexWords) {

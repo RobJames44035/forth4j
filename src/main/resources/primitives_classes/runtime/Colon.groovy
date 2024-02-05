@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package runtime
+package primitives_classes.runtime
 
 import com.rajames.forth.compiler.ForthCompilerException
 import com.rajames.forth.dictionary.Word
@@ -30,10 +30,11 @@ class Colon extends AbstractRuntime {
     private static final Logger log = LogManager.getLogger(this.class.getName())
 
     @Override
-    Object execute(ForthInterpreter interpreter, Word word) {
+    Object execute(ForthInterpreter interpreter, Word word, Word parentWord) {
         // Fail Fast
         if (interpreter.words.stream().noneMatch(w -> w.getName().equals(";"))) {
             interpreter.words.clear()
+            interpreter.nonWords.clear()
             throw new ForthCompilerException("No ending semicolon")
         }
 

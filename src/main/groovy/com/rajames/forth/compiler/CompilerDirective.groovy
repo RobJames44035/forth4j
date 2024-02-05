@@ -16,11 +16,10 @@
 
 package com.rajames.forth.compiler
 
+import com.rajames.forth.dictionary.Word
 import com.rajames.forth.runtime.ForthInterpreter
 
-abstract class AbstractCompile implements CompileTime {
+interface CompilerDirective {
 
-    ForthInterpreter interpreter
-    ForthCompiler compiler
-
+    Boolean execute(Word newWord, ForthCompiler compiler, ForthInterpreter interpreter)
 }

@@ -37,10 +37,10 @@ class Word implements Serializable {
     private String name
 
     @Column(columnDefinition = "TEXT", nullable = true)
-    private String runtimeClass
+    private String runtimeBehavior
 
     @Column(columnDefinition = "TEXT", nullable = true)
-    private String compileClass
+    private String compilerDirective
 
     @Column
     private Integer argumentCount = 0
@@ -71,7 +71,10 @@ class Word implements Serializable {
     private Word parentWord
 
     @Transient
-    private boolean isReturned = false
+    private Integer executionIndex = 0
+
+    @Transient
+    private Boolean returned = false
 
     @PrePersist
     void onCreate() {
@@ -143,19 +146,19 @@ class Word implements Serializable {
     }
 
     String getRuntimeClass() {
-        return runtimeClass
+        return runtimeBehavior
     }
 
     void setRuntimeClass(String runtimeClass) {
-        this.runtimeClass = runtimeClass
+        this.runtimeBehavior = runtimeClass
     }
 
     String getCompileClass() {
-        return compileClass
+        return compilerDirective
     }
 
     void setCompileClass(String compileClass) {
-        this.compileClass = compileClass
+        this.compilerDirective = compileClass
     }
 
     Date getCreateDateTime() {
@@ -174,12 +177,20 @@ class Word implements Serializable {
         this.controlWord = controlWord
     }
 
-    boolean getIsReturned() {
-        return isReturned
+    Integer getExecutionIndex() {
+        return executionIndex
     }
 
-    void setIsReturned(boolean isReturned) {
-        this.isReturned = isReturned
+    void setExecutionIndex(Integer executionIndex) {
+        this.executionIndex = executionIndex
+    }
+
+    Boolean getReturned() {
+        return returned
+    }
+
+    void setReturned(Boolean returned) {
+        this.returned = returned
     }
 
 //////////////////////////////////////// END GETTERS & SETTERS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -207,10 +218,10 @@ class Word implements Serializable {
         if (this.forthWords.size() > 0) {
             sb.append("\n\tCompiled Definition: ").append(this.forthWords)
         } else {
-            if (this.runtimeClass) {
+            if (this.runtimeBehavior) {
                 sb.append("\n\tRuntime Behavior: Scripted & available.")
             }
-            if (this.compileClass) {
+            if (this.compilerDirective) {
                 sb.append("\n\tCompiler Behavior: Scripted & available.")
             }
             sb.append("\n\tStack expectancy: ").append(this.argumentCount)

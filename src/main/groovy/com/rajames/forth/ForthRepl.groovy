@@ -18,6 +18,7 @@
 //file:noinspection GroovyUnusedAssignment
 package com.rajames.forth
 
+import com.rajames.forth.compiler.ForthCompiler
 import com.rajames.forth.memory.DataStack
 import com.rajames.forth.memory.Memory
 import com.rajames.forth.memory.ReturnStack
@@ -28,6 +29,9 @@ import org.apache.logging.log4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
+/**
+ * forth4j REPL
+ */
 @Component
 class ForthRepl {
 
@@ -51,10 +55,11 @@ class ForthRepl {
         this.scanner = new Scanner(System.in)
     }
 
+    /**
+     * Execute the REPL
+     */
     void run() {
-
         Boolean forthOutput
-
         printPreamble()
 
         while (true) {
@@ -71,14 +76,10 @@ class ForthRepl {
 
             try {
                 forthOutput = interpreter.interpretAndExecute(line)
-                interpreter.nonWords.clear()
-                interpreter.tokens.clear()
-                interpreter.words.clear()
-                interpreter.nonWords.clear()
-                interpreter.token = null
-                interpreter.instructionPointer = 0
+                resetInterpreter()
+                resetCompiler()
             } catch (Exception ex) {
-                log.error(ex.message)
+                log.error(ex.message, ex) // TODO remove stackTrace when ready.
             }
 
             if (forthOutput) {
@@ -95,6 +96,35 @@ class ForthRepl {
         System.exit(0)
     }
 
+    /**
+     * Reset the interpreter to it's known starting state.
+     */
+    private void resetInterpreter() {
+        interpreter.nonWords.clear()
+        interpreter.tokens.clear()
+        interpreter.words.clear()
+        interpreter.nonWords.clear()
+        interpreter.token = null
+        interpreter.instructionPointer = 0
+    }
+
+    /**
+     * Reset the compiler to it's known starting state.
+     */
+    private void resetCompiler() {
+        ForthCompiler compiler = interpreter.forthCompiler
+        compiler.newWord = null
+        compiler.literal = null
+        compiler.nextWordToCompile = null
+        compiler.forthWordsBuffer = new ArrayList<String>()
+        compiler.words.clear()
+        compiler.arguments.clear()
+        compiler.nonWords.clear()
+    }
+
+    /**
+     * Print the starting Banner
+     */
     static void printPreamble() {
         print("\u001B[2J")
         print("\u001B[H")
@@ -104,9 +134,5 @@ class ForthRepl {
         println("| For details see `https://www.apache.org/licenses/LICENSE-2.0' |")
         println("=================================================================")
         println("Type `bye' to exit.")
-    }
-
-    static void printPreamble2() {
-        println(ForthRepl.class.getClassLoader().getResource("preamble.txt").text)
     }
 }

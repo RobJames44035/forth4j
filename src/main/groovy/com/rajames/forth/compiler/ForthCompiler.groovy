@@ -37,8 +37,6 @@ class ForthCompiler {
 
     private static final Logger log = LogManager.getLogger(this.class.getName())
 
-    List<String> forthWordsBuffer = new ArrayList<>()
-
     @Autowired
     DictionaryService dictionaryService
 
@@ -62,9 +60,12 @@ class ForthCompiler {
 
     Word newWord
     Word literal
+    Word nextWordToCompile
     Dictionary dictionary
-
-    Stack<String> ctrlFlowStack = new Stack<>()
+    List<String> forthWordsBuffer = new ArrayList<>()
+    ConcurrentLinkedQueue<Word> words
+    ConcurrentLinkedQueue<Integer> arguments
+    ConcurrentLinkedQueue<String> nonWords
 
     @Transactional
     Word compileWord(
@@ -72,47 +73,55 @@ class ForthCompiler {
             ConcurrentLinkedQueue<Integer> arguments,
             ConcurrentLinkedQueue<String> nonWords
     ) {
+
+        this.words = words
+        this.arguments = arguments
+        this.nonWords = nonWords
+
         Word newForthWord = null
 
         try {
-            setupForCompilerRun(nonWords)
-            compileArgumentLiterals(arguments)
+            setupForCompilerRun()
+            compileArgumentLiterals()
+            doCompile()
 
-            newForthWord = doCompile(words)
-
-            newForthWord.forthWords = forthWordsBuffer
+            this.newWord.forthWords = forthWordsBuffer
             newForthWord = wordService.save(this.newWord)
 
         } catch (Exception e) {
-            log.error(e.message, e)
+            log.error(e.message)
         }
         return newForthWord
     }
 
-    private Word doCompile(ConcurrentLinkedQueue<Word> words) {
-        Boolean output
-        while (!words.isEmpty()) {
-            Word nextWordToCompile = words.remove()
-            if (nextWordToCompile) {
-                output = true
-                String compileClass = nextWordToCompile?.compileClass?.trim()
-                if (compileClass != null && !compileClass.isEmpty()) {
-                    def classLoader = new GroovyClassLoader()
-                    Class groovyClass = classLoader.parseClass(compileClass)
-                    CompileTime compileTime = groovyClass.getDeclaredConstructor().newInstance() as CompileTime
-                    output = compileTime.execute(this.newWord, this, this.interpreter)
-                    if (output) {
+    private Boolean doCompile() {
+        Boolean output = false
+        try {
+            while (!words.isEmpty()) {
+                nextWordToCompile = words.remove()
+                if (nextWordToCompile) {
+                    output = true
+                    String compileClass = nextWordToCompile?.compileClass?.trim()
+                    if (compileClass != null && !compileClass.isEmpty()) {
+                        def classLoader = new GroovyClassLoader()
+                        Class groovyClass = classLoader.parseClass(compileClass)
+                        CompilerDirective compileTime = groovyClass.getDeclaredConstructor().newInstance() as CompilerDirective
+                        output = compileTime.execute(this.newWord, this, this.interpreter)
+                        if (output) {
+                            forthWordsBuffer.add(nextWordToCompile.name)
+                        } // Edge cases can fo here. To be avoided though.
+                    } else {
                         forthWordsBuffer.add(nextWordToCompile.name)
                     }
-                } else {
-                    forthWordsBuffer.add(nextWordToCompile.name)
                 }
             }
+        } catch (Exception e) {
+            log.error("foo", e)
         }
-        return this.newWord
+        return output
     }
 
-    private void setupForCompilerRun(ConcurrentLinkedQueue<String> nonWords) {
+    private void setupForCompilerRun() {
         this.dictionary = dictionaryService.findByName(bootstrap.coreName)
         this.literal = wordService.findByName("literal")
         this.newWord = new Word()
@@ -121,7 +130,7 @@ class ForthCompiler {
         this.wordService.save(this.newWord)
     }
 
-    private void compileArgumentLiterals(ConcurrentLinkedQueue<Integer> arguments) {
+    private void compileArgumentLiterals() {
         while (!arguments.isEmpty()) {
             Integer argument = arguments.remove()
             String uniqueId = UUID.randomUUID().toString().replaceAll("-", "")

@@ -62,11 +62,11 @@ class CoreDefinitions {
         return retVal
     }
 
-    Word createPrimitiveWord(String wordName, String runtimeClass = null, String compileClass = null, Integer argumentCount = 0, Boolean compileOnly = false) {
+    Word createPrimitiveWord(String wordName, String runtimeClass = null, String compileClass = null, Integer argumentCount = 0, Boolean compileOnly = false, Boolean controlWord = false) {
         try {
             String runtimeContent = getRuntimeContent(runtimeClass)
             String compileContent = getCompileContent(compileClass)
-            return wordService.addWordToDictionary(wordName, coreName, null, runtimeContent, compileContent, argumentCount, compileOnly)
+            return wordService.addWordToDictionary(wordName, coreName, null, runtimeContent, compileContent, argumentCount, compileOnly, controlWord)
         } catch (Exception e) {
             throw new ForthCompilerException("Could not create primitive word ${wordName}.", e)
         }
@@ -112,9 +112,9 @@ class CoreDefinitions {
         Word literal = createPrimitiveWord("literal", "Literal", null, 0, true)
 
 
-        Word ifWord = createPrimitiveWord("if", null, "IfC", 1, true)
-        Word elseWord = createPrimitiveWord("else")
-        Word thenWord = createPrimitiveWord("then", null, "ThenC")
+        Word ifWord = createPrimitiveWord("if", "If", "IfC", 1, true, true)
+        Word elseWord = createPrimitiveWord("else", "Else", "ElseC", 0, true, true)
+        Word thenWord = createPrimitiveWord("then", "Then", "ThenC", 0, true, true)
 
 //        Word doWord = createPrimitiveWord("do")
 //        Word loopWord = createPrimitiveWord("loop")
@@ -126,13 +126,6 @@ class CoreDefinitions {
 //        Word repeatWord = createPrimitiveWord("repeat")
 
         // Complex words that are made up of a List<Word> that describes their behavior go here.
-
-        Word add = createComplexWord("add", [plus.name, cr.name, dot.name, cr.name], 2)
-//        log.debug("CoreDefinitions: createComplexWord(\"add\", [plus, cr, dot, cr], 2, false): complexWord.name = ${add} complexWord?.forthWords = ${add?.forthWords}")
-
-        Word sub = createComplexWord("sub", [minus.name, cr.name, dot.name, cr.name], 2)
-//        log.debug("CoreDefinitions: createComplexWord(\"sub\", [minus, cr, dot, cr], 2, false): complexWord.name = ${sub} complexWord?.forthWords = ${sub?.forthWords}")
-
 
         databaseBackupService.backupDatabase("/home/rajames/PROJECTS/forth4j/src/main/resources", "CoreForth4j.sql")
     }

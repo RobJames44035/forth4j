@@ -16,15 +16,28 @@
 
 package primitives_classes.runtime
 
+
 import com.rajames.forth.dictionary.Word
 import com.rajames.forth.runtime.AbstractRuntime
 import com.rajames.forth.runtime.ForthInterpreter
 
-class TwoPlus extends AbstractRuntime {
-
-    @Override
+class Else extends AbstractRuntime {
+// : test 5 = if ." Five " else ." Not Fove " then ;
     Object execute(ForthInterpreter interpreter, Word word, Word parentWord) {
-        interpreter.dataStack.push(interpreter.dataStack.pop() + 2)
+        // Pop from the stack is not required as 'If' already takes care of it.
+        parentWord.executionIndex = word.executionIndex + 1; // Move to next word following 'else'
+
+        // Continue executing the words until 'then' is found.
+        while (parentWord.forthWords.size() > parentWord.executionIndex) {
+            Word nxtWord = interpreter.wordService.findByName(parentWord.forthWords.get(parentWord.executionIndex))
+            if (nxtWord.name.equals("then")) {
+                break
+            }
+            nxtWord.execute(interpreter, nxtWord, parentWord)
+            parentWord.executionIndex++
+        }
+
         return null
     }
 }
+

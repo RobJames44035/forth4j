@@ -22,7 +22,7 @@ import com.rajames.forth.runtime.ForthInterpreter
 
 class Emit extends AbstractRuntime {
     @Override
-    Object execute(ForthInterpreter interpreter, Word word) {
+    Object execute(ForthInterpreter interpreter, Word word, Word parentWord) {
         print((char) interpreter.dataStack.pop())
         return null
     }

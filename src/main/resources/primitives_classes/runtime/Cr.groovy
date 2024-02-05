@@ -22,7 +22,7 @@ import com.rajames.forth.runtime.ForthInterpreter
 
 class Cr extends AbstractRuntime {
     @Override
-    Object execute(ForthInterpreter interpreter, Word word) {
+    Object execute(ForthInterpreter interpreter, Word word, Word parentWord) {
         println()
         return null
     }

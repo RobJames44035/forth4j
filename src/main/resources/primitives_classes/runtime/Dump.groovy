@@ -23,7 +23,7 @@ import com.rajames.forth.runtime.ForthInterpreter
 class Dump extends AbstractRuntime {
 
     @Override
-    Object execute(ForthInterpreter interpreter, Word word) {
+    Object execute(ForthInterpreter interpreter, Word word, Word parentWord) {
         Word dumpWord = interpreter?.words?.remove()
         println(dumpWord.toString())
         return null

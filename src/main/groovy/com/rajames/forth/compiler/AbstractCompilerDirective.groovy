@@ -14,17 +14,13 @@
  * limitations under the License.
  */
 
-package primitives_classes.runtime
+package com.rajames.forth.compiler
 
-import com.rajames.forth.dictionary.Word
-import com.rajames.forth.runtime.AbstractRuntime
 import com.rajames.forth.runtime.ForthInterpreter
 
-class TwoPlus extends AbstractRuntime {
+abstract class AbstractCompilerDirective implements CompilerDirective {
 
-    @Override
-    Object execute(ForthInterpreter interpreter, Word word, Word parentWord) {
-        interpreter.dataStack.push(interpreter.dataStack.pop() + 2)
-        return null
-    }
+    ForthInterpreter interpreter
+    ForthCompiler compiler
+
 }
