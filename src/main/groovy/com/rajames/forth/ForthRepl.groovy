@@ -23,6 +23,7 @@ import com.rajames.forth.memory.DataStack
 import com.rajames.forth.memory.Memory
 import com.rajames.forth.memory.ReturnStack
 import com.rajames.forth.runtime.ForthInterpreter
+import com.rajames.forth.runtime.ForthInterpreterException
 import org.apache.groovy.groovysh.Groovysh
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -78,8 +79,8 @@ class ForthRepl {
                 forthOutput = interpreter.interpretAndExecute(line)
                 resetInterpreter()
                 resetCompiler()
-            } catch (Exception ex) {
-                log.error("Error: ", ex) // TODO remove stackTrace when ready.
+            } catch (ForthInterpreterException ex) {
+                log.error("Error: ${ex?.message} ") // TODO remove stackTrace when ready.
             }
 
             if (forthOutput) {
@@ -88,7 +89,7 @@ class ForthRepl {
 
             print("\u001B[1A")  // Move cursor up one line
             print("\u001B[" + (line.length()) + "C")  // Move cursor to the end of existing user input + 2 spaces
-            print("\033[94mok\033[0m\n")
+            print("\033[94m ok\033[0m\n")
         }
 
         this.scanner.close()
@@ -99,10 +100,8 @@ class ForthRepl {
      * Reset the interpreter to it's known starting state.
      */
     private void resetInterpreter() {
-        interpreter.nonWords.clear()
         interpreter.tokens.clear()
         interpreter.words.clear()
-        interpreter.nonWords.clear()
         interpreter.token = null
         interpreter.instructionPointer = 0
     }

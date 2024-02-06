@@ -39,16 +39,16 @@ class ForthInterpreter {
 
     private static final Logger log = LogManager.getLogger(this.class.getName())
 
+    /**
+     * This is the input
+     */
     String line
     Word word
     String token
     Integer instructionPointer
 
     Queue<String> tokens = new ConcurrentLinkedQueue<>()
-    Queue<String> tokensCopy = new ConcurrentLinkedQueue<>()
     Queue<Word> words = new ConcurrentLinkedQueue<>()
-    Queue<String> nonWords = new ConcurrentLinkedQueue<>()
-    Queue<String> numbers = new ConcurrentLinkedQueue<>()
 
     @Autowired
     Memory memory
@@ -75,14 +75,43 @@ class ForthInterpreter {
      */
     boolean interpretAndExecute(String line) {
 
+//        this.line = line.toLowerCase().trim() as String
+//        this.tokens = new LinkedList<>(line.tokenize())
+//        boolean forthOutput = false
+
+        configureForthInterpreter(line)
+
+        return execution()
+    }
+
+    /**
+     * When we enter the interpreter with a line from REPL it needs to be broken out into
+     * a number of things to prepare it for execution:
+     * We iterate through all of the tokens in the line and set interpreter fields accordingly.
+     *
+     */
+    private void configureForthInterpreter(String line) {
+        this.instructionPointer = 0
         this.line = line.toLowerCase().trim() as String
         this.tokens = new LinkedList<>(line.tokenize())
         boolean forthOutput = false
 
-        configureForthInterpreter()
+        while (!tokens.isEmpty()) {
+            this.token = tokens.poll()
 
-        return execution()
+            this.word = wordService.findByName(token)
+            if (word != null) {
+                words.add(word)
+            } else {
+                try {
+                    dataStack.push(Integer.parseInt(token) as Integer)
+                } catch (NumberFormatException e) {
+                    throw new ForthInterpreterException("Opps! That word is not in the Dictionary!", e)
+                }
+            }
+        }
     }
+
 
     /**
      * execution is the responsable method for executing all the forth words from a line of input.
@@ -94,51 +123,8 @@ class ForthInterpreter {
         while (!words.isEmpty()) {
             Word exec = words.poll()
             forthOutput = executeWord(exec, exec.parentWord)
-
-//            if (exec.controlWord) {
-//                returnStack.push(instructionPointer)
-//            } else {
-//                instructionPointer++
-//            }
-//
-//            // Case when a return operation occurred:
-//            // Assuming here a flag inside `Word` class `isReturned`, which would indicate
-//            // if it was a word that returned (e.g., RET or ;)
-//            if (exec.returned && !returnStack.isEmpty()) {
-//                instructionPointer = returnStack.pop() as Integer
-//            }
         }
         return forthOutput
-    }
-    /**
-     * When we enter the interpreter with a line from REPL it needs to be broken out into
-     * a number of things to prepare it for execution:
-     * We iterate through all of the tokens in the line and set interpreter fields accordingly.
-     *
-     */
-    private void configureForthInterpreter() {
-
-
-        tokensCopy = tokens.clone() as Queue<String>
-        try {
-            while (!tokens.isEmpty()) {
-                this.token = tokens.poll()
-
-                this.word = wordService.findByName(token)
-                if (word != null) {
-                    words.add(word)
-                } else {
-                    try {
-                        dataStack.push(Integer.parseInt(token) as Integer)
-                        numbers.add(token)
-                    } catch (NumberFormatException ignored) {
-                        nonWords.add(token)
-                    }
-                }
-            }
-        } catch (Exception ignored) {
-//            log.error("Invalid Input or Undefined Word: ${tokens}\n\t" + e.message, e)
-        }
     }
 
     /**
@@ -155,10 +141,8 @@ class ForthInterpreter {
             return executePrimitiveWord(word, parentWord)
         } else if (word.forthWords.size() > 0) {
             return executeComplexWord(word, parentWord)
-        } else {
-            // Should be unreachable.
-            return false
         }
+        return false
     }
 
     /**
@@ -177,14 +161,6 @@ class ForthInterpreter {
                 Class groovyClass = classLoader.parseClass(runtimeBehaviorClass)
                 IRuntime runTime = groovyClass.getDeclaredConstructor().newInstance() as IRuntime
                 forthOutput = runTime.execute(this, word, parentWord)
-//                if (word.controlWord) {
-//                    returnStack.push(instructionPointer)
-//                } else {
-//                    instructionPointer++
-//                }
-//                if (word.returned && !returnStack.isEmpty()) {
-//                    instructionPointer = returnStack.pop() as Integer
-//                }
                 if (forthOutput == null) {
                     forthOutput = false
                 } // edge cases here. We CAN return anything we want in reality.

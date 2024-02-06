@@ -107,6 +107,8 @@ class CoreDefinitions {
         Word lessThan = createPrimitiveWord("<", "LessThan", null, 2)
         Word greaterThan = createPrimitiveWord(">", "GreaterThan", null, 2)
         Word equal = createPrimitiveWord("=", "Equal", null, 2)
+        Word spaces = createPrimitiveWord("spaces", "Spaces", null, 1)
+
         Word colon = createPrimitiveWord(":", "Colon")
         Word semicolon = createPrimitiveWord(";")
         Word literal = createPrimitiveWord("literal", "Literal", null, 0, true)
