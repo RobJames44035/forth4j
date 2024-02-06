@@ -14,18 +14,11 @@
  * limitations under the License.
  */
 
-package compiler
+package com.rajames.forth.runtime
 
-
-import com.rajames.forth.compiler.AbstractCompilerDirective
-import com.rajames.forth.compiler.ForthCompiler
 import com.rajames.forth.dictionary.Word
-import com.rajames.forth.runtime.ForthInterpreter
 
-class SemiColonC extends AbstractCompilerDirective {
+interface IRuntime {
 
-    @Override
-    Boolean execute(Word newWord, ForthCompiler compiler, ForthInterpreter interpreter) {
-        return false
-    }
+    Object execute(ForthInterpreter interpreter, Word word, Word parentWord)
 }

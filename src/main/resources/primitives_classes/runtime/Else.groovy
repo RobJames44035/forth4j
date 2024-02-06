@@ -14,30 +14,51 @@
  * limitations under the License.
  */
 
+/*
+ * The "Else" class is part of the runtime mechanism of the Forth-like language interpreter.
+ * This class extends from "AbstractRuntime", the abstract class that forms the base for all runtime classes.
+ *
+ * This class handles the 'ELSE' keyword. During normal execution, when 'IF' block is entered, and 'ELSE' command
+ * is encountered, execution is always skipped to 'THEN' excluding the instructions between 'ELSE' and 'THEN' from execution.
+ * This happens whether or not the condition for 'IF' was true or false.
+ *
+ * The presence of the commands 'IF', 'ELSE', and 'THEN' introduces the concept of nested execution control into the language,
+ * thereby providing programmers using the language with greater flexibility in designing their code.
+ *
+ * The word example given below demonstrates how a condition is tested and based on the result it selects a string to print.
+ * : test 5 = if ." Five " else ." Not Five " then ;
+ */
 package primitives_classes.runtime
-
 
 import com.rajames.forth.dictionary.Word
 import com.rajames.forth.runtime.AbstractRuntime
 import com.rajames.forth.runtime.ForthInterpreter
 
+/**
+ * The 'Else' class extends the 'AbstractRuntime' super class.
+ * It handles the logic of the 'ELSE' keyword in the interpreter.
+ */
 class Else extends AbstractRuntime {
-// : test 5 = if ." Five " else ." Not Fove " then ;
-    Object execute(ForthInterpreter interpreter, Word word, Word parentWord) {
-        // Pop from the stack is not required as 'If' already takes care of it.
-        parentWord.executionIndex = word.executionIndex + 1; // Move to next word following 'else'
 
-        // Continue executing the words until 'then' is found.
-        while (parentWord.forthWords.size() > parentWord.executionIndex) {
-            Word nxtWord = interpreter.wordService.findByName(parentWord.forthWords.get(parentWord.executionIndex))
-            if (nxtWord.name.equals("then")) {
-                break
-            }
-            nxtWord.execute(interpreter, nxtWord, parentWord)
-            parentWord.executionIndex++
+    /**
+     * The `execute` method is responsible for implementing the 'ELSE' operation in the forth interpreter.
+     * When an 'ELSE' is encountered during execution, it skips the commands and jumps to the 'THEN' command.
+     *
+     * @param interpreter The ForthInterpreter Spring bean
+     * @param word The word that is being interpreted.
+     * @param parentWord The word from which 'ELSE' is being executed.
+     * @return It will usually be null as this command represents a control structure rather than producing a value.
+     */
+    Object execute(ForthInterpreter interpreter, Word word, Word parentWord) {
+        // Find the index of 'THEN' command in parent word's forthWords list
+        Integer thenIndex = parentWord.forthWords.indexOf("then")
+
+        // If 'ELSE' is hit during execution, it always skips to 'THEN'
+        if (thenIndex > 0) {
+            parentWord.executionIndex = thenIndex
         }
 
+        // The 'else' block does not produce a result by itself, so method returns null
         return null
     }
 }
-

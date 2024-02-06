@@ -16,7 +16,7 @@
 
 package com.rajames.forth.runtime
 
-abstract class AbstractRuntime implements RunTime {
+abstract class AbstractRuntime implements IRuntime {
 
     ForthInterpreter interpreter
 

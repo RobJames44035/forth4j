@@ -95,18 +95,18 @@ class ForthInterpreter {
             Word exec = words.poll()
             forthOutput = executeWord(exec, exec.parentWord)
 
-            if (exec.controlWord) {
-                returnStack.push(instructionPointer)
-            } else {
-                instructionPointer++
-            }
-
-            // Case when a return operation occurred:
-            // Assuming here a flag inside `Word` class `isReturned`, which would indicate
-            // if it was a word that returned (e.g., RET or ;)
-            if (exec.returned && !returnStack.isEmpty()) {
-                instructionPointer = returnStack.pop() as Integer
-            }
+//            if (exec.controlWord) {
+//                returnStack.push(instructionPointer)
+//            } else {
+//                instructionPointer++
+//            }
+//
+//            // Case when a return operation occurred:
+//            // Assuming here a flag inside `Word` class `isReturned`, which would indicate
+//            // if it was a word that returned (e.g., RET or ;)
+//            if (exec.returned && !returnStack.isEmpty()) {
+//                instructionPointer = returnStack.pop() as Integer
+//            }
         }
         return forthOutput
     }
@@ -122,16 +122,14 @@ class ForthInterpreter {
         tokensCopy = tokens.clone() as Queue<String>
         try {
             while (!tokens.isEmpty()) {
-                this.token = tokens.remove()
+                this.token = tokens.poll()
 
                 this.word = wordService.findByName(token)
-
                 if (word != null) {
                     words.add(word)
                 } else {
                     try {
-                        Integer i = Integer.parseInt(token)
-                        dataStack.push(i as Integer)
+                        dataStack.push(Integer.parseInt(token) as Integer)
                         numbers.add(token)
                     } catch (NumberFormatException ignored) {
                         nonWords.add(token)
@@ -150,7 +148,7 @@ class ForthInterpreter {
      */
     boolean executeWord(Word word, Word parentWord) {
         if (word.compileOnly) {
-            throw new ForthInterpreterException("Compile Only.");
+            throw new ForthInterpreterException("Compile Only.")
         }
 
         if (word.runtimeClass != null) {
@@ -159,7 +157,7 @@ class ForthInterpreter {
             return executeComplexWord(word, parentWord)
         } else {
             // Should be unreachable.
-            return false;
+            return false
         }
     }
 
@@ -173,15 +171,23 @@ class ForthInterpreter {
     private boolean executePrimitiveWord(Word word, Word parentWord) {
         Boolean forthOutput = false
         try {
-            String runtimeClass = word?.runtimeClass?.trim()
-            if (runtimeClass != null && !word.runtimeClass.isEmpty()) {
+            String runtimeBehaviorClass = word?.runtimeClass?.trim()
+            if (runtimeBehaviorClass != null && !runtimeBehaviorClass.isEmpty() && !runtimeBehaviorClass.isBlank()) {
                 def classLoader = new GroovyClassLoader()
-                Class groovyClass = classLoader.parseClass(runtimeClass)
-                RunTime runTime = groovyClass.getDeclaredConstructor().newInstance() as RunTime
+                Class groovyClass = classLoader.parseClass(runtimeBehaviorClass)
+                IRuntime runTime = groovyClass.getDeclaredConstructor().newInstance() as IRuntime
                 forthOutput = runTime.execute(this, word, parentWord)
+//                if (word.controlWord) {
+//                    returnStack.push(instructionPointer)
+//                } else {
+//                    instructionPointer++
+//                }
+//                if (word.returned && !returnStack.isEmpty()) {
+//                    instructionPointer = returnStack.pop() as Integer
+//                }
                 if (forthOutput == null) {
                     forthOutput = false
-                } // edge cases here
+                } // edge cases here. We CAN return anything we want in reality.
             }
         } catch (ForthInterpreterException interpreterException) {
             log.error(interpreterException.message)
@@ -204,16 +210,13 @@ class ForthInterpreter {
         while (word.executionIndex < word.forthWords.size()) {
 
             Word nextWord = wordService.findByName(word.forthWords.get(word.executionIndex)) as Word
-
-            if (nextWord.forthWords.size() > 0) {
+            if (nextWord.forthWords.size() > 0 && nextWord != null) {
                 output = executeComplexWord(nextWord, word)
             } else if (nextWord.runtimeClass != null) {
                 output = executePrimitiveWord(nextWord, word)
             }
-
             word.executionIndex++
         }
-
         // Reset index after executing this word
         word.executionIndex = 0
         return output

@@ -65,7 +65,7 @@ class ForthRepl {
         while (true) {
             String line = this.scanner.nextLine().trim()
 
-            if (line == "bye" || line == "exit") {
+            if (line == "bye") {
                 println("Goodbye!")
                 break
             } else if (line == "gsh") {
@@ -79,7 +79,7 @@ class ForthRepl {
                 resetInterpreter()
                 resetCompiler()
             } catch (Exception ex) {
-                log.error(ex.message, ex) // TODO remove stackTrace when ready.
+                log.error("Error: ", ex) // TODO remove stackTrace when ready.
             }
 
             if (forthOutput) {
@@ -88,8 +88,7 @@ class ForthRepl {
 
             print("\u001B[1A")  // Move cursor up one line
             print("\u001B[" + (line.length()) + "C")  // Move cursor to the end of existing user input + 2 spaces
-            print(" ok\n")
-
+            print("\033[94mok\033[0m\n")
         }
 
         this.scanner.close()
@@ -117,9 +116,9 @@ class ForthRepl {
         compiler.literal = null
         compiler.nextWordToCompile = null
         compiler.forthWordsBuffer = new ArrayList<String>()
-        compiler.words.clear()
-        compiler.arguments.clear()
-        compiler.nonWords.clear()
+        compiler?.words?.clear()
+        compiler?.arguments?.clear()
+        compiler?.nonWords?.clear()
     }
 
     /**

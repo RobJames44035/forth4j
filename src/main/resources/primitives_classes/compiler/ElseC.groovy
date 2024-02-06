@@ -14,8 +14,24 @@
  * limitations under the License.
  */
 
-package primitives_classes.compiler
 
+/*
+ * The class "ElseC" extends from "AbstractCompilerDirective", and is part of the compile-time mechanism for handling the 'ELSE'
+ * control structure in the Forth-like language interpreter.
+ *
+ * During the compilation process, the compiler directive associated with 'ELSE' is activated upon encountering 'ELSE'.
+ * The 'ElseC' class's 'execute' method processes all tokens following 'ELSE' until it encounters 'THEN'.
+ * These tokens are sequentially translated into an executable form, to be interpreted by the runtime mechanism.
+ *
+ * Here is an example of how it's used:
+ * If the current line being interpreted contains "if 10 = else", the execute() method would process everything after "else" until a 'THEN' is found.
+ *
+ * A Note to developers: It helps to set a line breakpoint at the return statement and inspecting
+ * the compiler.forthWordsBuffer for correctness. This is what the 'newWord' will `look like` once saved
+ * to the dictionary.
+ *
+ */
+package primitives_classes.compiler
 
 import com.rajames.forth.compiler.AbstractCompilerDirective
 import com.rajames.forth.compiler.CompilerDirective
@@ -26,6 +42,10 @@ import com.rajames.forth.runtime.ForthInterpreter
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
+/**
+ * The 'ElseC' class extends the 'AbstractCompilerDirective' super class.
+ * This compiler directive class handles the logic of the 'ELSE' keyword at compile time in the interpreter.
+ */
 class ElseC extends AbstractCompilerDirective {
 
     private static final Logger log = LogManager.getLogger(this.class.getName())
@@ -33,6 +53,16 @@ class ElseC extends AbstractCompilerDirective {
     ForthCompiler compiler
     ForthInterpreter interpreter
 
+    /**
+     * The `execute` method is responsible for performing the compile-time operations for 'ELSE' in the
+     * Forth compiler.
+     *
+     * @param newWord The word that is being compiled.
+     * @param compiler The ForthCompiler instance.
+     * @param interpreter The ForthInterpreter instance.
+     * @return Boolean indicating if a new line needs to be printed or not in Forth REPL.
+     * @exception ForthCompilerException If there's no matching 'IF' or 'THEN' for 'ELSE'.
+     */
     @Override
     Boolean execute(Word newWord, ForthCompiler compiler, ForthInterpreter interpreter) {
         this.compiler = compiler
@@ -50,33 +80,28 @@ class ElseC extends AbstractCompilerDirective {
             throw new ForthCompilerException("No matching 'THEN for 'ELSE")
         }
 
-
         while (!this.interpreter.tokensCopy.isEmpty()) {
-            String token = this.interpreter.tokensCopy.remove()
+            String token = this.interpreter.tokensCopy.poll()
             Word thenWord = this.compiler.wordService.findByName("then")
-            if (token == thenWord.name) {
-                def classLoader = new GroovyClassLoader()
-                Class groovyClass = classLoader.parseClass(thenWord.compileClass)
-                CompilerDirective compileTime = groovyClass.getDeclaredConstructor().newInstance() as CompilerDirective
-                def output = compileTime.execute(this.compiler.newWord, this.compiler, this.interpreter)
-                break
-            } else {
-                Word word = this.compiler.wordService.findByName(token)
 
-                if (word) {
-                    this.compiler.forthWordsBuffer.add(word.name)
-                    if (word.compileClass) {
-                        def classLoader = new GroovyClassLoader()
-                        Class groovyClass = classLoader.parseClass(word.compileClass)
-                        CompilerDirective compileTime = groovyClass.getDeclaredConstructor().newInstance() as CompilerDirective
-                        def output = compileTime.execute(this.compiler.newWord, this.compiler, this.interpreter)
-                    }
+            Word word = this.compiler.wordService.findByName(token)
+
+            if (word) {
+                this.compiler.forthWordsBuffer.add(word.name)
+                if (word.compileClass) {
+                    def classLoader = new GroovyClassLoader()
+                    Class groovyClass = classLoader.parseClass(word.compileClass)
+                    CompilerDirective compileTime = groovyClass.getDeclaredConstructor().newInstance() as CompilerDirective
+                    def output = compileTime.execute(this.compiler.newWord, this.compiler, this.interpreter)
                 }
             }
+
+        }
+
+        // Fix things up a bit.
+        while (compiler.forthWordsBuffer.contains(";")) {
+            compiler.forthWordsBuffer.remove(";")
         }
         return false
     }
-
-    // ... rest of your methods ...
-
 }
