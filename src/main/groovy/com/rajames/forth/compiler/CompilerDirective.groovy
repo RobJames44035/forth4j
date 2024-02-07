@@ -19,7 +19,17 @@ package com.rajames.forth.compiler
 import com.rajames.forth.dictionary.Word
 import com.rajames.forth.runtime.ForthInterpreter
 
+/**
+ * Interface for Compiler Directives.
+ */
 interface CompilerDirective {
 
+    /**
+     * Execute a compiler Directive on a word.
+     * @param newWord The new word we are creating.
+     * @param compiler The FORTH compiler.
+     * @param interpreter The FORTH interpreter.
+     * @return an arbitrary `anything`. Usually null or Boolean false.
+     */
     Boolean execute(Word newWord, ForthCompiler compiler, ForthInterpreter interpreter)
 }

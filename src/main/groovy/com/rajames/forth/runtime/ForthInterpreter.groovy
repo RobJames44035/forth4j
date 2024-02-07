@@ -75,13 +75,34 @@ class ForthInterpreter {
      */
     boolean interpretAndExecute(String line) {
 
-//        this.line = line.toLowerCase().trim() as String
-//        this.tokens = new LinkedList<>(line.tokenize())
-//        boolean forthOutput = false
-
         configureForthInterpreter(line)
 
+        while (!tokens.isEmpty()) {
+            this.token = tokens.poll()
+
+            this.word = wordService.findByName(token)
+            if (word != null) {
+                words.add(word)
+            } else if (canParseToInt(token)) {
+                dataStack.push(Integer.parseInt(token) as Integer)
+            }
+        }
+
         return execution()
+    }
+
+    /**
+     * Check to see if a number in a string is an Integer.
+     * @param str the Sting we are attempting to convert to an Integer.
+     * @return true if it's an integer, false if it is not.
+     */
+    private static boolean canParseToInt(String str) {
+        try {
+            Integer.parseInt(str)
+            return true
+        } catch (NumberFormatException ignored) {
+            return false
+        }
     }
 
     /**
@@ -91,25 +112,10 @@ class ForthInterpreter {
      *
      */
     private void configureForthInterpreter(String line) {
-        this.instructionPointer = 0
         this.line = line.toLowerCase().trim() as String
         this.tokens = new LinkedList<>(line.tokenize())
         boolean forthOutput = false
-
-        while (!tokens.isEmpty()) {
-            this.token = tokens.poll()
-
-            this.word = wordService.findByName(token)
-            if (word != null) {
-                words.add(word)
-            } else {
-                try {
-                    dataStack.push(Integer.parseInt(token) as Integer)
-                } catch (NumberFormatException e) {
-                    throw new ForthInterpreterException("Opps! That word is not in the Dictionary!", e)
-                }
-            }
-        }
+        this.instructionPointer = 0
     }
 
 
@@ -157,10 +163,10 @@ class ForthInterpreter {
         try {
             String runtimeBehaviorClass = word?.runtimeClass?.trim()
             if (runtimeBehaviorClass != null && !runtimeBehaviorClass.isEmpty() && !runtimeBehaviorClass.isBlank()) {
-                def classLoader = new GroovyClassLoader()
+                GroovyClassLoader classLoader = new GroovyClassLoader()
                 Class groovyClass = classLoader.parseClass(runtimeBehaviorClass)
-                IRuntime runTime = groovyClass.getDeclaredConstructor().newInstance() as IRuntime
-                forthOutput = runTime.execute(this, word, parentWord)
+                Runtime runtime = groovyClass.getDeclaredConstructor().newInstance() as Runtime
+                forthOutput = runtime.execute(this, word, parentWord)
                 if (forthOutput == null) {
                     forthOutput = false
                 } // edge cases here. We CAN return anything we want in reality.

@@ -16,6 +16,7 @@
 
 package com.rajames.forth.compiler
 
+import com.rajames.forth.dictionary.Word
 import com.rajames.forth.runtime.ForthInterpreter
 
 abstract class AbstractCompilerDirective implements CompilerDirective {
@@ -23,4 +24,15 @@ abstract class AbstractCompilerDirective implements CompilerDirective {
     ForthInterpreter interpreter
     ForthCompiler compiler
 
+    /**
+     * Execute a compiler Directive on a word.
+     * @param newWord The new word we are creating.
+     * @param compiler The FORTH compiler.
+     * @param interpreter The FORTH interpreter.
+     * @return an arbitrary `anything`. Usually null or Boolean false.
+     */
+    @Override
+    Boolean execute(Word newWord, ForthCompiler compiler, ForthInterpreter interpreter) {
+        throw new ForthCompilerException("No defined compiler directive")
+    }
 }

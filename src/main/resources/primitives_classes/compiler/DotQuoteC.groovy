@@ -14,52 +14,50 @@
  * limitations under the License.
  */
 
-package compiler
+package primitives_classes.compiler
 
 
 import com.rajames.forth.compiler.AbstractCompilerDirective
 import com.rajames.forth.compiler.ForthCompiler
+import com.rajames.forth.compiler.ForthCompilerException
 import com.rajames.forth.dictionary.Word
 import com.rajames.forth.runtime.ForthInterpreter
 import org.springframework.transaction.annotation.Transactional
 
 import java.util.concurrent.ConcurrentLinkedQueue
 
+// : test 2 + ." adding x + 2 = " . cr ." Done!" ;
 class DotQuoteC extends AbstractCompilerDirective {
+
+
+    public static final String QUOTATION_MARK = "\""
 
     @Override
     @Transactional
     Boolean execute(Word word, ForthCompiler compiler, ForthInterpreter interpreter) {
         ConcurrentLinkedQueue<Word> words = interpreter.words
-        ConcurrentLinkedQueue<String> nonWords = interpreter.nonWords
+        StringBuilder sb = new StringBuilder()
         Word nextWord = null
         try {
-            nextWord = words.remove()
-        } catch (Exception ignored) {
-        }
-        while (!nonWords.isEmpty()) {
-            String stringLiteral = nonWords.remove()
-            if (stringLiteral == "\"") {
-                break
-            }
-            Word literal = compiler.literal
-            Word wordLiteral = new Word()
-            wordLiteral.name = "str_${literal.name}_${UUID.randomUUID().toString()}"
-            wordLiteral.runtimeClass = literal.runtimeClass
-            wordLiteral.stringLiteral = stringLiteral - "\""
-            wordLiteral.compileOnly = true
-            wordLiteral.dictionary = compiler.dictionary
-            wordLiteral.parentWord = compiler.newWord
-            compiler.wordService.save(wordLiteral)
+            compiler.forthWordsBuffer.add(word.name)
+            while (!compiler.tokens.isEmpty()) {
+                String token = compiler.tokens.poll()
+                if (token == QUOTATION_MARK) {
+                    break
+                }
+                if (token.endsWith(QUOTATION_MARK)) {
+                    sb.append(token)
+                    break
+                }
 
-            compiler.forthWordsBuffer.add(wordLiteral.name)
-            if (stringLiteral.endsWith("\"")) {
-                break
+                sb.append(token).append(" ")
             }
-        }
-        if (nextWord != null) {
-            compiler.forthWordsBuffer.add(nextWord.name)
+            String stringLiteral = sb.toString()
+            compiler.compileLiteral(stringLiteral)
+        } catch (Exception e) {
+            throw new ForthCompilerException("${this.class.simpleName} failed.", e)
         }
         return false
     }
+
 }

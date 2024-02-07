@@ -23,8 +23,6 @@ import com.rajames.forth.runtime.ForthInterpreter
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
-import java.util.concurrent.ConcurrentLinkedQueue
-
 class Colon extends AbstractRuntime {
 
     private static final Logger log = LogManager.getLogger(this.class.getName())
@@ -32,23 +30,15 @@ class Colon extends AbstractRuntime {
     @Override
     Object execute(ForthInterpreter interpreter, Word word, Word parentWord) {
         // Fail Fast
-        if (interpreter.words.stream().noneMatch(w -> w.getName().equals(";"))) {
-            interpreter.words.clear()
-            interpreter.nonWords.clear()
-            throw new ForthCompilerException("No ending semicolon")
-        }
-
-        ConcurrentLinkedQueue<String> nonWords = interpreter.nonWords
-        ConcurrentLinkedQueue<Word> words = interpreter.words
-        ConcurrentLinkedQueue<Integer> arguments = new ConcurrentLinkedQueue<>()
-
-        while (interpreter.dataStack.size() > 0) {
-            Integer argument = interpreter.dataStack.pop() as Integer
-            arguments.add(argument)
-        }
-
+        if (!interpreter.line.endsWith(";"))
+            throw new ForthCompilerException("No matching ';' for ':'")
         // Invoke the compiler
-        interpreter.forthCompiler.compileWord(words, arguments, nonWords)
-        return null
+        interpreter.forthCompiler.compile(interpreter.line)
+        interpreter.tokens.clear()
+        interpreter.words.clear()
+        interpreter.word = null
+        interpreter.line = null
+        interpreter.instructionPointer = 0
+        return false
     }
 }

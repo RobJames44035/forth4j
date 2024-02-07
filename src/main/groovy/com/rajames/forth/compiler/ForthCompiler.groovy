@@ -60,31 +60,51 @@ class ForthCompiler {
 
     Word newWord
     Word literal
-    Word nextWordToCompile
+    String nextTokenToCompile
     Dictionary dictionary
     List<String> forthWordsBuffer = new ArrayList<>()
-    ConcurrentLinkedQueue<Word> words
-    ConcurrentLinkedQueue<Integer> arguments
-    ConcurrentLinkedQueue<String> nonWords
+
+    Queue<String> tokens = new ConcurrentLinkedQueue<>()
+
+    private boolean isStringContext = false
 
     @Transactional
-    Word compileWord(
-            ConcurrentLinkedQueue<Word> words,
-            ConcurrentLinkedQueue<Integer> arguments,
-            ConcurrentLinkedQueue<String> nonWords
-    ) {
-
-        this.words = words
-        this.arguments = arguments
-        this.nonWords = nonWords
-
+    Word compile(String line) {
+        // Setup
         Word newForthWord = null
+        line = line.toLowerCase().trim() - ":" - ";" as String
+        this.tokens = new LinkedList<>(line.tokenize())
+        defineNewWord()
+
+        while (!tokens.isEmpty()) {
+            Object compilerOutput = null
+            List<String> list = new ArrayList<>(tokens)
+            String token = tokens.poll()
+            Word word = wordService.findByName(token)
+
+            if (word != null) {
+                String compilerDirectiveClass = word?.compileClass?.trim()
+                if (compilerDirectiveClass != null && !compilerDirectiveClass.isEmpty() && !compilerDirectiveClass.isBlank()) {
+                    GroovyClassLoader classLoader = new GroovyClassLoader()
+                    Class groovyClass = classLoader.parseClass(compilerDirectiveClass)
+                    CompilerDirective compilerDirective = groovyClass.getDeclaredConstructor().newInstance() as CompilerDirective
+                    compilerOutput = compilerDirective.execute(word, this, this.interpreter)
+                    if (compilerOutput == null) {
+                        compilerOutput = false
+                    } else {
+                        // We CAN return anything we want in reality if there is anything AFTER
+                        // the compiler directive is finished and if we return something.
+                        // This was done to handle edge cases should they arise.
+                        continue
+                    }
+                }
+                this.forthWordsBuffer.add(word.name)
+            } else if (canParseToInt(token)) {
+                compileIntegerLiteral(token)
+            }
+        }
 
         try {
-            setupForCompilerRun()
-            compileArgumentLiterals()
-            doCompile()
-
             this.newWord.forthWords = forthWordsBuffer
             newForthWord = wordService.save(this.newWord)
 
@@ -94,56 +114,55 @@ class ForthCompiler {
         return newForthWord
     }
 
-    private Boolean doCompile() {
-        Boolean output = false
+    private static boolean canParseToInt(String str) {
         try {
-            while (!words.isEmpty()) {
-                nextWordToCompile = words.remove()
-                if (nextWordToCompile) {
-                    output = true
-                    String compileClass = nextWordToCompile?.compileClass?.trim()
-                    if (compileClass != null && !compileClass.isEmpty()) {
-                        def classLoader = new GroovyClassLoader()
-                        Class groovyClass = classLoader.parseClass(compileClass)
-                        CompilerDirective compileTime = groovyClass.getDeclaredConstructor().newInstance() as CompilerDirective
-                        output = compileTime.execute(this.newWord, this, this.interpreter)
-                        if (output) {
-                            forthWordsBuffer.add(nextWordToCompile.name)
-                        } // Edge cases can fo here. To be avoided though.
-                    } else {
-                        forthWordsBuffer.add(nextWordToCompile.name)
-                    }
-                }
-            }
-        } catch (Exception e) {
-            log.error("foo", e)
+            Integer.parseInt(str)
+            return true
+        } catch (NumberFormatException ignored) {
+            return false
         }
-        return output
     }
 
-    private void setupForCompilerRun() {
+    private void defineNewWord() {
         this.dictionary = dictionaryService.findByName(bootstrap.coreName)
-        this.literal = wordService.findByName("literal")
         this.newWord = new Word()
-        this.newWord.name = nonWords.remove()
+        this.newWord.name = this.tokens.poll()
         this.newWord.dictionary = dictionary
         this.wordService.save(this.newWord)
     }
 
-    private void compileArgumentLiterals() {
-        while (!arguments.isEmpty()) {
-            Integer argument = arguments.remove()
-            String uniqueId = UUID.randomUUID().toString().replaceAll("-", "")
-
-            Word wordLiteral = new Word()
-            wordLiteral.name = "int_${literal.name}_${uniqueId}"
-            wordLiteral.runtimeClass = literal.runtimeClass
-            wordLiteral.stackValue = argument
-            wordLiteral.compileOnly = true
-            wordLiteral.dictionary = this.dictionary
-            wordLiteral.parentWord = newWord
-            wordService.save(wordLiteral)
-            forthWordsBuffer.add(wordLiteral.name)
+    void compileIntegerLiteral(String token) {
+        try {
+            Word literal = wordService.findByName("literal")
+            Word integerLiteral = new Word()
+            integerLiteral.name = "int_${literal.name}_${UUID.randomUUID().toString() - "-"}"
+            integerLiteral.runtimeClass = literal.runtimeClass
+            integerLiteral.stackValue = Integer.parseInt(token)
+            integerLiteral.dictionary = this.dictionary
+            integerLiteral.parentWord = this.newWord
+            wordService.save(integerLiteral)
+            this.forthWordsBuffer.add(integerLiteral.name)
+        } catch (Exception e) {
+            throw new ForthCompilerException("Could not compile ${token} into the dictionary.", e)
         }
     }
+
+    void compileLiteral(String compileLiteral) {
+        try {
+            Word literal = wordService.findByName("literal")
+            Word stringLiteral = new Word()
+            stringLiteral.name = "str_${literal.name}_${UUID.randomUUID().toString() - "-"}"
+            stringLiteral.runtimeClass = literal.runtimeClass
+            stringLiteral.stringLiteral = compileLiteral
+            stringLiteral.compileOnly = true
+            stringLiteral.dictionary = this.dictionary
+            stringLiteral.parentWord = this.newWord
+            wordService.save(stringLiteral)
+            forthWordsBuffer.add(stringLiteral.name)
+        } catch (Exception e) {
+            throw new ForthCompilerException("Could not compile ${compileLiteral} into the dictionary.", e)
+        }
+    }
+
+
 }

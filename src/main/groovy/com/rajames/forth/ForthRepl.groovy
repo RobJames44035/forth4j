@@ -113,11 +113,8 @@ class ForthRepl {
         ForthCompiler compiler = interpreter.forthCompiler
         compiler.newWord = null
         compiler.literal = null
-        compiler.nextWordToCompile = null
+        compiler.nextTokenToCompile = null
         compiler.forthWordsBuffer = new ArrayList<String>()
-        compiler?.words?.clear()
-        compiler?.arguments?.clear()
-        compiler?.nonWords?.clear()
     }
 
     /**
