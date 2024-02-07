@@ -36,6 +36,12 @@ class Colon extends AbstractRuntime {
         interpreter.forthCompiler.compile(interpreter.line)
         interpreter.tokens.clear()
         interpreter.words.clear()
+
+        //Not too sure about this but...
+        interpreter.dataStack.clear()
+        interpreter.returnStack.clear()
+        // Revisit if needed
+
         interpreter.word = null
         interpreter.line = null
         interpreter.instructionPointer = 0

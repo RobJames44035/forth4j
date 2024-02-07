@@ -33,6 +33,7 @@
  * Our test cases included:
  * : test1 5 = if ." Five " then ;
  * : test2 5 = if ." Five " else ." Not Five " then ;
+ * : test3 dup test1 test2 ;
 */
 
 package primitives_classes.compiler
