@@ -80,7 +80,7 @@ class ForthRepl {
                 resetInterpreter()
                 resetCompiler()
             } catch (ForthInterpreterException ex) {
-                log.error("Error: ${ex?.message} ") // TODO remove stackTrace when ready.
+                log.error("Error: ${ex?.message}")
             }
 
             if (forthOutput) {
