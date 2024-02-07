@@ -29,7 +29,7 @@ interface Runtime {
      * @param word The word that is being executed.
      * @param parentWord It's parent word (if any).
      * @return An object of any type. By convention we are returning a Boolean to indicate if the REPL
-     * should print a newline or not. If you do anyhing with a returned Object, be sure to set
+     * should print a newline or not. If you do anything with a returned Object, be sure to set
      * forthOutput to to a Boolean for REPL.
      */
     Object execute(ForthInterpreter interpreter, Word word, Word parentWord)
