@@ -46,6 +46,8 @@ import com.rajames.forth.runtime.ForthInterpreter
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
+import java.util.concurrent.ConcurrentLinkedQueue
+
 /**
  * The 'IfC' class extends the 'AbstractCompilerDirective' super class.
  * This compiler directive class handles the logic of the 'IF' keyword at compile time in the interpreter.
@@ -67,106 +69,42 @@ class IfC extends AbstractCompilerDirective {
  * @exception ForthCompilerException if there's no matching 'IF' or 'THEN' for 'ELSE'.
  */
     @Override
-    Boolean execute(Word newWord, ForthCompiler compiler, ForthInterpreter interpreter) {
-        this.compiler = compiler
-        this.interpreter = interpreter
-
-        if (!interpreter.line.contains("if")) {
+    Boolean execute(Word word, ForthCompiler compiler, ForthInterpreter interpreter) {
+        ConcurrentLinkedQueue<Word> words = interpreter.words
+        Word nextWord = null
+        // Fail Fast
+        if (!compiler.tokens.contains("then")) {
             interpreter.words.clear()
-            interpreter.nonWords.clear()
-            throw new ForthCompilerException("No matching 'IF for 'ELSE")
+            throw new ForthCompilerException("No matching 'THEN'")
         }
-
-        if (!interpreter.line.contains("then")) {
+        if (compiler.tokens.contains("else") && !compiler.tokens.contains("then")) {
             interpreter.words.clear()
-            interpreter.nonWords.clear()
             throw new ForthCompilerException("No matching 'THEN for 'ELSE")
         }
 
-        runup()
-
-        while (!this.interpreter.tokensCopy.isEmpty()) {
-            String token = this.interpreter.tokensCopy.remove()
-            Word thenWord = this.compiler.wordService.findByName("then")
-            Word elseWord = this.compiler.wordService.findByName("else")
-            if (token == thenWord.name || token == elseWord.name) {
-                if (token == thenWord.name) {
-                    this.compiler.forthWordsBuffer.add(thenWord.name)
-                    this.interpreter.words.remove()
-                    break
-                }
-                if (token == elseWord.name) {
-                    def classLoader = new GroovyClassLoader()
-                    Class groovyClass = classLoader.parseClass(elseWord.compileClass)
-                    CompilerDirective compileTime = groovyClass.getDeclaredConstructor().newInstance() as CompilerDirective
-                    def output = compileTime.execute(this.compiler.newWord, this.compiler, this.interpreter)
-                    break
-                }
-            } else {
-                Word word = this.compiler.wordService.findByName(token)
-                try {
-                    this.interpreter.words.remove()
-                } catch (Exception ignored) {
+        try {
+            compiler.forthWordsBuffer.add(word.name)
+            while (!compiler.tokens.isEmpty()) {
+                String token = compiler.tokens.poll()
+                if (token == "then") {
+                    compiler.forthWordsBuffer.add(token)
                     break
                 }
 
-                if (word) {
-                    this.compiler.forthWordsBuffer.add(word.name)
-                    if (word.compileClass) {
+                nextWord = compiler.wordService.findByName(token)
+                if (nextWord != null) {
+                    // if nextWord has a defined compiler directive we need to insure it's executed as well.
+                    if (nextWord.compileClass != null && !nextWord.compileClass.isEmpty() && !nextWord.compileClass.isBlank()) {
                         def classLoader = new GroovyClassLoader()
-                        Class groovyClass = classLoader.parseClass(word.compileClass)
+                        Class groovyClass = classLoader.parseClass(nextWord.compileClass)
                         CompilerDirective compileTime = groovyClass.getDeclaredConstructor().newInstance() as CompilerDirective
-                        def output = compileTime.execute(this.compiler.newWord, this.compiler, this.interpreter)
+                        Boolean output = compileTime.execute(nextWord, compiler, interpreter)
                     }
                 }
             }
+        } catch (Exception e) {
+            throw new ForthCompilerException("${this.class.simpleName} failed.", e)
         }
         return false
-    }
-
-    /**
-     * The 'runup' method removes all tokens from the tokensCopy up to "if".
-     * It adds "if" to the list of forthWordsBuffer.
-     */
-    private void runup() {
-        // remove all tokens from the tokensCopy up to "if"
-        while (!this.interpreter.tokensCopy.isEmpty()) {
-            String token = this.interpreter.tokensCopy.remove()
-            Word ifWord = this.compiler.wordService.findByName("if")
-            if (ifWord.name == token) {
-                // add "if" to the list of forthWordsBuffer
-                this.compiler.forthWordsBuffer.add(ifWord.name)
-                break
-            }
-        }
-    }
-
-    /**
-     * The 'compileLiteral' method takes in a token (either integer or string literal) and
-     * generates unique identifiers for each.
-     * It then saves the literals as Words into the dictionary.
-     *
-     * @param token An Integer or String literal token
-     * @return A Word instance representing the literal token.
-     */
-    private Word compileLiteral(String token) {
-        Word wordLiteral = new Word()
-        String uniqueId = UUID.randomUUID().toString().replaceAll("-", "")
-        try {
-            // Integer literals
-            Integer i = Integer.parseInt(token)
-            wordLiteral.name = "int_${this.compiler.literal.name}_${uniqueId}"
-            wordLiteral.stackValue = i
-        } catch (NumberFormatException ignored) {
-            // string literal
-            wordLiteral.name = "str_${this.compiler.literal.name}_${uniqueId}"
-            wordLiteral.stringLiteral = token
-        }
-        wordLiteral.runtimeClass = this.compiler.literal.runtimeClass
-        wordLiteral.compileOnly = true
-        wordLiteral.dictionary = this.compiler.dictionary
-        wordLiteral.parentWord = this.compiler.newWord
-        this.compiler.wordService.save(wordLiteral)
-        return wordLiteral
     }
 }

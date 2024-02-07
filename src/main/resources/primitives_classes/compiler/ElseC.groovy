@@ -42,6 +42,8 @@ import com.rajames.forth.runtime.ForthInterpreter
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
+import java.util.concurrent.ConcurrentLinkedQueue
+
 /**
  * The 'ElseC' class extends the 'AbstractCompilerDirective' super class.
  * This compiler directive class handles the logic of the 'ELSE' keyword at compile time in the interpreter.
@@ -64,43 +66,37 @@ class ElseC extends AbstractCompilerDirective {
      * @exception ForthCompilerException If there's no matching 'IF' or 'THEN' for 'ELSE'.
      */
     @Override
-    Boolean execute(Word newWord, ForthCompiler compiler, ForthInterpreter interpreter) {
-        this.compiler = compiler
-        this.interpreter = interpreter
+    Boolean execute(Word word, ForthCompiler compiler, ForthInterpreter interpreter) {
+        ConcurrentLinkedQueue<Word> words = interpreter.words
+        Word nextWord = null
 
-        if (!interpreter.line.contains("if")) {
+        if (!compiler.tokens.contains("then")) {
             interpreter.words.clear()
-            interpreter.nonWords.clear()
-            throw new ForthCompilerException("No matching 'IF for 'ELSE")
+            throw new ForthCompilerException("No matching 'THEN'")
         }
 
-        if (!interpreter.line.contains("then")) {
-            interpreter.words.clear()
-            interpreter.nonWords.clear()
-            throw new ForthCompilerException("No matching 'THEN for 'ELSE")
-        }
+        try {
+            compiler.forthWordsBuffer.add(word.name)
+            while (!compiler.tokens.isEmpty()) {
+                String token = compiler.tokens.poll()
+                if (token == "then") {
+                    compiler.forthWordsBuffer.add(token)
+                    break
+                }
 
-        while (!this.interpreter.tokensCopy.isEmpty()) {
-            String token = this.interpreter.tokensCopy.poll()
-            Word thenWord = this.compiler.wordService.findByName("then")
-
-            Word word = this.compiler.wordService.findByName(token)
-
-            if (word) {
-                this.compiler.forthWordsBuffer.add(word.name)
-                if (word.compileClass) {
-                    def classLoader = new GroovyClassLoader()
-                    Class groovyClass = classLoader.parseClass(word.compileClass)
-                    CompilerDirective compileTime = groovyClass.getDeclaredConstructor().newInstance() as CompilerDirective
-                    def output = compileTime.execute(this.compiler.newWord, this.compiler, this.interpreter)
+                nextWord = compiler.wordService.findByName(token)
+                if (nextWord != null) {
+                    // if nextWord has a defined compiler directive we need to insure it's executed as well.
+                    if (nextWord.compileClass != null && !nextWord.compileClass.isEmpty() && !nextWord.compileClass.isBlank()) {
+                        def classLoader = new GroovyClassLoader()
+                        Class groovyClass = classLoader.parseClass(nextWord.compileClass)
+                        CompilerDirective compileTime = groovyClass.getDeclaredConstructor().newInstance() as CompilerDirective
+                        Boolean output = compileTime.execute(nextWord, compiler, interpreter)
+                    }
                 }
             }
-
-        }
-
-        // Fix things up a bit.
-        while (compiler.forthWordsBuffer.contains(";")) {
-            compiler.forthWordsBuffer.remove(";")
+        } catch (Exception e) {
+            throw new ForthCompilerException("${this.class.simpleName} failed.", e)
         }
         return false
     }

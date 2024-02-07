@@ -112,9 +112,9 @@ class CoreDefinitions {
         Word colon = createPrimitiveWord(":", "Colon")
         Word semicolon = createPrimitiveWord(";")
         Word literal = createPrimitiveWord("literal", "Literal", null, 0, true)
-//        Word ifWord = createPrimitiveWord("if", "If", "IfC", 1, true, true)
-//        Word elseWord = createPrimitiveWord("else", "Else", "ElseC", 0, true, true)
-//        Word thenWord = createPrimitiveWord("then", null, null, 0, true, true)
+        Word ifWord = createPrimitiveWord("if", "If", "IfC", 1, true, true)
+        Word elseWord = createPrimitiveWord("else", "Else", "ElseC", 0, true, true)
+        Word thenWord = createPrimitiveWord("then", null, null, 0, true, true)
 
 //        Word doWord = createPrimitiveWord("do")
 //        Word loopWord = createPrimitiveWord("loop")
