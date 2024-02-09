@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component
 class MemoryAddress {
 
     private Integer address
-    private Integer value
+    private Byte value
 
     int getAddress() {
         return address
@@ -37,7 +37,7 @@ class MemoryAddress {
         return value
     }
 
-    void setValue(int value) {
+    void setValue(Byte value) {
         this.value = value
     }
 }

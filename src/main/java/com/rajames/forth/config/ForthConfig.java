@@ -87,30 +87,6 @@ public class ForthConfig {
         return dataSource;
     }
 
-//    @Autowired
-//    @Bean
-//    public SessionFactory sessionFactory(final DataSource dataSource) throws Exception {
-//        final LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
-//        sessionFactory.setDataSource(dataSource);
-//        sessionFactory.setPackagesToScan(this.ENTITYMANAGER_PACKAGES_TO_SCAN);
-//
-//        final Properties hibernateProperties = new Properties();
-//
-//        hibernateProperties.put("hibernate.dialect", this.HIBERNATE_DIALECT);
-//        hibernateProperties.put("hibernate.show_sql", this.HIBERNATE_SHOW_SQL);
-//        hibernateProperties.put("hibernate.hbm2ddl.auto", this.HIBERNATE_HBM2DDL_AUTO);
-//        hibernateProperties.put("hibernate.connection.autocommit", this.HIBERNATE_CONNECTION_AUTOCOMMIT);
-//        hibernateProperties.put("hibernate.cache.use_second_level_cache", this.HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE);
-//        hibernateProperties.put("hibernate.cache.use_query_cache", this.HIBERNATE_CACHE_USE_QUERY_CACHE);
-//        hibernateProperties.put("hibernate.enable_lazy_load_no_trans", this.HIBERNATE_ENABLE_LAZY_LOAD_NO_TRANS);
-//
-//        sessionFactory.setHibernateProperties(hibernateProperties);
-//
-//        sessionFactory.afterPropertiesSet();
-//        return sessionFactory.getObject();
-//    }
-
-
     @Autowired
     @Bean(name = "transactionManager")
     JpaTransactionManager transactionManager(final EntityManagerFactory entityManagerFactory) {
@@ -140,8 +116,4 @@ public class ForthConfig {
 
         return emFactory;
     }
-//    @Bean
-//    public EntityManager entityManager(final EntityManagerFactory entityManagerFactory) {
-//        return entityManagerFactory.createEntityManager();
-//    }
 }

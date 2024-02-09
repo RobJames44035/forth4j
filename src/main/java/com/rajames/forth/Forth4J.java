@@ -34,19 +34,17 @@ public class Forth4J {
     public static void main(final String[] args) {
         final Options options = getOptions();
 
-        final HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp("forth4j", options);
         final CommandLineParser parser = new DefaultParser();
         final CommandLine cmd;
         try {
             cmd = parser.parse(options, args);
         } catch (final ParseException parseException) {
             System.err.println(parseException.getMessage());
-            formatter.printHelp("forth4j", options);
             System.exit(1);
             return;
         }
         if (cmd.hasOption("help")) {
+            final HelpFormatter formatter = new HelpFormatter();
             formatter.printHelp("forth4j", options);
             System.exit(0);
         }

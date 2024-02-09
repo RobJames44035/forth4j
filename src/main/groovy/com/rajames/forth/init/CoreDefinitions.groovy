@@ -82,7 +82,8 @@ class CoreDefinitions {
 
 
     void createCoreDictionary() {
-
+        log.info("\tBuilding core dictionary...")
+        println("\tBuilding core dictionary...")
         // Non-Standard words
         Word noop = createPrimitiveWord("noop")
         Word nop = createPrimitiveWord("nop")
@@ -124,12 +125,14 @@ class CoreDefinitions {
         Word fetch = createPrimitiveWord("@", "Fetch", null, 1)
         Word questionMark = createPrimitiveWord("?", "QuestionMark", null, 1)
         Word words = createPrimitiveWord("words", "Words")
-
         Word times = createPrimitiveWord("*", "Times", null, 2)
         Word divide = createPrimitiveWord("/", "Divide", null, 2)
         Word timesDivide = createPrimitiveWord("/", "TimesDivide", null, 3)
         Word plusStore = createPrimitiveWord("+!", "PlusStore", null, 2)
+        Word block = createPrimitiveWord("block", "Block", null, 1)
 
+
+        // TODO after "editor"
 //        Word beginWord = createPrimitiveWord("begin")
 //        Word againWord = createPrimitiveWord("again")
 //        Word whileWord = createPrimitiveWord("while")
