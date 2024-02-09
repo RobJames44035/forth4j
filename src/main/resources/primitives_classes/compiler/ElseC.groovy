@@ -92,7 +92,9 @@ class ElseC extends AbstractCompilerDirective {
                         Class groovyClass = classLoader.parseClass(nextWord.compileClass)
                         CompilerDirective compileTime = groovyClass.getDeclaredConstructor().newInstance() as CompilerDirective
                         Boolean output = compileTime.execute(nextWord, compiler, interpreter)
+                        continue
                     }
+                    compiler.forthWordsBuffer.add(nextWord.name)
                 } else if (compiler.canParseToInt(token)) {
                     compiler.compileIntegerLiteral(token)
                 }
