@@ -16,8 +16,11 @@
 
 package com.rajames.forth;
 
+import org.apache.commons.cli.*;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.springframework.beans.BeansException;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -29,7 +32,40 @@ public class Forth4J {
     private static final Logger log = LogManager.getLogger(Forth4J.class.getName());
 
     public static void main(final String[] args) {
-        log.info("Here we go!");
+        final Options options = getOptions();
+
+        final HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp("forth4j", options);
+        final CommandLineParser parser = new DefaultParser();
+        final CommandLine cmd;
+        try {
+            cmd = parser.parse(options, args);
+        } catch (final ParseException parseException) {
+            System.err.println(parseException.getMessage());
+            formatter.printHelp("forth4j", options);
+            System.exit(1);
+            return;
+        }
+        if (cmd.hasOption("help")) {
+            formatter.printHelp("forth4j", options);
+            System.exit(0);
+        }
+
+        if (cmd.hasOption("load-dictionary")) {
+            System.out.println("Unimplemented");
+            System.exit(0);
+        }
+
+        if (cmd.hasOption("execute-word")) {
+            System.out.println("Unimplemented");
+            System.exit(0);
+        }
+
+        if (cmd.hasOption("log-level")) {
+            final String logLevel = cmd.getOptionValue("log-level");
+            System.out.println("Setting log level to " + logLevel);
+            Configurator.setRootLevel(Level.getLevel(logLevel));
+        }
 
         try {
             try (final AnnotationConfigApplicationContext context =
@@ -46,5 +82,22 @@ public class Forth4J {
         }
 
         log.info("All Done! Bye, bye!!");
+    }
+
+    private static Options getOptions() {
+        final Options options = new Options();
+        final Option dictionary = new Option("d", "load-dictionary", true, "Load dictionary.");
+        dictionary.setRequired(false);
+        options.addOption(dictionary);
+        final Option execute = new Option("e", "execute-word", true, "Execute FORTH word.");
+        execute.setRequired(false);
+        options.addOption(execute);
+        final Option logging = new Option("l", "log-level", true, "Set Log Level.");
+        logging.setRequired(false);
+        options.addOption(logging);
+        final Option help = new Option("h", "help", false, "This message.");
+        help.setRequired(false);
+        options.addOption(help);
+        return options;
     }
 }

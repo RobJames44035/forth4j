@@ -27,7 +27,9 @@ import com.rajames.forth.runtime.ForthInterpreterException
 import org.apache.groovy.groovysh.Groovysh
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import org.codehaus.groovy.tools.shell.IO
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.stereotype.Component
 
 /**
@@ -70,7 +72,17 @@ class ForthRepl {
                 println("Goodbye!")
                 break
             } else if (line == "gsh") {
-                Groovysh groovysh = new Groovysh()
+                Binding binding = new Binding()
+                AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext("com.rajames.forth")
+                String[] allBeanNames = context.getBeanDefinitionNames()
+
+                allBeanNames.each { beanName ->
+                    Object bean = context.getBean(beanName)
+                    binding.setProperty(beanName, bean)
+                }
+
+                Groovysh groovysh = new Groovysh(binding, new IO())
+
                 groovysh.run(null, [])
                 continue
             }
