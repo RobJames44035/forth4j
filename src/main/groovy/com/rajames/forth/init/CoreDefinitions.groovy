@@ -115,10 +115,11 @@ class CoreDefinitions {
         Word ifWord = createPrimitiveWord("if", "If", "IfC", 1, true, true)
         Word elseWord = createPrimitiveWord("else", "Else", "ElseC", 0, true, true)
         Word thenWord = createPrimitiveWord("then", null, null, 0, true, true)
+        Word I = createPrimitiveWord("i", "I")
 
-//        Word doWord = createPrimitiveWord("do")
-//        Word loopWord = createPrimitiveWord("loop")
-//        Word plusLoopWord = createPrimitiveWord("+loop)
+        Word doWord = createPrimitiveWord("do", "Do", "DoC", 2, true, true)
+        Word loopWord = createPrimitiveWord("loop", "Loop", null, 0, true, true)
+        Word plusLoopWord = createPrimitiveWord("+loop", "PlusLoop", null, 1, true, true)
 
 //        Word beginWord = createPrimitiveWord("begin")
 //        Word againWord = createPrimitiveWord("again")
