@@ -34,13 +34,13 @@ class PlusLoop extends AbstractRuntime {
  */
     @Override
     Object execute(ForthInterpreter interpreter, Word word, Word parentWord) {
-        Integer plus = interpreter.returnStack.pop()
+        Integer plus = interpreter.dataStack.pop()
         Integer limit = interpreter.returnStack.pop()
         Integer index = interpreter.returnStack.pop()
 
         if (index < limit - 1) {
             index = index + plus
-            interpreter.returnStack.push(plus)
+            interpreter.dataStack.push(plus)
             interpreter.returnStack.push(index)
             interpreter.returnStack.push(limit)
             parentWord.executionIndex = parentWord.forthWords.indexOf("do")

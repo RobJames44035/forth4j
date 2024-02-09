@@ -114,7 +114,7 @@ class ForthCompiler {
         return newForthWord
     }
 
-    private static boolean canParseToInt(String str) {
+    static boolean canParseToInt(String str) {
         try {
             Integer.parseInt(str)
             return true
@@ -123,7 +123,7 @@ class ForthCompiler {
         }
     }
 
-    private void defineNewWord() {
+    void defineNewWord() {
         this.dictionary = dictionaryService.findByName(bootstrap.coreName)
         this.newWord = new Word()
         this.newWord.name = this.tokens.poll()

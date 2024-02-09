@@ -91,7 +91,8 @@ class DoC extends AbstractCompilerDirective {
                         CompilerDirective compileTime = groovyClass.getDeclaredConstructor().newInstance() as CompilerDirective
                         Boolean output = compileTime.execute(nextWord, compiler, interpreter)
                     }
-//                    compiler.forthWordsBuffer.add(nextWord.name)
+                } else if (compiler.canParseToInt(token)) {
+                    compiler.compileIntegerLiteral(token)
                 }
             }
         } catch (Exception e) {
