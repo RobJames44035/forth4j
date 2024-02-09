@@ -44,6 +44,10 @@ class WordService {
         this.dictionaryRepository = dictionaryRepository
     }
 
+    List<Word> list() {
+        return wordRepository.findAll()
+    }
+
     @Transactional
     Word findByName(String name) {
         log.trace("WordService.findByName(String '${name}')")

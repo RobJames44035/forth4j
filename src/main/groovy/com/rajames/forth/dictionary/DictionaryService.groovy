@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
+@Transactional
 class DictionaryService {
 
     private static final Logger log = LogManager.getLogger(this.class.getName())
@@ -30,6 +31,10 @@ class DictionaryService {
 
     DictionaryService(DictionaryRepository dictionaryRepository) {
         this.dictionaryRepository = dictionaryRepository
+    }
+
+    List<Dictionary> list() {
+        return dictionaryRepository.findAllByOrderById()
     }
 
     @Transactional

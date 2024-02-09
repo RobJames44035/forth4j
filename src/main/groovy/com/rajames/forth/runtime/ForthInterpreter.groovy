@@ -19,6 +19,7 @@ package com.rajames.forth.runtime
 
 import com.rajames.forth.compiler.ForthCompiler
 import com.rajames.forth.compiler.ForthCompilerException
+import com.rajames.forth.dictionary.DictionaryService
 import com.rajames.forth.dictionary.Word
 import com.rajames.forth.dictionary.WordService
 import com.rajames.forth.memory.DataStack
@@ -61,6 +62,9 @@ class ForthInterpreter {
 
     @Autowired
     WordService wordService
+
+    @Autowired
+    DictionaryService dictionaryService
 
     @Autowired
     ForthCompiler forthCompiler

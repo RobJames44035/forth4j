@@ -109,6 +109,7 @@ class CoreDefinitions {
         Word equal = createPrimitiveWord("=", "Equal", null, 2)
         Word spaces = createPrimitiveWord("spaces", "Spaces", null, 1)
         Word dup = createPrimitiveWord("dup", "Dup", null, 1)
+        Word drop = createPrimitiveWord("drop", "Drop", null, 1)
         Word colon = createPrimitiveWord(":", "Colon")
         Word semicolon = createPrimitiveWord(";")
         Word literal = createPrimitiveWord("literal", "Literal", null, 0, true)
@@ -116,10 +117,18 @@ class CoreDefinitions {
         Word elseWord = createPrimitiveWord("else", "Else", "ElseC", 0, true, true)
         Word thenWord = createPrimitiveWord("then", null, null, 0, true, true)
         Word I = createPrimitiveWord("i", "I")
-
         Word doWord = createPrimitiveWord("do", "Do", "DoC", 2, true, true)
         Word loopWord = createPrimitiveWord("loop", "Loop", null, 0, true, true)
         Word plusLoopWord = createPrimitiveWord("+loop", "PlusLoop", null, 1, true, true)
+        Word store = createPrimitiveWord("!", "Store", null, 2)
+        Word fetch = createPrimitiveWord("@", "Fetch", null, 1)
+        Word questionMark = createPrimitiveWord("?", "QuestionMark", null, 1)
+        Word words = createPrimitiveWord("words", "Words")
+
+        Word times = createPrimitiveWord("*", "Times", null, 2)
+        Word divide = createPrimitiveWord("/", "Divide", null, 2)
+        Word timesDivide = createPrimitiveWord("/", "TimesDivide", null, 3)
+        Word plusStore = createPrimitiveWord("+!", "PlusStore", null, 2)
 
 //        Word beginWord = createPrimitiveWord("begin")
 //        Word againWord = createPrimitiveWord("again")
