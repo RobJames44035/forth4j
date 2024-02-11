@@ -21,9 +21,16 @@ import com.rajames.forth.compiler.ForthCompilerException
 import com.rajames.forth.dictionary.Word
 import com.rajames.forth.dictionary.WordService
 import com.rajames.forth.util.DatabaseBackupService
+import com.rajames.forth.util.FlushService
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 
+import javax.persistence.EntityManager
+
+@Transactional
+@Component
 class CoreDefinitions {
 
     private static final Logger log = LogManager.getLogger(this.class.getName())
@@ -32,14 +39,27 @@ class CoreDefinitions {
     public static final String COMPILE = "primitives_classes/compiler"
 
     private final WordService wordService
+
+    String getCoreName() {
+        return coreName
+    }
+
+    void setCoreName(String coreName) {
+        this.coreName = coreName
+    }
     private String coreName
 
     private DatabaseBackupService databaseBackupService
 
-    CoreDefinitions(WordService wordService, String dictionaryName, DatabaseBackupService databaseBackupService) {
+    private EntityManager entityManager
+
+    private FlushService flushService
+
+    CoreDefinitions(WordService wordService, DatabaseBackupService databaseBackupService, FlushService flushService) {
         this.wordService = wordService
-        this.coreName = dictionaryName
         this.databaseBackupService = databaseBackupService
+        this.entityManager = wordService.entityManager
+        this.flushService = flushService
     }
 
     static String getRuntimeContent(String runtimeClass) {
@@ -88,7 +108,8 @@ class CoreDefinitions {
         Word noop = createPrimitiveWord("noop")
         Word nop = createPrimitiveWord("nop")
         Word dump = createPrimitiveWord("defdump", "DefDump")
-        Word save = createPrimitiveWord("save", "Save")
+        Word saveForth = createPrimitiveWord("save-forth", "SaveForth")
+        Word loadForth = createPrimitiveWord("load-forth", "LoadForth")
 
         // Primitive words with their behavior described in a Groovy Script
         Word plus = createPrimitiveWord("+", "Plus", null, 2)
@@ -141,6 +162,7 @@ class CoreDefinitions {
 
         // Complex words that are made up of a List<Word> that describes their behavior go here.
 
+        flushService.flush()
         databaseBackupService.backupDatabase("/home/rajames/PROJECTS/forth4j/src/main/resources", "CoreForth4j.sql")
     }
 }

@@ -19,18 +19,25 @@ package primitives_classes.runtime
 import com.rajames.forth.dictionary.Word
 import com.rajames.forth.runtime.AbstractRuntime
 import com.rajames.forth.runtime.ForthInterpreter
-import com.rajames.forth.runtime.ForthInterpreterException
+import org.springframework.transaction.annotation.Transactional
 
-class DefDump extends AbstractRuntime {
+class SaveForth extends AbstractRuntime {
 
+/**
+ * Execute the FORTH word from the interpreter.
+ * @param interpreter The FORTH interpreter instance.
+ * @param word The word that is being executed.
+ * @param parentWord It's parent word (if any).
+ * @return An object of any type. By convention we are returning a Boolean to indicate if the REPL
+ * should print a newline or not. If you do anything with a returned Object, be sure to set
+ * forthOutput to to a Boolean for REPL.
+ */
+    @Transactional
     @Override
     Object execute(ForthInterpreter interpreter, Word word, Word parentWord) {
-        try {
-            Word dumpWord = interpreter?.words?.remove()
-            println(dumpWord.toString())
-        } catch (NoSuchElementException e) {
-            throw new ForthInterpreterException("No such word.")
-        }
+        interpreter.flushService.flush()
+        interpreter.databaseBackupService.backupDatabase(null, null)
+        interpreter.flushService.flush()
         return null
     }
 }

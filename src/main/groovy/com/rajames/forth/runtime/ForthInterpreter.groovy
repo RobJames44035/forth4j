@@ -27,6 +27,7 @@ import com.rajames.forth.memory.Memory
 import com.rajames.forth.memory.ReturnStack
 import com.rajames.forth.memory.storage.BlockService
 import com.rajames.forth.util.DatabaseBackupService
+import com.rajames.forth.util.FlushService
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
@@ -76,6 +77,9 @@ class ForthInterpreter {
 
     @Autowired
     ForthCompiler forthCompiler
+
+    @Autowired
+    FlushService flushService
 
 
     /**

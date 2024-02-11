@@ -19,8 +19,9 @@ package primitives_classes.runtime
 import com.rajames.forth.dictionary.Word
 import com.rajames.forth.runtime.AbstractRuntime
 import com.rajames.forth.runtime.ForthInterpreter
+import org.springframework.transaction.annotation.Transactional
 
-class Save extends AbstractRuntime {
+class LoadForth extends AbstractRuntime {
 
 /**
  * Execute the FORTH word from the interpreter.
@@ -31,10 +32,12 @@ class Save extends AbstractRuntime {
  * should print a newline or not. If you do anything with a returned Object, be sure to set
  * forthOutput to to a Boolean for REPL.
  */
-
+    @Transactional
     @Override
     Object execute(ForthInterpreter interpreter, Word word, Word parentWord) {
-        interpreter.databaseBackupService.backupDatabase(null, null)
+        interpreter.flushService.flush()
+        interpreter.databaseBackupService.loadDatabase(null, null)
+        interpreter.flushService.flush()
         return null
     }
 }

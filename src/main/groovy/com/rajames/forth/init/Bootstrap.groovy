@@ -19,11 +19,13 @@ package com.rajames.forth.init
 import com.rajames.forth.dictionary.DictionaryService
 import com.rajames.forth.dictionary.WordService
 import com.rajames.forth.util.DatabaseBackupService
+import com.rajames.forth.util.FlushService
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 
 @Component
 class Bootstrap implements InitializingBean {
@@ -32,19 +34,21 @@ class Bootstrap implements InitializingBean {
 
     private DictionaryService dictionaryService
     private WordService wordService
-
+    private FlushService flushService
     private String coreName
 
     private DatabaseBackupService databaseBackupService
 
     @Autowired
-    Bootstrap(DictionaryService dictionaryService, WordService wordService, DatabaseBackupService databaseBackupService) {
+    Bootstrap(DictionaryService dictionaryService, WordService wordService, DatabaseBackupService databaseBackupService, FlushService flushService) {
         this.dictionaryService = dictionaryService
         this.wordService = wordService
         this.databaseBackupService = databaseBackupService
+        this.flushService = flushService
     }
 
     @Override
+    @Transactional
     void afterPropertiesSet() {
         log.info("Bootstrap started...")
         println("Bootstrap started...")
@@ -58,7 +62,8 @@ class Bootstrap implements InitializingBean {
             In the future we will be adding FORTH words to save and load from the running system as well as specifying
             a commandline option to select a named database to load on startup.
         */
-        CoreDefinitions coreDefinitions = new CoreDefinitions(wordService, coreName, databaseBackupService)
+        CoreDefinitions coreDefinitions = new CoreDefinitions(wordService, databaseBackupService, flushService)
+        coreDefinitions.coreName = this.coreName
         coreDefinitions.createCoreDictionary()
 
         // more initialization code here...

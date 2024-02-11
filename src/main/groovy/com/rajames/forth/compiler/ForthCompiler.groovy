@@ -22,6 +22,7 @@ import com.rajames.forth.init.Bootstrap
 import com.rajames.forth.memory.storage.BlockService
 import com.rajames.forth.runtime.ForthInterpreter
 import com.rajames.forth.util.DatabaseBackupService
+import com.rajames.forth.util.FlushService
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
@@ -61,6 +62,9 @@ class ForthCompiler {
 
     @Autowired
     DatabaseBackupService databaseBackupService
+
+    @Autowired
+    FlushService flushService
 
     Word newWord
     Word literal

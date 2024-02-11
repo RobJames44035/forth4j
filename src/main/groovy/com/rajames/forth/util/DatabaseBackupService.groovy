@@ -16,12 +16,15 @@
 
 package com.rajames.forth.util
 
-import org.h2.tools.RunScript
+import com.rajames.forth.runtime.ForthInterpreterException
+import groovy.sql.Sql
 import org.h2.tools.Script
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import org.springframework.util.StringUtils
+import org.springframework.transaction.annotation.Transactional
 
+import javax.persistence.EntityManager
+import javax.persistence.PersistenceContext
 import javax.sql.DataSource
 import java.sql.Connection
 import java.sql.SQLException
@@ -32,34 +35,59 @@ class DatabaseBackupService {
     @Autowired
     private DataSource dataSource
 
+    @Autowired
+    FlushService flushService
+
+    @PersistenceContext
+    private EntityManager entityManager
+
     void backupDatabase(String path, String filename) throws SQLException {
         // saving the backup to an SQL file
-        if (StringUtils.isEmpty(filename)) {
-            filename = "fourth4j.sql"
+        if (filename == null || filename.isBlank() || filename.isEmpty()) {
+            filename = "forth4j.sql"
         }
-        if (StringUtils.isEmpty(path)) {
-            path = "/home/rajames/PROJECTS/forth4j"
+        if (path == null || path.isBlank() || path.isEmpty()) {
+            path = "./forth4jDb"
         }
         final String backupFilePath = path + "/" + filename
+        File file = new File(backupFilePath)
+        String absolutePath = file.absolutePath
+
+        entityManager.clear()
         try (final Connection conn = this.dataSource.getConnection()) {
-            Script.process(conn, backupFilePath, "", "")
+            Script.process(conn, absolutePath, "", "")
         }
     }
 
+    @Transactional
     void loadDatabase(String path, String filename) throws SQLException {
         // loading the backup from the SQL file
-        if (filename == "") {
-            filename = "fourth4j.sql"
+        if (filename == null || filename.isBlank() || filename.isEmpty()) {
+            filename = "forth4j.sql"
         }
-        if (path == "") {
-            path = "/home/rajames/PROJECTS/forth4j"
+        if (path == null || path.isBlank() || path.isEmpty()) {
+            path = "./forth4jDb"
         }
         String backupFilePath = path + "/" + filename
+        File file = new File(backupFilePath)
+        String absolutePath = file.absolutePath
 
-        try (final Connection conn = this.dataSource.getConnection()) {
-            RunScript.execute(conn, new FileReader(backupFilePath))
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e)
+        try {
+            Sql sql = new Sql(dataSource)
+            if (absolutePath) {
+                sql.execute('DROP ALL OBJECTS;')
+                String script = new File(absolutePath).text
+                sql.execute(script)
+            }
+        } catch (Exception ignored) {
+            throw new ForthInterpreterException("Could not load ${backupFilePath}.")
         }
+//        try (final Connection conn = this.dataSource.getConnection()) {
+//            RunScript.execute(conn, new FileReader(absolutePath))
+//        } catch (FileNotFoundException e) {
+//            throw new RuntimeException(e)
+//        }
+
+        flushService.flush()
     }
 }

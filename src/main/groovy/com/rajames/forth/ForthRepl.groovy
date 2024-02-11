@@ -73,7 +73,7 @@ class ForthRepl {
             String line = this.scanner.nextLine().trim()
 
             if (line == "bye") {
-                databaseBackupService.backupDatabase(null, null)
+                databaseBackupService.backupDatabase(null, "core.sql")
                 println("Goodbye!")
                 break
             } else if (line == "gsh") {

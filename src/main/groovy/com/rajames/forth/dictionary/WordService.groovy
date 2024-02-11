@@ -36,7 +36,7 @@ class WordService {
     private final DictionaryRepository dictionaryRepository
 
     @PersistenceContext
-    private EntityManager entityManager
+    EntityManager entityManager
 
     @Autowired
     WordService(WordRepository wordRepository, DictionaryRepository dictionaryRepository/*, EntityManager entityManager*/) {
@@ -65,9 +65,7 @@ class WordService {
 
     @Transactional
     Word save(Word word) {
-        log.trace("WordService: Word before 'save(word)' word?.name = '${word?.name}' word?.forthWords = ${word?.forthWords}")
         Word retrievedWord = wordRepository.save(word)
-        log.trace("WordService: Word after 'save(word)' retrievedWord?.name = '${retrievedWord?.name}' retrievedWord?.forthWords = ${retrievedWord?.forthWords}")
         entityManager.flush()
         return retrievedWord
     }
