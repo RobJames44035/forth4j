@@ -18,7 +18,6 @@ package com.rajames.forth.init
 
 import com.rajames.forth.dictionary.DictionaryService
 import com.rajames.forth.dictionary.WordService
-import com.rajames.forth.memory.Memory
 import com.rajames.forth.util.DatabaseBackupService
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -33,25 +32,22 @@ class Bootstrap implements InitializingBean {
 
     private DictionaryService dictionaryService
     private WordService wordService
-    private Memory memory
 
     private String coreName
 
     private DatabaseBackupService databaseBackupService
 
     @Autowired
-    Bootstrap(DictionaryService dictionaryService, WordService wordService, DatabaseBackupService databaseBackupService, Memory memory) {
+    Bootstrap(DictionaryService dictionaryService, WordService wordService, DatabaseBackupService databaseBackupService) {
         this.dictionaryService = dictionaryService
         this.wordService = wordService
         this.databaseBackupService = databaseBackupService
-        this.memory = memory
     }
 
     @Override
     void afterPropertiesSet() {
         log.info("Bootstrap started...")
         println("Bootstrap started...")
-        memory.init()
 
         coreName = dictionaryService.createDictionary("Core")
 

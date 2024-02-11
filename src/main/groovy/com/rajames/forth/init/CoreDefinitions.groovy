@@ -87,7 +87,8 @@ class CoreDefinitions {
         // Non-Standard words
         Word noop = createPrimitiveWord("noop")
         Word nop = createPrimitiveWord("nop")
-        Word dump = createPrimitiveWord("defdump", "Dump")
+        Word dump = createPrimitiveWord("defdump", "DefDump")
+        Word save = createPrimitiveWord("save", "Save")
 
         // Primitive words with their behavior described in a Groovy Script
         Word plus = createPrimitiveWord("+", "Plus", null, 2)
@@ -129,7 +130,7 @@ class CoreDefinitions {
         Word divide = createPrimitiveWord("/", "Divide", null, 2)
         Word timesDivide = createPrimitiveWord("/", "TimesDivide", null, 3)
         Word plusStore = createPrimitiveWord("+!", "PlusStore", null, 2)
-        Word block = createPrimitiveWord("block", "Block", null, 1)
+        Word block = createPrimitiveWord("block", "BlockWord", null, 1)
 
 
         // TODO after "editor"

@@ -33,22 +33,22 @@ class Dictionary implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id
 
-//    @Version
-//    private int version
-//
-//    @Temporal(TemporalType.TIMESTAMP)
-//    private Date createDateTime
-//
+    @Version
+    private int version
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createDateTime
+
     @Column(unique=true)
     private String name
 
     @OneToMany(mappedBy = "dictionary", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Word> vocabulary
 
-//    @PrePersist
-//    void onCreate() {
-//        this.setCreateDateTime(new Date())
-//    }
+    @PrePersist
+    void onCreate() {
+        this.setCreateDateTime(new Date())
+    }
 
     String getName() {
         return name

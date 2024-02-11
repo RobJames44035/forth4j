@@ -20,23 +20,12 @@ import com.rajames.forth.dictionary.Word
 import com.rajames.forth.runtime.AbstractRuntime
 import com.rajames.forth.runtime.ForthInterpreter
 
-class Block extends AbstractRuntime {
-
-/**
- * Execute the FORTH word from the interpreter.
- * @param interpreter The FORTH interpreter instance.
- * @param word The word that is being executed.
- * @param parentWord It's parent word (if any).
- * @return An object of any type. By convention we are returning a Boolean to indicate if the REPL
- * should print a newline or not. If you do anything with a returned Object, be sure to set
- * forthOutput to to a Boolean for REPL.
- */
+class DefDump extends AbstractRuntime {
 
     @Override
     Object execute(ForthInterpreter interpreter, Word word, Word parentWord) {
-        Integer blockNumber = interpreter.dataStack.pop() as Integer
-        Integer addr = interpreter.memory.getAddressFromBlock(blockNumber)
-        interpreter.dataStack.push(addr)
+        Word dumpWord = interpreter?.words?.remove()
+        println(dumpWord.toString())
         return null
     }
 }

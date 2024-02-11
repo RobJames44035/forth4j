@@ -14,18 +14,28 @@
  * limitations under the License.
  */
 
-package runtime
+package primitives_classes.runtime
 
 import com.rajames.forth.dictionary.Word
 import com.rajames.forth.runtime.AbstractRuntime
 import com.rajames.forth.runtime.ForthInterpreter
 
-class Dump extends AbstractRuntime {
+class BlockWord extends AbstractRuntime {
+
+/**
+ * Execute the FORTH word from the interpreter.
+ * @param interpreter The FORTH interpreter instance.
+ * @param word The word that is being executed.
+ * @param parentWord It's parent word (if any).
+ * @return An object of any type. By convention we are returning a Boolean to indicate if the REPL
+ * should print a newline or not. If you do anything with a returned Object, be sure to set
+ * forthOutput to to a Boolean for REPL.
+ */
 
     @Override
     Object execute(ForthInterpreter interpreter, Word word, Word parentWord) {
-        Word dumpWord = interpreter?.words?.remove()
-        println(dumpWord.toString())
+        Integer blockNumber = interpreter.dataStack.pop() as Integer
+
         return null
     }
 }

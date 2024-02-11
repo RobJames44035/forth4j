@@ -19,6 +19,7 @@ package com.rajames.forth.compiler
 
 import com.rajames.forth.dictionary.*
 import com.rajames.forth.init.Bootstrap
+import com.rajames.forth.memory.storage.BlockService
 import com.rajames.forth.runtime.ForthInterpreter
 import com.rajames.forth.util.DatabaseBackupService
 import org.apache.logging.log4j.LogManager
@@ -54,6 +55,9 @@ class ForthCompiler {
 
     @Autowired
     ForthInterpreter interpreter
+
+    @Autowired
+    BlockService blockService
 
     @Autowired
     DatabaseBackupService databaseBackupService

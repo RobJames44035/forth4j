@@ -24,6 +24,7 @@ import com.rajames.forth.memory.Memory
 import com.rajames.forth.memory.ReturnStack
 import com.rajames.forth.runtime.ForthInterpreter
 import com.rajames.forth.runtime.ForthInterpreterException
+import com.rajames.forth.util.DatabaseBackupService
 import org.apache.groovy.groovysh.Groovysh
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -54,6 +55,9 @@ class ForthRepl {
     @Autowired
     ForthInterpreter interpreter
 
+    @Autowired
+    DatabaseBackupService databaseBackupService
+
     ForthRepl() {
         this.scanner = new Scanner(System.in)
     }
@@ -69,6 +73,7 @@ class ForthRepl {
             String line = this.scanner.nextLine().trim()
 
             if (line == "bye") {
+                databaseBackupService.backupDatabase(null, null)
                 println("Goodbye!")
                 break
             } else if (line == "gsh") {

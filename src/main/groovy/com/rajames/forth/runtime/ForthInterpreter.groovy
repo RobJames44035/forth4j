@@ -25,6 +25,8 @@ import com.rajames.forth.dictionary.WordService
 import com.rajames.forth.memory.DataStack
 import com.rajames.forth.memory.Memory
 import com.rajames.forth.memory.ReturnStack
+import com.rajames.forth.memory.storage.BlockService
+import com.rajames.forth.util.DatabaseBackupService
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
@@ -65,6 +67,12 @@ class ForthInterpreter {
 
     @Autowired
     DictionaryService dictionaryService
+
+    @Autowired
+    BlockService blockService
+
+    @Autowired
+    DatabaseBackupService databaseBackupService
 
     @Autowired
     ForthCompiler forthCompiler
