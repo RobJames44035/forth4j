@@ -101,6 +101,8 @@ class ForthInterpreter {
                 words.add(word)
             } else if (canParseToInt(token)) {
                 dataStack.push(Integer.parseInt(token) as Integer)
+            } else {
+                throw new ForthInterpreterException("No such word in this dictionary.")
             }
         }
 
