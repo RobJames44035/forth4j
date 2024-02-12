@@ -104,19 +104,21 @@ class Editor {
                     }
                     break
                 default:
-                    if (ks.getKeyType() == KeyType.Character && !ks.isCtrlDown()) {
+                    if (ks.getKeyType() == KeyType.Character && !ks.isCtrlDown() && !ks.isAltDown()) {
                         Character inputChar = ks.getCharacter()
                         screen.setCharacter(column, row, TextCharacter.fromCharacter(inputChar, TextColor.ANSI.YELLOW, TextColor.ANSI.BLACK) as TextCharacter)
                         if (column < 68) {
                             column++
                         }
                     }
+
                     if (ks.isCtrlDown() && ks.getCharacter() == 'x') {
                         screen.stopScreen()
                         screen.close()
                         terminal.close()
                         throw new EditorException("Exit editor command received")
                     }
+
                     if (ks.isCtrlDown() && ks.getCharacter() == 'w') {
                         byte[] bytes = new byte[1024]
                         int index = 0
