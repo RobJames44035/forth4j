@@ -110,6 +110,7 @@ class CoreDefinitions {
         Word dump = createPrimitiveWord("defdump", "DefDump")
         Word saveForth = createPrimitiveWord("save-forth", "SaveForth")
         Word loadForth = createPrimitiveWord("load-forth", "LoadForth")
+        Word edit = createPrimitiveWord("edit", "Edit", null, 1)
 
         // Primitive words with their behavior described in a Groovy Script
         Word plus = createPrimitiveWord("+", "Plus", null, 2)
@@ -152,6 +153,7 @@ class CoreDefinitions {
         Word timesDivide = createPrimitiveWord("/", "TimesDivide", null, 3)
         Word plusStore = createPrimitiveWord("+!", "PlusStore", null, 2)
         Word block = createPrimitiveWord("block", "BlockWord", null, 1)
+        Word list = createPrimitiveWord("list", "List", null, 1)
 
 
         // TODO after "editor"

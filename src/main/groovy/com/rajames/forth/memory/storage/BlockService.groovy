@@ -33,6 +33,11 @@ class BlockService {
     }
 
     @Transactional
+    Block save(Block block) {
+        return blockRepository.save(block)
+    }
+
+    @Transactional
     Block getBlock(Integer blockNumber) {
         Optional<Block> blockOptional = blockRepository.findByBlockNumber(blockNumber)
 
@@ -57,6 +62,7 @@ class BlockService {
         return blockRepository.save(block)
     }
 
+    @Transactional
     Byte fetch(Integer address) {
         Integer blockNumber = (address / BLOCK_SIZE) as Integer
         Integer index = address % BLOCK_SIZE
@@ -65,10 +71,11 @@ class BlockService {
         Block block = blockRepository.findByBlockNumber(blockNumber)
                 .orElseGet(() -> {
                     byte[] newBytes = new byte[BLOCK_SIZE]
-                    Arrays.fill(newBytes, 32 as Byte)
+                    Byte fill = Byte.valueOf(" ")
+                    Arrays.fill(newBytes as Byte[], fill)
 
                     Block newBlock = new Block()
-                    newBlock.setBlockNumber((long) blockNumber)
+                    newBlock.setBlockNumber(blockNumber)
                     newBlock.setBytes(newBytes)
 
                     return blockRepository.save(newBlock)

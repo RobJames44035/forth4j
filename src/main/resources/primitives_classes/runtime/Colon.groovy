@@ -30,7 +30,7 @@ class Colon extends AbstractRuntime {
     @Override
     Object execute(ForthInterpreter interpreter, Word word, Word parentWord) {
         // Fail Fast
-        if (!interpreter.line.endsWith(";"))
+        if (!interpreter.line.contains(";"))
             throw new ForthCompilerException("No matching ';' for ':'")
         // Invoke the compiler
         interpreter.forthCompiler.compile(interpreter.line)
