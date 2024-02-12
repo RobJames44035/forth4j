@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+//file:noinspection GroovyInfiniteLoopStatement
 
 package com.rajames.forth.util
 
@@ -25,7 +26,9 @@ import com.googlecode.lanterna.gui2.WindowBasedTextGUI
 import com.googlecode.lanterna.input.KeyStroke
 import com.googlecode.lanterna.input.KeyType
 import com.googlecode.lanterna.screen.Screen
+import com.googlecode.lanterna.screen.TerminalScreen
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory
+import com.googlecode.lanterna.terminal.Terminal
 import com.rajames.forth.memory.storage.Block
 import com.rajames.forth.memory.storage.BlockService
 
@@ -52,118 +55,88 @@ class Editor {
     }
 
     void editor() {
-        try {
-            // : populate 1024 0 do 42 i ! loop ;
-            screen = terminalFactory.createScreen()
-            screen.startScreen()
-            initScreen()
-            screen.refresh()
-            while (true) {
-                KeyStroke ks = screen.readInput()
-                switch (ks.getKeyType()) {
-                    case KeyType.ArrowUp:
-                        // Move cursor Up
-                        if (row > startRow) {
-                            row--
+        // : populate 1024 0 do 42 i ! loop ;
+        Terminal terminal = terminalFactory.createTerminal()
+        screen = new TerminalScreen(terminal)
+        screen = terminalFactory.createScreen()
+        screen.startScreen()
+        initScreen()
+        screen.refresh()
+        while (true) {
+            KeyStroke ks = screen.readInput()
+            switch (ks.getKeyType()) {
+                case KeyType.ArrowUp:
+                    if (row > startRow) {
+                        row--
+                    }
+                    break
+                case KeyType.ArrowDown:
+                    if (row < 19) {
+                        row++
+                    }
+                    break
+                case KeyType.ArrowLeft:
+                    if (column > startCol) {
+                        column--
+                    }
+                    break
+                case KeyType.ArrowRight:
+                    if (column < 68) {
+                        column++
+                    }
+                    break
+                case KeyType.Backspace:
+                    if (column > startCol) {
+                        column--
+                        screen.setCharacter(column, row, TextCharacter.fromCharacter(" " as char, TextColor.ANSI.YELLOW, TextColor.ANSI.BLACK) as TextCharacter)
+                    }
+                    break
+                case KeyType.Enter:
+                    if (row < 19) {
+                        row++
+                    }
+                    column = startCol
+                    for (; column <= 68; column++) {
+                        TextCharacter textCharacter = screen.getFrontCharacter(column, row)
+                        if (textCharacter.getCharacterString() == ' ' || textCharacter.getCharacterString() == '\u0000') {
+                            break
                         }
-                        break
-                    case KeyType.ArrowDown:
-                        // Move cursor Down
-                        if (row < 19) {
-                            row++
-                        }
-                        break
-                    case KeyType.ArrowLeft:
-                        // Move cursor Left
-                        if (column > startCol) {
-                            column--
-                        }
-                        break
-                    case KeyType.ArrowRight:
-                        // Move cursor Right
+                    }
+                    break
+                default:
+                    if (ks.getKeyType() == KeyType.Character && !ks.isCtrlDown()) {
+                        Character inputChar = ks.getCharacter()
+                        screen.setCharacter(column, row, TextCharacter.fromCharacter(inputChar, TextColor.ANSI.YELLOW, TextColor.ANSI.BLACK) as TextCharacter)
                         if (column < 68) {
                             column++
                         }
+                    }
+                    if (ks.isCtrlDown() && ks.getCharacter() == 'x') {
+                        screen.stopScreen()
+                        screen.close()
+                        terminal.close()
+                        throw new EditorException("Exit editor command received")
+                    }
+                    if (ks.isCtrlDown() && ks.getCharacter() == 'w') {
+                        byte[] bytes = new byte[1024]
+                        int index = 0
+                        for (int currentRow = startRow; currentRow < startRow + 16; currentRow++) {
+                            for (int currentColumn = startCol; currentColumn < startCol + 64; currentColumn++) {
+                                TextCharacter textCharacter = screen.getFrontCharacter(currentColumn, currentRow)
+                                char chr = textCharacter.getCharacterString() as char
+                                bytes[index] = chr as byte
+                                index++
+                            }
+                        }
+                        block.bytes = bytes
+                        blockService.save(this.block)
                         break
-                    case KeyType.Backspace:
-                        // Handle Backspace
-                        if (column > startCol) {
-                            column--
-                            screen.setCharacter(column, row, new TextCharacter(' ' as char, TextColor.ANSI.YELLOW, TextColor.ANSI.BLACK))
-                        }
-                        break
-                    case KeyType.Enter:
-                        // Carriage Return / Enter
-                        // Move to the next line if it's not the last one
-                        if (row < 19) row++
-
-                        // Reset column to the start
-                        column = startCol
-
-                        // Iterate over the line to find the end of the content
-                        for (; column <= 68; column++) {
-                            // Get the character at the new cursor position
-                            TextCharacter textCharacter = screen.getFrontCharacter(column, row)
-
-                            // If the character is a space or null, it's the end of the content
-                            if (textCharacter.getCharacterString() == ' ' || textCharacter.getCharacterString() == '\u0000') {
-                                break;
-                            }
-                        }
-                        break;
-                    default:
-                        // Handle Character keystrokes (Typing)
-                        if (ks.getKeyType() == KeyType.Character) {
-                            // Obtain the input character
-                            Character inputChar = ks.getCharacter()
-                            // Update screen contents
-                            screen.setCharacter(column, row, TextCharacter.fromCharacter(inputChar, TextColor.ANSI.YELLOW, TextColor.ANSI.BLACK) as TextCharacter)
-                            // Advance cursor position to right after typing
-                            if (column < 68) {
-                                column++
-                            }
-                        }
-                        // Handle Ctrl + X (Exiting the editor)
-                        if (ks.isCtrlDown() && ks.getCharacter() == 'x') {
-                            throw new EditorException("Exit editor command received");
-                        }                        // Handle Ctrl + W (ctrlWAction)
-                        if (ks.isCtrlDown() && ks.getCharacter() == 'w') {
-                            byte[] bytes = new byte[1024]
-                            int index = 0
-                            for (int currentRow = startRow; currentRow < startRow + 16; currentRow++) {
-                                for (int currentColumn = startCol; currentColumn < startCol + 64; currentColumn++) {
-                                    TextCharacter textCharacter = screen.getFrontCharacter(currentColumn, currentRow)
-                                    char chr = textCharacter.getCharacterString() as char
-                                    bytes[index] = chr as byte
-                                    index++
-                                }
-                            }
-                            block.bytes = bytes
-                            blockService.save(this.block)
-                            break
-                        }
-                        screen.setCursorPosition(new TerminalPosition(column, row))
-                        screen.refresh()
-                }
-                screen.setCursorPosition(new TerminalPosition(column, row))
-                // Update cursor position after every keystroke
-                screen.refresh()
-            }
-        }
-        catch (IOException e) {
-            e.printStackTrace()
-        }
-        finally {
-            if (screen != null) {
-                try {
+                    }
+                    screen.setCursorPosition(new TerminalPosition(column, row))
                     screen.refresh()
-                    screen.stopScreen()
-                    print("\033[H\033[2J")
-                }
-                catch (IOException e) {
-                    e.printStackTrace()
-                }
             }
+            screen.setCursorPosition(new TerminalPosition(column, row))
+            screen.refresh()
         }
     }
 

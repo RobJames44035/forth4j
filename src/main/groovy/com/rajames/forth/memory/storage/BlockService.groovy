@@ -71,8 +71,8 @@ class BlockService {
         Block block = blockRepository.findByBlockNumber(blockNumber)
                 .orElseGet(() -> {
                     byte[] newBytes = new byte[BLOCK_SIZE]
-                    Byte fill = Byte.valueOf(" ")
-                    Arrays.fill(newBytes as Byte[], fill)
+//                    Byte fill = Byte.valueOf(" ")
+//                    Arrays.fill(newBytes as Byte[], fill)
 
                     Block newBlock = new Block()
                     newBlock.setBlockNumber(blockNumber)

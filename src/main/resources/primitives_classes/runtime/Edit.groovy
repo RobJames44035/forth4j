@@ -45,6 +45,7 @@ class Edit extends AbstractRuntime {
             editor.editor()
         } catch (EditorException e) {
             if ("Exit editor command received" == e.getMessage()) {
+//                print("\u001bc")
                 return null
             } else {
                 throw new ForthInterpreterException("The editor incurred an error.")
