@@ -136,7 +136,6 @@ class ForthInterpreter {
         this.instructionPointer = 0
     }
 
-
     /**
      * execution is the responsable method for executing all the forth words from a line of input.
      * @return see interpretAndExecute() for more
@@ -146,7 +145,7 @@ class ForthInterpreter {
         instructionPointer = 0
         while (!words.isEmpty()) {
             Word exec = words.poll()
-            log.debug(exec.name)
+            log.trace(exec.name)
             forthOutput = executeWord(exec, exec.parentWord)
         }
         return forthOutput
@@ -224,7 +223,7 @@ class ForthInterpreter {
     }
 
     /**
-     *
+     * Reset the interpreter to a known state.
      */
     void reset() {
         this.word = null
@@ -233,10 +232,7 @@ class ForthInterpreter {
         this.words.clear()
         this.token = null
         this.instructionPointer = 0
-
-        // Not too sure about this but...
         this.dataStack.clear()
         this.returnStack.clear()
-        // Revisit if needed
     }
 }

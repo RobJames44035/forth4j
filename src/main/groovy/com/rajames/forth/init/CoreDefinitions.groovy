@@ -155,7 +155,10 @@ class CoreDefinitions {
         Word block = createPrimitiveWord("block", "BlockWord", null, 1)
         Word list = createPrimitiveWord("list", "List", null, 1)
         Word load = createPrimitiveWord("load", "Load", null, 1)
-
+        Word qdup = createPrimitiveWord("?dup", "Qdup", null, 1)
+        Word abort = createPrimitiveWord("abort", "Abort")
+        Word abs = createPrimitiveWord("abs", "Abs", null, 1)
+        Word and = createPrimitiveWord("and", "And", null, 2)
 
         // TODO after "editor"
 //        Word beginWord = createPrimitiveWord("begin")
