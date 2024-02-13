@@ -146,6 +146,7 @@ class ForthInterpreter {
         instructionPointer = 0
         while (!words.isEmpty()) {
             Word exec = words.poll()
+            log.debug(exec.name)
             forthOutput = executeWord(exec, exec.parentWord)
         }
         return forthOutput
@@ -222,4 +223,20 @@ class ForthInterpreter {
         return output
     }
 
+    /**
+     *
+     */
+    void reset() {
+        this.word = null
+        this.line = null
+        this.tokens.clear()
+        this.words.clear()
+        this.token = null
+        this.instructionPointer = 0
+
+        // Not too sure about this but...
+        this.dataStack.clear()
+        this.returnStack.clear()
+        // Revisit if needed
+    }
 }

@@ -33,7 +33,7 @@ class Words extends AbstractRuntime {
  */
     @Override
     Object execute(ForthInterpreter interpreter, Word word, Word parentWord) {
-        List<Word> words = interpreter.wordService.list() as ArrayList
+        ArrayList<Word> words = interpreter.wordService.list() as ArrayList<Word>
         words.each { Word word1 ->
             print(word1.name + " ")
         }

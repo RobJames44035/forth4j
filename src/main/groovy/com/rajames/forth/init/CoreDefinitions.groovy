@@ -154,6 +154,7 @@ class CoreDefinitions {
         Word plusStore = createPrimitiveWord("+!", "PlusStore", null, 2)
         Word block = createPrimitiveWord("block", "BlockWord", null, 1)
         Word list = createPrimitiveWord("list", "List", null, 1)
+        Word load = createPrimitiveWord("load", "Load", null, 1)
 
 
         // TODO after "editor"

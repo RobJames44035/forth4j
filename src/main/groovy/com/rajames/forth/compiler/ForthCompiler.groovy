@@ -119,6 +119,7 @@ class ForthCompiler {
         } catch (Exception e) {
             log.error(e.message)
         }
+        interpreter.reset()
         return newForthWord
     }
 
@@ -172,5 +173,10 @@ class ForthCompiler {
         }
     }
 
-
+    void reset() {
+        this.newWord = null
+        this.literal = null
+        this.nextTokenToCompile = null
+        this.forthWordsBuffer = new ArrayList<String>()
+    }
 }

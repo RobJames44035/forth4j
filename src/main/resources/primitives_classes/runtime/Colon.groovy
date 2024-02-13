@@ -33,18 +33,9 @@ class Colon extends AbstractRuntime {
         if (!interpreter.line.contains(";"))
             throw new ForthCompilerException("No matching ';' for ':'")
         // Invoke the compiler
+        interpreter.forthCompiler.reset()
         interpreter.forthCompiler.compile(interpreter.line)
-        interpreter.tokens.clear()
-        interpreter.words.clear()
-
-        //Not too sure about this but...
-        interpreter.dataStack.clear()
-        interpreter.returnStack.clear()
-        // Revisit if needed
-
-        interpreter.word = null
-        interpreter.line = null
-        interpreter.instructionPointer = 0
+//        interpreter.reset()
         return false
     }
 }
