@@ -16,9 +16,61 @@
 
 package com.rajames.forth.memory
 
+import com.rajames.forth.ForthException
+import com.rajames.forth.memory.storage.BlockService
+import org.springframework.beans.factory.annotation.Autowired
+
 abstract class AbstractStack implements StackInterface, Serializable {
 
     protected Stack<Object> stack = new Stack<>()
+
+    @Autowired
+    BlockService blockService
+
+    @Override
+    void serialize() {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream()
+        ObjectOutputStream out = new ObjectOutputStream(bos)
+        out.withCloseable { ObjectOutputStream oos ->
+            oos.writeObject(this)
+            oos.flush()
+        }
+        bos.withCloseable { ByteArrayOutputStream baos ->
+            byte[] serializedData = baos.toByteArray()
+            for (int i = 0; i < serializedData.length; i++) {
+                Integer address = 0 - Math.abs(i + 1024)
+                byte b = serializedData[i]
+                blockService.store(address, b, true)
+            }
+        }
+    }
+
+    @Override
+    void deserialize() {
+        List<Byte> data = []
+        int i = 0
+        while (true) {
+            Integer address = 0 - Math.abs(i + 1024)
+            Byte b = null
+            try {
+                b = blockService.fetch(address, true)
+            } catch (ForthException ex) {
+                if (ex.getMessage().equals("Illegal memory access :(")) {
+                    break
+                }
+            }
+            data.add(b)
+            i++
+        }
+
+        byte[] serializedData = data as byte[]
+        ByteArrayInputStream bis = new ByteArrayInputStream(serializedData)
+        ObjectInputStream ois = new ObjectInputStream(bis)
+        ois.withCloseable { ObjectInputStream is ->
+            AbstractStack deserializedObject = (AbstractStack) is.readObject()
+            this.stack = deserializedObject.stack
+        }
+    }
 
     @Override
     void push(Object value) {
@@ -43,6 +95,22 @@ abstract class AbstractStack implements StackInterface, Serializable {
     @Override
     int size() {
         return stack.size()
+    }
+
+
+    boolean equals(o) {
+        if (this.is(o)) return true
+        if (!(o instanceof AbstractStack)) return false
+
+        AbstractStack that = (AbstractStack) o
+
+        if (stack != that.stack) return false
+
+        return true
+    }
+
+    int hashCode() {
+        return (stack != null ? stack.hashCode() : 0)
     }
 
     @Override
