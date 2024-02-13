@@ -17,6 +17,7 @@
 
 package com.rajames.forth.runtime
 
+import com.rajames.forth.ForthException
 import com.rajames.forth.compiler.ForthCompiler
 import com.rajames.forth.compiler.ForthCompilerException
 import com.rajames.forth.dictionary.DictionaryService
@@ -185,10 +186,12 @@ class ForthInterpreter {
                     forthOutput = false
                 } // edge cases here. We CAN return anything we want in reality.
             }
-        } catch (ForthInterpreterException interpreterException) {
-            log.error(interpreterException.message)
-        } catch (ForthCompilerException compilerException) {
-            log.error(compilerException.message, compilerException)
+        } catch (ForthException forthException) {
+            log.error(forthException.message)
+        } catch (ForthInterpreterException forthInterpreterException) {
+            log.error(forthInterpreterException.message, forthInterpreterException)
+        } catch (ForthCompilerException forthCompilerException) {
+            log.error(forthCompilerException.message)
         }
         return forthOutput
     }

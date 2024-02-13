@@ -16,6 +16,8 @@
 
 package primitives_classes.runtime
 
+import com.rajames.forth.Forth4J
+import com.rajames.forth.ForthException
 import com.rajames.forth.dictionary.Word
 import com.rajames.forth.memory.storage.Block
 import com.rajames.forth.runtime.AbstractRuntime
@@ -23,8 +25,12 @@ import com.rajames.forth.runtime.ForthInterpreter
 import com.rajames.forth.runtime.ForthInterpreterException
 import com.rajames.forth.util.Editor
 import com.rajames.forth.util.EditorException
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 
 class Edit extends AbstractRuntime {
+
+    private static final Logger log = LogManager.getLogger(Forth4J.class.getName())
 
 /**
  * Execute the FORTH word from the interpreter.
@@ -39,7 +45,12 @@ class Edit extends AbstractRuntime {
     @Override
     Object execute(ForthInterpreter interpreter, Word word, Word parentWord) {
         Integer blockNumber = interpreter.dataStack.pop() as Integer
-        Block block = interpreter.blockService.getBlock(blockNumber)
+        Block block = null
+        try {
+            block = interpreter.blockService.getBlock(blockNumber)
+        } catch (ForthException f) {
+            log.error(f.message)
+        }
         try {
             Editor editor = new Editor(block, interpreter.blockService)
             editor.editor()

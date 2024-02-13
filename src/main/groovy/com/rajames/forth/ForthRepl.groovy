@@ -92,6 +92,8 @@ class ForthRepl {
                 forthOutput = interpreter.interpretAndExecute(line)
                 resetInterpreter()
                 resetCompiler()
+            } catch (ForthException f) {
+                log.error("Error: ${f?.message}")
             } catch (ForthInterpreterException ex) {
                 log.error("Error: ${ex?.message}")
             }

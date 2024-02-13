@@ -73,7 +73,11 @@ public class Forth4J {
                 final ForthRepl repl = context.getBean(ForthRepl.class);
 
                 // Run it
-                repl.run();
+                try {
+                    repl.run();
+                } catch (final Exception e) {
+                    log.error(e.getMessage());
+                }
             }
         } catch (final BeansException beansException) {
             log.error("Error initializing application", beansException);
