@@ -16,7 +16,7 @@
 
 package com.rajames.forth.memory
 
-abstract class AbstractStack implements StackInterface {
+abstract class AbstractStack implements StackInterface, Serializable {
 
     protected Stack<Object> stack = new Stack<>()
 

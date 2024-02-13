@@ -16,6 +16,7 @@
 
 package com.rajames.forth.memory.storage
 
+import com.rajames.forth.ForthException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -39,6 +40,7 @@ class BlockService {
 
     @Transactional
     Block getBlock(Integer blockNumber) {
+        verifyBlockNumber(blockNumber)
         Optional<Block> blockOptional = blockRepository.findByBlockNumber(blockNumber)
 
         if (blockOptional.isPresent()) {
@@ -55,7 +57,29 @@ class BlockService {
     }
 
     @Transactional
+    Block getBlock(Integer blockNumber, Boolean flag) {
+        if (flag) {
+            Optional<Block> blockOptional = blockRepository.findByBlockNumber(blockNumber)
+
+            if (blockOptional.isPresent()) {
+                return blockOptional.get()
+            } else {
+                Block newBlock = new Block()
+                byte[] newBytes = new byte[BLOCK_SIZE]
+                Arrays.fill(newBytes as Byte[], null)
+
+                newBlock.setBlockNumber(blockNumber)
+                newBlock.setBytes(newBytes)
+                return blockRepository.save(newBlock)
+            }
+        } else {
+            throw new ForthException("Illegal memory access :(")
+        }
+    }
+
+    @Transactional
     Block putBlock(Integer blockNumber) {
+        verifyBlockNumber(blockNumber)
         // Check if block with given blockNumber already exists
         Optional<Block> blockOptional = blockRepository.findByBlockNumber(blockNumber)
 
@@ -67,6 +91,25 @@ class BlockService {
         block.setBytes(fill)
 
         return blockRepository.save(block)
+    }
+
+    @Transactional
+    Block putBlock(Integer blockNumber, Boolean flag) {
+        if (flag) {
+            // Check if block with given blockNumber already exists
+            Optional<Block> blockOptional = blockRepository.findByBlockNumber(blockNumber)
+
+            Block block = blockOptional.orElseGet(Block::new)
+            byte[] newBytes = new byte[BLOCK_SIZE]
+            def fill = Arrays.fill(newBytes as Byte[], null)
+
+            block.setBlockNumber(blockNumber)
+            block.setBytes(fill)
+
+            return blockRepository.save(block)
+        } else {
+            throw new ForthException("Illegal memory access :(")
+        }
     }
 
     @Transactional
@@ -88,6 +131,31 @@ class BlockService {
                 })
 
         return block.getBytes()[index]
+    }
+
+    @Transactional
+    Byte fetch(Integer address, Boolean flag) {
+        if (flag) {
+            Integer blockNumber = (address / BLOCK_SIZE) as Integer
+            Integer index = address % BLOCK_SIZE
+            int absNumber = Math.abs(index) // <-- Always a positive number
+
+            // Find block or create new one if it doesn't exist
+            Block block = blockRepository.findByBlockNumber(blockNumber)
+                    .orElseGet(() -> {
+                        byte[] newBytes = new byte[BLOCK_SIZE]
+                        Arrays.fill(newBytes as Byte[], null)
+
+                        Block newBlock = new Block()
+                        newBlock.setBlockNumber(blockNumber)
+                        newBlock.setBytes(newBytes)
+
+                        return blockRepository.save(newBlock)
+                    })
+            return block.getBytes()[absNumber]
+        } else {
+            throw new ForthException("Illegal memory access :(")
+        }
     }
 
     @Transactional
@@ -113,5 +181,40 @@ class BlockService {
 
         block.setBytes(bytes)
         blockRepository.save(block)
+    }
+
+    @Transactional
+    void store(Integer address, Byte value, Boolean flag) {
+        int blockNumber = address / BLOCK_SIZE as Integer
+        int index = address % BLOCK_SIZE
+        int absNumber = Math.abs(index) // <-- Always a positive number
+
+        if (flag) {
+            // Find block or create new one if it doesn't exist
+            Block block = blockRepository.findByBlockNumber(blockNumber)
+                    .orElseGet(() -> {
+                        byte[] newBytes = new byte[BLOCK_SIZE]
+                        Arrays.fill(newBytes as Byte[], null)
+
+                        Block newBlock = new Block()
+                        newBlock.setBlockNumber(blockNumber)
+                        newBlock.setBytes(newBytes)
+
+                        return blockRepository.save(newBlock)
+                    })
+            byte[] bytes = block.getBytes()
+            bytes[absNumber] = value
+
+            block.setBytes(bytes)
+            blockRepository.save(block)
+        } else {
+            throw new ForthException("Illegal memory access :(")
+        }
+    }
+
+    private void verifyBlockNumber(Integer blockNumber) {
+        if (blockNumber < 1) {
+            throw new ForthException("Invalid block number: " + blockNumber)
+        }
     }
 }
