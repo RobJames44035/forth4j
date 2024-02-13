@@ -23,7 +23,6 @@ import com.rajames.forth.dictionary.DictionaryService
 import com.rajames.forth.dictionary.Word
 import com.rajames.forth.dictionary.WordService
 import com.rajames.forth.memory.DataStack
-import com.rajames.forth.memory.Memory
 import com.rajames.forth.memory.ReturnStack
 import com.rajames.forth.memory.storage.BlockService
 import com.rajames.forth.util.DatabaseBackupService
@@ -53,9 +52,6 @@ class ForthInterpreter {
 
     Queue<String> tokens = new ConcurrentLinkedQueue<>()
     Queue<Word> words = new ConcurrentLinkedQueue<>()
-
-    @Autowired
-    Memory memory
 
     @Autowired
     DataStack dataStack

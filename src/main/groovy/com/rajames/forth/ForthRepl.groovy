@@ -20,7 +20,6 @@ package com.rajames.forth
 
 import com.rajames.forth.compiler.ForthCompiler
 import com.rajames.forth.memory.DataStack
-import com.rajames.forth.memory.Memory
 import com.rajames.forth.memory.ReturnStack
 import com.rajames.forth.runtime.ForthInterpreter
 import com.rajames.forth.runtime.ForthInterpreterException
@@ -42,9 +41,6 @@ class ForthRepl {
     private static final Logger log = LogManager.getLogger(this.class.getName())
 
     private Scanner scanner
-
-    @Autowired
-    private Memory memory
 
     @Autowired
     private DataStack dataStack

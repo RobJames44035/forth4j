@@ -159,6 +159,9 @@ class CoreDefinitions {
         Word abort = createPrimitiveWord("abort", "Abort")
         Word abs = createPrimitiveWord("abs", "Abs", null, 1)
         Word and = createPrimitiveWord("and", "And", null, 2)
+        Word cStore = createPrimitiveWord("c!", "Store", null, 2)
+        Word cFetch = createPrimitiveWord("c@", "Fetch", null, 2)
+
 
         // TODO after "editor"
 //        Word beginWord = createPrimitiveWord("begin")

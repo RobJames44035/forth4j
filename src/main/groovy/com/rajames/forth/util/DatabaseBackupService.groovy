@@ -82,12 +82,6 @@ class DatabaseBackupService {
         } catch (Exception ignored) {
             throw new ForthInterpreterException("Could not load ${backupFilePath}.")
         }
-//        try (final Connection conn = this.dataSource.getConnection()) {
-//            RunScript.execute(conn, new FileReader(absolutePath))
-//        } catch (FileNotFoundException e) {
-//            throw new RuntimeException(e)
-//        }
-
         flushService.flush()
     }
 }
