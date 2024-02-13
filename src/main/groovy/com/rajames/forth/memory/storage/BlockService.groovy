@@ -45,7 +45,11 @@ class BlockService {
             return blockOptional.get()
         } else {
             Block newBlock = new Block()
+            byte[] newBytes = new byte[BLOCK_SIZE]
+            Arrays.fill(newBytes as Byte[], null)
+
             newBlock.setBlockNumber(blockNumber)
+            newBlock.setBytes(newBytes)
             return blockRepository.save(newBlock)
         }
     }
@@ -56,8 +60,11 @@ class BlockService {
         Optional<Block> blockOptional = blockRepository.findByBlockNumber(blockNumber)
 
         Block block = blockOptional.orElseGet(Block::new)
+        byte[] newBytes = new byte[BLOCK_SIZE]
+        Arrays.fill(newBytes as Byte[], null)
 
         block.setBlockNumber(blockNumber)
+        block.setBytes(fill)
 
         return blockRepository.save(block)
     }
@@ -71,8 +78,7 @@ class BlockService {
         Block block = blockRepository.findByBlockNumber(blockNumber)
                 .orElseGet(() -> {
                     byte[] newBytes = new byte[BLOCK_SIZE]
-//                    Byte fill = Byte.valueOf(" ")
-//                    Arrays.fill(newBytes as Byte[], fill)
+                    Arrays.fill(newBytes as Byte[], null)
 
                     Block newBlock = new Block()
                     newBlock.setBlockNumber(blockNumber)
@@ -93,7 +99,7 @@ class BlockService {
         Block block = blockRepository.findByBlockNumber(blockNumber)
                 .orElseGet(() -> {
                     byte[] newBytes = new byte[BLOCK_SIZE]
-                    Arrays.fill(newBytes, (byte) 0)
+                    Arrays.fill(newBytes as Byte[], null)
 
                     Block newBlock = new Block()
                     newBlock.setBlockNumber(blockNumber)

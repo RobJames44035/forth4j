@@ -37,12 +37,17 @@ class List extends AbstractRuntime {
         Integer blockNumber = interpreter.dataStack.pop() as Integer
         byte[] bytes = interpreter.blockService.getBlock(blockNumber).bytes
         for (int i = 0; i < 16; i++) {
-            print((i + 1) + ": ")
+            String rowNumber = String.format(" %02d: ", i + 1)
+            print(rowNumber)
 
             for (int j = 0; j < 64; j++) {
                 if (i * 64 + j < bytes.length) {
                     char c = bytes[i * 64 + j] as char
-                    print(c)
+                    if (bytes[i * 64 + j] == (byte) 0) {
+                        print(" ")
+                    } else {
+                        print(c)
+                    }
                 } else {
                     print(" ")
                 }

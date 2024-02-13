@@ -96,23 +96,30 @@ class Editor {
                         row++
                     }
                     column = startCol
-                    for (; column <= 68; column++) {
-                        TextCharacter textCharacter = screen.getFrontCharacter(column, row)
-                        if (textCharacter.getCharacterString() == ' ' || textCharacter.getCharacterString() == '\u0000') {
-                            break
-                        }
-                    }
+//                    for (; column <= 68; column++) {
+//                        TextCharacter textCharacter = screen.getFrontCharacter(column, row)
+//                        if (textCharacter.getCharacterString() == '\u0000') {
+//                            break
+//                        }
+//                    }
                     break
                 default:
                     if (ks.getKeyType() == KeyType.Character && !ks.isCtrlDown() && !ks.isAltDown()) {
                         Character inputChar = ks.getCharacter()
                         screen.setCharacter(column, row, TextCharacter.fromCharacter(inputChar, TextColor.ANSI.YELLOW, TextColor.ANSI.BLACK) as TextCharacter)
                         if (column < 68) {
+                            // Calculate appropriate index in byte array
+                            int index = (row - 4) * 64 + (column - startCol)
+
+                            // Ensure index is within array bounds
+                            if (index >= 0 && index < block.bytes.length) {
+                                this.block.bytes[index] = (byte) inputChar.charValue()
+                            }
                             column++
                         }
                     }
-
                     if (ks.isCtrlDown() && ks.getCharacter() == 'x') {
+                        blockService.save(this.block)
                         screen.stopScreen()
                         screen.close()
                         terminal.close()
@@ -159,7 +166,7 @@ class Editor {
             try {
                 screen.setCharacter(col, row, TextCharacter.fromCharacter(ch, TextColor.ANSI.YELLOW, TextColor.ANSI.BLACK) as TextCharacter)
             } catch (IllegalArgumentException ignored) {
-                screen.setCharacter(col, row, TextCharacter.fromCharacter("." as char, TextColor.ANSI.YELLOW, TextColor.ANSI.BLACK) as TextCharacter)
+                screen.setCharacter(col, row, TextCharacter.fromCharacter(" " as char, TextColor.ANSI.YELLOW, TextColor.ANSI.BLACK) as TextCharacter)
             }
             col++
             if (col >= startCol + width) {
@@ -187,7 +194,7 @@ class Editor {
     }
 
     private void foot() {
-        String footer = " ^X Exit      ^W Write Block                                                    "
+        String footer = " ^X Exit                                                                        "
         TextGraphics textGraphics = screen.newTextGraphics()
         textGraphics.setForegroundColor(TextColor.ANSI.BLACK)
         textGraphics.setBackgroundColor(TextColor.ANSI.YELLOW)
