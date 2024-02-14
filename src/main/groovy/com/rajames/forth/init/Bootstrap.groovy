@@ -18,6 +18,7 @@ package com.rajames.forth.init
 
 import com.rajames.forth.dictionary.DictionaryService
 import com.rajames.forth.dictionary.WordService
+import com.rajames.forth.memory.storage.BlockService
 import com.rajames.forth.util.DatabaseBackupService
 import com.rajames.forth.util.FlushService
 import org.apache.logging.log4j.LogManager
@@ -36,15 +37,16 @@ class Bootstrap implements InitializingBean {
     private WordService wordService
     private FlushService flushService
     private String coreName
-
+    private BlockService blockService
     private DatabaseBackupService databaseBackupService
 
     @Autowired
-    Bootstrap(DictionaryService dictionaryService, WordService wordService, DatabaseBackupService databaseBackupService, FlushService flushService) {
+    Bootstrap(DictionaryService dictionaryService, WordService wordService, DatabaseBackupService databaseBackupService, FlushService flushService, BlockService blockService) {
         this.dictionaryService = dictionaryService
         this.wordService = wordService
         this.databaseBackupService = databaseBackupService
         this.flushService = flushService
+        this.blockService = blockService
     }
 
     @Override
@@ -65,6 +67,9 @@ class Bootstrap implements InitializingBean {
         CoreDefinitions coreDefinitions = new CoreDefinitions(wordService, databaseBackupService, flushService)
         coreDefinitions.coreName = this.coreName
         coreDefinitions.createCoreDictionary()
+
+        CoreMemory coreMemory = new CoreMemory(blockService)
+        coreMemory.buildCoreMemory()
 
         // more initialization code here...
         log.info("...Bootstrap finished.")
