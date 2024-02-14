@@ -161,7 +161,7 @@ class CoreDefinitions {
         Word and = createPrimitiveWord("and", "And", null, 2)
         Word cStore = createPrimitiveWord("c!", "Store", null, 2)
         Word cFetch = createPrimitiveWord("c@", "Fetch", null, 2)
-        Word COLON = createPrimitiveWord("COLON")
+        Word COLON = createPrimitiveWord("colon")
         Word hash = createPrimitiveWord("#", "Deferred")
         Word hashOver = createPrimitiveWord("#>", "Deferred")
         Word hashS = createPrimitiveWord("#S", "Deferred")
@@ -173,7 +173,10 @@ class CoreDefinitions {
         Word max = createPrimitiveWord("max", "Max")
         Word min = createPrimitiveWord("min", "Min")
         Word swap = createPrimitiveWord("swap", "Swap")
-
+        Word negate = createPrimitiveWord("negate", "Negate")
+        Word not = createPrimitiveWord("not", "Not")
+        Word or = createPrimitiveWord("or", "Or")
+        Word xor = createPrimitiveWord("xor", "Xor")
 
         // TODO after "editor"
 //        Word beginWord = createPrimitiveWord("begin")
