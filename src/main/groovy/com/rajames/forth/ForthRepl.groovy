@@ -75,7 +75,7 @@ class ForthRepl {
                 databaseBackupService.backupDatabase(null, "core.sql")
                 println("Goodbye!")
                 break
-            } else if (line == "gsh") {
+            } else if (line == "gsh") { // TODO This will go away at some point.
                 Binding binding = new Binding()
                 AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext("com.rajames.forth")
                 String[] allBeanNames = context.getBeanDefinitionNames()
