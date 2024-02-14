@@ -172,6 +172,7 @@ class CoreDefinitions {
         Word slashMod = createPrimitiveWord("/mod", "SlashMod")
         Word max = createPrimitiveWord("max", "Max")
         Word min = createPrimitiveWord("min", "Min")
+        Word swap = createPrimitiveWord("swap", "Swap")
 
 
         // TODO after "editor"
