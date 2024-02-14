@@ -69,6 +69,9 @@ class ForthRepl {
             String line = this.scanner.nextLine().trim()
 
             if (line == "bye") {
+                // TODO for state machine when we get there
+//                dataStack.serialize()
+//                returnStack.serialize()
                 databaseBackupService.backupDatabase(null, "core.sql")
                 println("Goodbye!")
                 break
