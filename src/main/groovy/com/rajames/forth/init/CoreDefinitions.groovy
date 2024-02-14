@@ -161,6 +161,17 @@ class CoreDefinitions {
         Word and = createPrimitiveWord("and", "And", null, 2)
         Word cStore = createPrimitiveWord("c!", "Store", null, 2)
         Word cFetch = createPrimitiveWord("c@", "Fetch", null, 2)
+        Word COLON = createPrimitiveWord("COLON")
+        Word hash = createPrimitiveWord("#", "Deferred")
+        Word hashOver = createPrimitiveWord("#>", "Deferred")
+        Word hashS = createPrimitiveWord("#S", "Deferred")
+        Word tick = createPrimitiveWord("'", "Deferred")
+        Word comment = createPrimitiveWord("(", "Comment")
+        Word mod = createPrimitiveWord("mod", "Mod")
+        Word starSlashMod = createPrimitiveWord("*/mod", "StarSlashMod")
+        Word slashMod = createPrimitiveWord("/mod", "SlashMod")
+        Word max = createPrimitiveWord("max", "Max")
+        Word min = createPrimitiveWord("min", "Min")
 
 
         // TODO after "editor"
