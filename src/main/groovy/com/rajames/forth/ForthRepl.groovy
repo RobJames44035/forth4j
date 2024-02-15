@@ -68,7 +68,7 @@ class ForthRepl {
         while (true) {
             String line = this.scanner.nextLine().trim()
 
-            if (line == "bye") {
+            if (line == "bye" || line == "quit") {
                 // TODO for state machine when we get there
 //                dataStack.serialize()
 //                returnStack.serialize()

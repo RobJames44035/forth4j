@@ -49,6 +49,11 @@ class WordService {
     }
 
     @Transactional
+    void deleteAllWithCreationDateOnOrAfter(Date date) {
+        wordRepository.deleteAllWithCreationDateOnOrAfter(date)
+    }
+
+    @Transactional
     Word findByName(String name) {
         log.trace("WordService.findByName(String '${name}')")
         Optional<Word> optional = wordRepository.findFirstByNameOrderByCreateDateTimeDesc(name)

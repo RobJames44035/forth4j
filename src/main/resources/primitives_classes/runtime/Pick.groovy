@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package com.rajames.forth.memory
+package primitives_classes.runtime
 
-interface StackInterface {
+import com.rajames.forth.dictionary.Word
+import com.rajames.forth.runtime.AbstractRuntime
+import com.rajames.forth.runtime.ForthInterpreter
 
-    void push(Object value)
-    Object pop()
-    void clear()
-    int size()
-    boolean isEmpty()
+class Pick extends AbstractRuntime {
 
-    int get(Integer i)
-
-    void serialize()
-    void deserialize()
+    @Override
+    Object execute(ForthInterpreter interpreter, Word word, Word parentWord) {
+        Integer index = interpreter.dataStack.pop() as Integer
+        Integer item = interpreter.dataStack.get(index)
+        interpreter.dataStack.push(item)
+        return null
+    }
 }

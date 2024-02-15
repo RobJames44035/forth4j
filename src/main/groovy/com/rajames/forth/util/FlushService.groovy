@@ -30,6 +30,6 @@ class FlushService {
 
     @Transactional
     void flush() {
-        entityManager.flush();
+        entityManager.flush()
     }
 }

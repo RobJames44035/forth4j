@@ -18,6 +18,7 @@ package com.rajames.forth.memory
 
 import com.rajames.forth.ForthException
 import com.rajames.forth.memory.storage.BlockService
+import com.rajames.forth.runtime.ForthInterpreterException
 import org.springframework.beans.factory.annotation.Autowired
 
 abstract class AbstractStack implements StackInterface, Serializable {
@@ -97,6 +98,15 @@ abstract class AbstractStack implements StackInterface, Serializable {
         return stack.size()
     }
 
+    @Override
+    int get(Integer i) {
+        if (i >= 0 && i < stack.size()) { // Checking if index is valid
+            return stack.get(stack.size() - i - 1) as int
+            // Inverting the index because the top of stack is the end of list
+        } else {
+            throw new ForthInterpreterException("Warning: Invalid Index")
+        }
+    }
 
     boolean equals(o) {
         if (this.is(o)) return true
