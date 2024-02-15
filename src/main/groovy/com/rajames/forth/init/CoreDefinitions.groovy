@@ -189,12 +189,13 @@ class CoreDefinitions {
         Word roll = createPrimitiveWord("roll", "Roll")
         Word space = createPrimitiveWord("space", "Space")
 
-        // TODO after "editor"
-//        Word beginWord = createPrimitiveWord("begin")
-//        Word againWord = createPrimitiveWord("again")
-//        Word whileWord = createPrimitiveWord("while")
-//        Word repeatWord = createPrimitiveWord("repeat")
-
+/* TODO after "editor"
+        Word beginWord = createPrimitiveWord("begin")
+        Word againWord = createPrimitiveWord("again")
+        Word whileWord = createPrimitiveWord("while")
+        Word repeatWord = createPrimitiveWord("repeat")
+        ...
+*/
         // Complex words that are made up of a List<Word> that describes their behavior go here.
 
         flushService.flush()
