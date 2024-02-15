@@ -173,7 +173,6 @@ class CoreDefinitions {
         Word not = createPrimitiveWord("not", "Not")
         Word or = createPrimitiveWord("or", "Or")
         Word xor = createPrimitiveWord("xor", "Xor")
-
         Word move = createPrimitiveWord("move", "Move")
         Word cMove = createPrimitiveWord("cmove", "CMove")
         Word overR = createPrimitiveWord(">r", "OverR")
