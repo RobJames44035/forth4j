@@ -14,27 +14,26 @@
  * limitations under the License.
  */
 
-package primitives_classes.runtime
+package primitives_classes.compiler
 
-import com.rajames.forth.compiler.ForthCompilerException
+import com.rajames.forth.compiler.AbstractCompilerDirective
+import com.rajames.forth.compiler.ForthCompiler
 import com.rajames.forth.dictionary.Word
-import com.rajames.forth.runtime.AbstractRuntime
 import com.rajames.forth.runtime.ForthInterpreter
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
 
-class Colon extends AbstractRuntime {
+import javax.transaction.Transactional
 
-    private static final Logger log = LogManager.getLogger(this.class.getName())
+class VariableC extends AbstractCompilerDirective {
 
     @Override
-    Object execute(ForthInterpreter interpreter, Word word, Word parentWord) {
-        // Fail Fast
-        if (!interpreter.line.contains(";"))
-            throw new ForthCompilerException("No matching ';' for ':'")
-        // Invoke the compiler
-        interpreter.forthCompiler.reset()
-        interpreter.forthCompiler.compile(interpreter.line)
+    @Transactional
+    Boolean execute(Word newWord, ForthCompiler compiler, ForthInterpreter interpreter) {
+        Integer n1 = interpreter.dataStack.pop() as Integer
+        compiler.newWord.name = compiler.tokens.poll()
+        compiler.newWord.runtimeClass = null
+        compiler.newWord.compileClass = null
+        compiler.wordService.save(compiler.newWord)
+        compiler.compileIntegerVariable(n1.toString())
         return false
     }
 }

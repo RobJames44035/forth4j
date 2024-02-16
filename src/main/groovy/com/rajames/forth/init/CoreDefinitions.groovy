@@ -137,6 +137,7 @@ class CoreDefinitions {
         Word colon = createPrimitiveWord(":", "Colon")
         Word semicolon = createPrimitiveWord(";")
         Word literal = createPrimitiveWord("literal", "Literal", null, 0, true)
+        Word lit = createPrimitiveWord("lit", "Lit", null, 0, true)
         Word ifWord = createPrimitiveWord("if", "If", "IfC", 1, true, true)
         Word elseWord = createPrimitiveWord("else", "Else", "ElseC", 0, true, true)
         Word thenWord = createPrimitiveWord("then", null, null, 0, true, true)
@@ -146,7 +147,6 @@ class CoreDefinitions {
         Word plusLoopWord = createPrimitiveWord("+loop", "PlusLoop", null, 1, true, true)
         Word store = createPrimitiveWord("!", "Store", null, 2)
         Word fetch = createPrimitiveWord("@", "Fetch", null, 1)
-        Word questionMark = createPrimitiveWord("?", "QuestionMark", null, 1)
         Word words = createPrimitiveWord("words", "Words")
         Word times = createPrimitiveWord("*", "Times", null, 2)
         Word divide = createPrimitiveWord("/", "Divide", null, 2)
@@ -188,6 +188,8 @@ class CoreDefinitions {
         Word rFetch = createPrimitiveWord("r@", "RFetch")
         Word roll = createPrimitiveWord("roll", "Roll")
         Word space = createPrimitiveWord("space", "Space")
+        Word constant = createPrimitiveWord("constant", "Constant", "ConstantC")
+        Word variable = createPrimitiveWord("variable", "Variable", "VariableC")
 
 /* TODO after "editor"
         Word beginWord = createPrimitiveWord("begin")

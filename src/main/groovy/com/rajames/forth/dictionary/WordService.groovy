@@ -17,6 +17,7 @@
 package com.rajames.forth.dictionary
 
 import com.rajames.forth.compiler.ForthCompilerException
+import com.rajames.forth.runtime.ForthInterpreterException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
@@ -39,9 +40,13 @@ class WordService {
     EntityManager entityManager
 
     @Autowired
-    WordService(WordRepository wordRepository, DictionaryRepository dictionaryRepository/*, EntityManager entityManager*/) {
+    WordService(WordRepository wordRepository, DictionaryRepository dictionaryRepository) {
         this.wordRepository = wordRepository
         this.dictionaryRepository = dictionaryRepository
+    }
+
+    Word getById(Long id) {
+        return wordRepository.findById(id).orElseThrow(() -> new ForthInterpreterException("Word not found for id: " + id))
     }
 
     List<Word> list() {

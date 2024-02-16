@@ -58,6 +58,7 @@ class BlockService {
 
     @Transactional
     Block getBlock(Integer blockNumber, Boolean flag) {
+        blockNumber = 0 - (blockNumber + BLOCK_SIZE)
         if (flag) {
             Optional<Block> blockOptional = blockRepository.findByBlockNumber(blockNumber)
 
@@ -95,6 +96,7 @@ class BlockService {
 
     @Transactional
     Block putBlock(Integer blockNumber, Boolean flag) {
+        blockNumber = 0 - (blockNumber + BLOCK_SIZE)
         if (flag) {
             // Check if block with given blockNumber already exists
             Optional<Block> blockOptional = blockRepository.findByBlockNumber(blockNumber)
@@ -136,7 +138,7 @@ class BlockService {
     @Transactional
     Byte fetch(Integer address, Boolean flag) {
         if (flag) {
-            Integer blockNumber = (address / BLOCK_SIZE) as Integer
+            Integer blockNumber = (address / BLOCK_SIZE) - BLOCK_SIZE as Integer
             Integer index = address % BLOCK_SIZE
             int absNumber = Math.abs(index) // <-- Always a positive number
 
@@ -185,9 +187,9 @@ class BlockService {
 
     @Transactional
     void store(Integer address, Byte value, Boolean flag) {
-        int blockNumber = address / BLOCK_SIZE as Integer
-        int index = address % BLOCK_SIZE
-        int absNumber = Math.abs(index) // <-- Always a positive number
+        Integer blockNumber = (address / BLOCK_SIZE) - BLOCK_SIZE as Integer
+        Integer index = address % BLOCK_SIZE
+        index = Math.abs(index) // <-- Always a positive number
 
         if (flag) {
             // Find block or create new one if it doesn't exist
@@ -202,8 +204,9 @@ class BlockService {
 
                         return blockRepository.save(newBlock)
                     })
+
             byte[] bytes = block.getBytes()
-            bytes[absNumber] = value
+            bytes[index] = value
 
             block.setBytes(bytes)
             blockRepository.save(block)

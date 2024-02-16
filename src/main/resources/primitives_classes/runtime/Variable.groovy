@@ -20,7 +20,7 @@ import com.rajames.forth.dictionary.Word
 import com.rajames.forth.runtime.AbstractRuntime
 import com.rajames.forth.runtime.ForthInterpreter
 
-class PlusStore extends AbstractRuntime {
+class Variable extends AbstractRuntime {
 
 /**
  * Execute the FORTH word from the interpreter.
@@ -34,11 +34,8 @@ class PlusStore extends AbstractRuntime {
 
     @Override
     Object execute(ForthInterpreter interpreter, Word word, Word parentWord) {
-        Integer addr = interpreter.dataStack.pop() as Integer
-        Integer n1 = interpreter.dataStack.pop() as Integer
-        Integer mem = interpreter.blockService.fetch(addr, true)
-        Integer sum = mem + n1
-        interpreter.blockService.store(addr, sum as Byte, true)
+        interpreter.forthCompiler.reset()
+        interpreter.forthCompiler.compile(interpreter.line)
         return null
     }
 }

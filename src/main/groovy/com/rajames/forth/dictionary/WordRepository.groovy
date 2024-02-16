@@ -24,8 +24,10 @@ import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 
 @Repository
-interface WordRepository extends JpaRepository<Word, String> {
+interface WordRepository extends JpaRepository<Word, Long> {
     Optional<Word> findFirstByNameOrderByCreateDateTimeDesc(String name)
+
+    Optional<Word> findById(Long id)
 
     @Transactional
     @Modifying

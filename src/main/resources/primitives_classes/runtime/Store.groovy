@@ -34,9 +34,16 @@ class Store extends AbstractRuntime {
 
     @Override
     Object execute(ForthInterpreter interpreter, Word word, Word parentWord) {
-        Integer addr = interpreter.dataStack.pop() as Integer
-        Byte b = interpreter.dataStack.pop() as Byte
-        interpreter.blockService.store(addr, b)
+        Object addr = interpreter.dataStack.pop() as Object
+        if (addr instanceof Long) {
+            Word variable = interpreter.wordService.getById(addr)
+            Integer i = interpreter.dataStack.pop() as Integer
+            variable.stackValue = i
+            interpreter.wordService.save(variable)
+        } else {
+            Byte b = interpreter.dataStack.pop() as Byte
+            interpreter.blockService.store(addr as Integer, b, true)
+        }
         return null
     }
 }

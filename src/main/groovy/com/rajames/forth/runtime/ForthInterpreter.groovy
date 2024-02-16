@@ -43,17 +43,6 @@ class ForthInterpreter {
 
     private static final Logger log = LogManager.getLogger(this.class.getName())
 
-    /**
-     * This is the input
-     */
-    String line
-    Word word
-    String token
-    Integer instructionPointer
-
-    Queue<String> tokens = new ConcurrentLinkedQueue<>()
-    Queue<Word> words = new ConcurrentLinkedQueue<>()
-
     @Autowired
     DataStack dataStack
 
@@ -78,6 +67,12 @@ class ForthInterpreter {
     @Autowired
     FlushService flushService
 
+    String line
+    Word word
+    String token
+    Integer instructionPointer
+    Queue<String> tokens = new ConcurrentLinkedQueue<>()
+    Queue<Word> words = new ConcurrentLinkedQueue<>()
 
     /**
      * Main entry point from the REPL
@@ -124,7 +119,6 @@ class ForthInterpreter {
      * When we enter the interpreter with a line from REPL it needs to be broken out into
      * a number of things to prepare it for execution:
      * We iterate through all of the tokens in the line and set interpreter fields accordingly.
-     *
      */
     private void configureForthInterpreter(String line) {
         this.line = line.toLowerCase().trim() as String

@@ -38,8 +38,8 @@ class Move extends AbstractRuntime {
         Integer n = interpreter.dataStack.pop() as Integer
 
         for (int l = 0; l < n; l++) {
-            byte b = interpreter.blockService.fetch(src + l) as byte
-            interpreter.blockService.store(dest + l, b)
+            byte b = interpreter.blockService.fetch(src + l, true) as byte
+            interpreter.blockService.store(dest + l, b, true)
         }
         return null
     }

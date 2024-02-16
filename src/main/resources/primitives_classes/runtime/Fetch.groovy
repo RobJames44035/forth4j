@@ -34,9 +34,15 @@ class Fetch extends AbstractRuntime {
 
     @Override
     Object execute(ForthInterpreter interpreter, Word word, Word parentWord) {
-        Integer addr = interpreter.dataStack.pop() as Integer
-        Byte b = interpreter.blockService.fetch(addr)
-        interpreter.dataStack.push(b)
+        Object addr = interpreter.dataStack.pop() as Object
+        if (addr instanceof Long) {
+            Word variable = interpreter.wordService.getById(addr)
+            Integer value = variable.stackValue
+            interpreter.dataStack.push(value)
+        } else {
+            Byte b = interpreter.blockService.fetch(addr as Integer, true)
+            interpreter.dataStack.push(b)
+        }
         return null
     }
 }

@@ -71,10 +71,7 @@ class ForthCompiler {
     String nextTokenToCompile
     Dictionary dictionary
     List<String> forthWordsBuffer = new ArrayList<>()
-
     Queue<String> tokens = new ConcurrentLinkedQueue<>()
-
-    private boolean isStringContext = false
 
     @Transactional
     Word compile(String line) {
@@ -151,6 +148,22 @@ class ForthCompiler {
             integerLiteral.parentWord = this.newWord
             wordService.save(integerLiteral)
             this.forthWordsBuffer.add(integerLiteral.name)
+        } catch (Exception e) {
+            throw new ForthCompilerException("Could not compile ${token} into the dictionary.", e)
+        }
+    }
+
+    void compileIntegerVariable(String token) {
+        try {
+            Word lit = wordService.findByName("lit")
+            Word variable = new Word()
+            variable.name = "var_${UUID.randomUUID().toString() - "-"}"
+            variable.runtimeClass = lit.runtimeClass
+            variable.stackValue = Integer.parseInt(token)
+            variable.dictionary = this.dictionary
+            variable.parentWord = this.newWord
+            wordService.save(variable)
+            this.forthWordsBuffer.add(variable.name)
         } catch (Exception e) {
             throw new ForthCompilerException("Could not compile ${token} into the dictionary.", e)
         }
