@@ -96,12 +96,6 @@ class Editor {
                         row++
                     }
                     column = startCol
-//                    for (; column <= 68; column++) {
-//                        TextCharacter textCharacter = screen.getFrontCharacter(column, row)
-//                        if (textCharacter.getCharacterString() == '\u0000') {
-//                            break
-//                        }
-//                    }
                     break
                 default:
                     if (ks.getKeyType() == KeyType.Character && !ks.isCtrlDown() && !ks.isAltDown()) {
