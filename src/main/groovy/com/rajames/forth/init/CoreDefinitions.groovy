@@ -197,6 +197,7 @@ class CoreDefinitions {
         Word comma = createPrimitiveWord(",", "Comma")
         Word base = createPrimitiveWord("base", "Base")
         Word page = createPrimitiveWord("page", "Page")
+        Word expect = createPrimitiveWord("expect", "Expect")
 
 /* TODO after "editor"
         Word beginWord = createPrimitiveWord("begin")
