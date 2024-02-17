@@ -19,6 +19,7 @@
 package com.rajames.forth
 
 import com.rajames.forth.compiler.ForthCompiler
+import com.rajames.forth.compiler.ForthCompilerException
 import com.rajames.forth.memory.DataStack
 import com.rajames.forth.memory.ReturnStack
 import com.rajames.forth.runtime.ForthInterpreter
@@ -93,12 +94,15 @@ class ForthRepl {
 
             try {
                 forthOutput = interpreter.interpretAndExecute(line)
-                resetInterpreter()
-                resetCompiler()
             } catch (ForthException f) {
                 log.error("Error: ${f?.message}")
             } catch (ForthInterpreterException ex) {
                 log.error("Error: ${ex?.message}")
+            } catch (ForthCompilerException c) {
+                log.error("Error: ${c.message}")
+            } finally {
+                resetInterpreter()
+                resetCompiler()
             }
 
             if (forthOutput) {
