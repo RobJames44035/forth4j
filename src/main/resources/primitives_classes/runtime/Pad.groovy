@@ -20,7 +20,7 @@ import com.rajames.forth.dictionary.Word
 import com.rajames.forth.runtime.AbstractRuntime
 import com.rajames.forth.runtime.ForthInterpreter
 
-class Variable extends AbstractRuntime {
+class Pad extends AbstractRuntime {
 
 /**
  * Execute the FORTH word from the interpreter.
@@ -34,12 +34,8 @@ class Variable extends AbstractRuntime {
 
     @Override
     Object execute(ForthInterpreter interpreter, Word word, Word parentWord) {
-        String line = interpreter.line
-        if (line.startsWith("variable")) {
-            line = "0 " + line
-        }
-        interpreter.forthCompiler.reset()
-        interpreter.forthCompiler.compile(line)
+        Integer pad = 512
+        interpreter.dataStack.push(pad)
         return null
     }
 }

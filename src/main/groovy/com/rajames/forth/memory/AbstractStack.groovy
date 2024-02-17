@@ -108,6 +108,15 @@ abstract class AbstractStack implements StackInterface, Serializable {
         }
     }
 
+    @Override
+    Object peek() {
+        if (stack.empty()) {
+            return Integer.MAX_VALUE
+        } else {
+            return stack.peek()
+        }
+    }
+
     boolean equals(o) {
         if (this.is(o)) return true
         if (!(o instanceof AbstractStack)) return false

@@ -20,10 +20,11 @@ interface StackInterface {
 
     void push(Object value)
     Object pop()
+
+    Object peek()
     void clear()
     int size()
     boolean isEmpty()
-
     int get(Integer i)
 
     void serialize()

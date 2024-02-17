@@ -67,6 +67,7 @@ class ForthInterpreter {
     @Autowired
     FlushService flushService
 
+    Integer BASE = 10
     String line
     Word word
     String token
