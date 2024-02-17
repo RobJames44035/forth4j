@@ -192,6 +192,7 @@ class CoreDefinitions {
         Word variable = createPrimitiveWord("variable", "Variable", "VariableC")
         Word fill = createPrimitiveWord("fill", "Fill")
         Word pad = createPrimitiveWord("pad", "Pad")
+        Word create = createPrimitiveWord("create", "Create", "CreateC")
 
 /* TODO after "editor"
         Word beginWord = createPrimitiveWord("begin")
