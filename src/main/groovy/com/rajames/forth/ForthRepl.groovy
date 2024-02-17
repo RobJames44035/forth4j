@@ -94,12 +94,14 @@ class ForthRepl {
 
             try {
                 forthOutput = interpreter.interpretAndExecute(line)
-            } catch (ForthException f) {
-                log.error("Error: ${f?.message}")
-            } catch (ForthInterpreterException ex) {
-                log.error("Error: ${ex?.message}")
-            } catch (ForthCompilerException c) {
-                log.error("Error: ${c.message}")
+            } catch (ForthException forthException) {
+                log.error("Error: ${forthException?.message}")
+            } catch (ForthInterpreterException forthInterpreterException) {
+                log.error("Error: ${forthInterpreterException?.message}")
+            } catch (ForthCompilerException forthCompilerException) {
+                log.error("Error: ${forthCompilerException.message}")
+            } catch (Exception exception) {
+                log.error("Error: ${exception.message}")
             } finally {
                 resetInterpreter()
                 resetCompiler()
