@@ -40,7 +40,7 @@ class Word extends AbstractRuntime {
             String userInput = reader.readLine()
 
             // Split the input into words and take the first one.
-            String[] words = userInput.split(new String(chr))
+            String[] words = userInput.split("\\Q" + new String(chr) + "\\E")
             String firstWord = words[0]
 
             // Convert the first word to bytes and store it in memory.

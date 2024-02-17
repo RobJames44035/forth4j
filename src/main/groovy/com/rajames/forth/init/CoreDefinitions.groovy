@@ -107,7 +107,7 @@ class CoreDefinitions {
         // Non-Standard words
         Word noop = createPrimitiveWord("noop")
         Word nop = createPrimitiveWord("nop")
-        Word dump = createPrimitiveWord("defdump", "DefDump")
+        Word see = createPrimitiveWord("see", "DefDump")
         Word saveForth = createPrimitiveWord("save-forth", "SaveForth")
         Word loadForth = createPrimitiveWord("load-forth", "LoadForth")
         Word edit = createPrimitiveWord("edit", "Edit", null, 1)
