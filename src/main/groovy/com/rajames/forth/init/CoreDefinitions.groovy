@@ -196,6 +196,7 @@ class CoreDefinitions {
         Word allot = createPrimitiveWord("allot", "Allot")
         Word comma = createPrimitiveWord(",", "Comma")
         Word base = createPrimitiveWord("base", "Base")
+        Word page = createPrimitiveWord("page", "Page")
 
 /* TODO after "editor"
         Word beginWord = createPrimitiveWord("begin")
