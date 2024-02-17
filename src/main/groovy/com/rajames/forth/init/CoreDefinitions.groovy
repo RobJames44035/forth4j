@@ -199,6 +199,8 @@ class CoreDefinitions {
         Word page = createPrimitiveWord("page", "Page")
         Word expect = createPrimitiveWord("expect", "Expect")
         Word word = createPrimitiveWord("word", "Word")
+        Word hex = createPrimitiveWord("hex", "Hex")
+        Word decimal = createPrimitiveWord("decimal", "Decimal")
 
 /* TODO after "editor"
         Word beginWord = createPrimitiveWord("begin")
