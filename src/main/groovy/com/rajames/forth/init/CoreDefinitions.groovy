@@ -100,13 +100,10 @@ class CoreDefinitions {
         }
     }
 
-
     void createCoreDictionary() {
         log.info("\tBuilding core dictionary...")
         println("\tBuilding core dictionary...")
         // Non-Standard words
-        Word noop = createPrimitiveWord("noop")
-        Word nop = createPrimitiveWord("nop")
         Word see = createPrimitiveWord("see", "DefDump")
         Word saveForth = createPrimitiveWord("save-forth", "SaveForth")
         Word loadForth = createPrimitiveWord("load-forth", "LoadForth")
