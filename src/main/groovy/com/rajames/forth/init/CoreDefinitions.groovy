@@ -212,6 +212,9 @@ class CoreDefinitions {
         Word execute = createPrimitiveWord("execute", "Execute")
         Word standard79 = createPrimitiveWord("79-standard")
         Word blk = createPrimitiveWord("blk")
+        Word doublePlus = createPrimitiveWord("d+", "DPlus")
+        Word doubleLessThan = createPrimitiveWord("d<", "DlessThan")
+        Word dnegate = createPrimitiveWord("dnegate", "DNegate")
 
 /* TODO after "editor"
         Word beginWord = createPrimitiveWord("begin")

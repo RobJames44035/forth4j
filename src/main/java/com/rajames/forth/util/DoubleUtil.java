@@ -62,4 +62,16 @@ public class DoubleUtil {
         final long result = aValue % bValue;
         return longToInts(result);
     }
+
+    public static boolean lessThanDouble(int[] a, int[] b) {
+        long aLong = intsToLong(a[0], a[1]);
+        long bLong = intsToLong(b[0], b[1]);
+        return aLong < bLong;
+    }
+
+    public static int[] negateDouble(final int[] a) {
+        final long aValue = intsToLong(a[0], a[1]);
+        final long result = -aValue;
+        return longToInts(result);
+    }
 }
