@@ -56,7 +56,7 @@ abstract class AbstractStack implements StackInterface, Serializable {
             try {
                 b = blockService.fetch(address, true)
             } catch (ForthException ex) {
-                if (ex.getMessage().equals("Illegal memory access :(")) {
+                if (ex.getMessage() == "Illegal memory access :(") {
                     break
                 }
             }
