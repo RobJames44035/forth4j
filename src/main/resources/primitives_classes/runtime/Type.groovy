@@ -37,11 +37,10 @@ class Type extends AbstractRuntime {
         Integer stringLength = 0
         if (interpreter.dataStack.size() < 2) {
             print(interpreter.forthRepl.pad.toString() + " ")
-//            stringStart = interpreter.forthRepl.padStart
-//            stringLength = interpreter.forthRepl.pad.length() - stringStart
         } else {
             stringLength = interpreter.dataStack.pop() as Integer - stringStart
             stringStart = interpreter.dataStack.pop() as Integer
+            // TODO
         }
         String outputString = interpreter.forthRepl.pad.substring(stringStart, stringStart + stringLength)
         print(outputString)

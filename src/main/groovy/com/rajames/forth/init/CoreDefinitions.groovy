@@ -206,12 +206,19 @@ class CoreDefinitions {
         Word hash = createPrimitiveWord("#", "Hash")
         Word endHash = createPrimitiveWord("#>", "EndHash")
         Word type = createPrimitiveWord("type", "Type")
+        Word gtIn = createPrimitiveWord(">in", "GtIn")
+        Word count = createPrimitiveWord("count", "Count")
+        Word tick = createPrimitiveWord("'", "Tick")
+        Word execute = createPrimitiveWord("execute", "Execute")
+        Word standard79 = createPrimitiveWord("79-standard")
+        Word blk = createPrimitiveWord("blk")
 
 /* TODO after "editor"
         Word beginWord = createPrimitiveWord("begin")
         Word againWord = createPrimitiveWord("again")
         Word whileWord = createPrimitiveWord("while")
         Word repeatWord = createPrimitiveWord("repeat")
+        Word trailing = createPrimitiveWord("-trailing", "MinusTrailing")
         ...
 */
         // Complex words that are made up of a List<Word> that describes their behavior go here.

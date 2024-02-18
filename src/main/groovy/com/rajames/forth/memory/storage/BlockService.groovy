@@ -17,6 +17,7 @@
 package com.rajames.forth.memory.storage
 
 import com.rajames.forth.ForthException
+import com.rajames.forth.ForthRepl
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -33,14 +34,19 @@ class BlockService {
         this.blockRepository = blockRepository
     }
 
+    @Autowired
+    ForthRepl forthRepl
+
     @Transactional
     Block save(Block block) {
+        forthRepl.BLK = block.blockNumber
         return blockRepository.save(block)
     }
 
     @Transactional
     Block getBlock(Integer blockNumber) {
         verifyBlockNumber(blockNumber)
+        forthRepl.BLK = blockNumber
         Optional<Block> blockOptional = blockRepository.findByBlockNumber(blockNumber)
 
         if (blockOptional.isPresent()) {
@@ -59,6 +65,7 @@ class BlockService {
     @Transactional
     Block getBlock(Integer blockNumber, Boolean flag) {
         blockNumber = 0 - (blockNumber + BLOCK_SIZE)
+        forthRepl.BLK = blockNumber
         if (flag) {
             Optional<Block> blockOptional = blockRepository.findByBlockNumber(blockNumber)
 
@@ -81,6 +88,7 @@ class BlockService {
     @Transactional
     Block putBlock(Integer blockNumber) {
         verifyBlockNumber(blockNumber)
+        forthRepl.BLK = blockNumber
         // Check if block with given blockNumber already exists
         Optional<Block> blockOptional = blockRepository.findByBlockNumber(blockNumber)
 
@@ -89,7 +97,7 @@ class BlockService {
         Arrays.fill(newBytes as Byte[], null)
 
         block.setBlockNumber(blockNumber)
-        block.setBytes(fill)
+        block.setBytes(newBytes)
 
         return blockRepository.save(block)
     }
@@ -97,6 +105,7 @@ class BlockService {
     @Transactional
     Block putBlock(Integer blockNumber, Boolean flag) {
         blockNumber = 0 - (blockNumber + BLOCK_SIZE)
+        forthRepl.BLK = blockNumber
         if (flag) {
             // Check if block with given blockNumber already exists
             Optional<Block> blockOptional = blockRepository.findByBlockNumber(blockNumber)
@@ -117,6 +126,7 @@ class BlockService {
     @Transactional
     Byte fetch(Integer address) {
         Integer blockNumber = (address / BLOCK_SIZE) as Integer
+        forthRepl.BLK = blockNumber
         Integer index = address % BLOCK_SIZE
 
         // Find block or create new one if it doesn't exist
@@ -139,6 +149,7 @@ class BlockService {
     Byte fetch(Integer address, Boolean flag) {
         if (flag) {
             Integer blockNumber = (address / BLOCK_SIZE) - BLOCK_SIZE as Integer
+            forthRepl.BLK = blockNumber
             Integer index = address % BLOCK_SIZE
             int absNumber = Math.abs(index) // <-- Always a positive number
 
@@ -163,6 +174,7 @@ class BlockService {
     @Transactional
     void store(Integer address, Byte value) {
         int blockNumber = address / BLOCK_SIZE as Integer
+        forthRepl.BLK = blockNumber
         int index = address % BLOCK_SIZE
 
         // Find block or create new one if it doesn't exist
@@ -188,6 +200,7 @@ class BlockService {
     @Transactional
     void store(Integer address, Byte value, Boolean flag) {
         Integer blockNumber = (address / BLOCK_SIZE) - BLOCK_SIZE as Integer
+        forthRepl.BLK = blockNumber
         Integer index = address % BLOCK_SIZE
         index = Math.abs(index) // <-- Always a positive number
 

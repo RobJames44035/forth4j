@@ -35,7 +35,7 @@ class BlockWord extends AbstractRuntime {
     @Override
     Object execute(ForthInterpreter interpreter, Word word, Word parentWord) {
         Integer blockNumber = interpreter.dataStack.pop() as Integer
-
+        interpreter.forthRepl.BLK = blockNumber
         return null
     }
 }

@@ -59,6 +59,7 @@ class ForthRepl {
     Integer padStart
     Double number
     Integer BASE = 10
+    Integer BLK = 0
 
 
     ForthRepl() {
