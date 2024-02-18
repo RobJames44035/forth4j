@@ -117,6 +117,23 @@ abstract class AbstractStack implements StackInterface, Serializable {
         }
     }
 
+    @Override
+    int[] popDouble() {
+        // Check if there are enough items on stack
+        if (stack.size() < 2) {
+            throw new ForthInterpreterException("Warning: Double underflow")
+        }
+        int high = pop() as int
+        int low = pop() as int
+        return [low, high] as int[]
+    }
+
+    @Override
+    void pushDouble(Integer low, Integer high) {
+        push(low)
+        push(high)
+    }
+
     boolean equals(o) {
         if (this.is(o)) return true
         if (!(o instanceof AbstractStack)) return false
@@ -136,7 +153,5 @@ abstract class AbstractStack implements StackInterface, Serializable {
     boolean isEmpty() {
         return stack.empty
     }
-
-    // Additional stack operations as you need...
 }
 

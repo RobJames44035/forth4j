@@ -27,6 +27,10 @@ interface StackInterface {
     boolean isEmpty()
     int get(Integer i)
 
+    int[] popDouble()
+
+    void pushDouble(Integer low, Integer high)
+
     void serialize()
     void deserialize()
 }
