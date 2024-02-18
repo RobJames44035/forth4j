@@ -19,9 +19,8 @@ package primitives_classes.runtime
 import com.rajames.forth.dictionary.Word
 import com.rajames.forth.runtime.AbstractRuntime
 import com.rajames.forth.runtime.ForthInterpreter
-import com.rajames.forth.runtime.ForthInterpreterException
 
-class Base extends AbstractRuntime {
+class StringHash extends AbstractRuntime {
 
     /**
      * Execute the FORTH word from the interpreter.
@@ -34,11 +33,17 @@ class Base extends AbstractRuntime {
      */
     @Override
     Object execute(ForthInterpreter interpreter, Word word, Word parentWord) {
-        Integer i = interpreter.dataStack.pop() as Integer
-        if (i == 2 || i == 10 || i == 16) {
-            interpreter.forthRepl.BASE = i
-        } else {
-            throw new ForthInterpreterException("Illegal BASE value.")
+        Long number = Math.abs(interpreter.forthRepl.number) as Long // Get absolute number
+        Integer remainder
+        while (number >= interpreter.forthRepl.BASE) { // Loop until number is less than BASE
+            remainder = (number % interpreter.forthRepl.BASE) as Integer
+            // Get the remainder (which is the next digit to convert)
+            number /= interpreter.forthRepl.BASE
+            interpreter.forthRepl.pad.append(remainder.toString()) // Convert the digit to a string and append it to PAD
+        }
+        interpreter.forthRepl.pad.append(number.toString())
+        if (interpreter.forthRepl.number < 0) { // If the number was negative
+            interpreter.forthRepl.pad.append('-') // Append the minus sign to PAD
         }
         return null
     }

@@ -201,6 +201,11 @@ class CoreDefinitions {
         Word word = createPrimitiveWord("word", "Word")
         Word hex = createPrimitiveWord("hex", "Hex")
         Word decimal = createPrimitiveWord("decimal", "Decimal")
+        Word startHash = createPrimitiveWord("<#", "StartHash")
+        Word stringHash = createPrimitiveWord("#s", "StringHash")
+        Word hash = createPrimitiveWord("#", "Hash")
+        Word endHash = createPrimitiveWord("#>", "EndHash")
+        Word type = createPrimitiveWord("type", "Type")
 
 /* TODO after "editor"
         Word beginWord = createPrimitiveWord("begin")

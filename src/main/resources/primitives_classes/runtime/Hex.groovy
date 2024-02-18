@@ -33,7 +33,7 @@ class Hex extends AbstractRuntime {
      */
     @Override
     Object execute(ForthInterpreter interpreter, Word word, Word parentWord) {
-        interpreter.BASE = 16
+        interpreter.forthRepl.BASE = 16
         return null
     }
 }

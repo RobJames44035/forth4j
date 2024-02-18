@@ -33,7 +33,7 @@ class Decimal extends AbstractRuntime {
      */
     @Override
     Object execute(ForthInterpreter interpreter, Word word, Word parentWord) {
-        interpreter.BASE = 10
+        interpreter.forthRepl.BASE = 10
         return null
     }
 }

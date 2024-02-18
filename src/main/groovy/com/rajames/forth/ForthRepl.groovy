@@ -55,6 +55,12 @@ class ForthRepl {
     @Autowired
     DatabaseBackupService databaseBackupService
 
+    StringBuilder pad
+    Integer padStart
+    Double number
+    Integer BASE = 10
+
+
     ForthRepl() {
         this.scanner = new Scanner(System.in)
     }

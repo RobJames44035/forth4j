@@ -18,6 +18,7 @@
 package com.rajames.forth.runtime
 
 import com.rajames.forth.ForthException
+import com.rajames.forth.ForthRepl
 import com.rajames.forth.compiler.ForthCompiler
 import com.rajames.forth.compiler.ForthCompilerException
 import com.rajames.forth.dictionary.DictionaryService
@@ -44,6 +45,9 @@ class ForthInterpreter {
     private static final Logger log = LogManager.getLogger(this.class.getName())
 
     @Autowired
+    ForthRepl forthRepl
+
+    @Autowired
     DataStack dataStack
 
     @Autowired
@@ -67,7 +71,11 @@ class ForthInterpreter {
     @Autowired
     FlushService flushService
 
-    Integer BASE = 10
+//    StringBuilder pad
+//    Integer padStart
+//    Double number
+//    Integer BASE = 10
+
     String line
     Word word
     String token

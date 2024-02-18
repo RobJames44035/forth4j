@@ -19,9 +19,8 @@ package primitives_classes.runtime
 import com.rajames.forth.dictionary.Word
 import com.rajames.forth.runtime.AbstractRuntime
 import com.rajames.forth.runtime.ForthInterpreter
-import com.rajames.forth.runtime.ForthInterpreterException
 
-class Base extends AbstractRuntime {
+class Hash extends AbstractRuntime {
 
     /**
      * Execute the FORTH word from the interpreter.
@@ -34,12 +33,11 @@ class Base extends AbstractRuntime {
      */
     @Override
     Object execute(ForthInterpreter interpreter, Word word, Word parentWord) {
-        Integer i = interpreter.dataStack.pop() as Integer
-        if (i == 2 || i == 10 || i == 16) {
-            interpreter.forthRepl.BASE = i
-        } else {
-            throw new ForthInterpreterException("Illegal BASE value.")
-        }
+        Long number = interpreter.forthRepl.number as Long // Get the current number
+        Integer digit = (number % interpreter.forthRepl.BASE) as Integer // Extract the next digit
+        number /= interpreter.forthRepl.BASE // Update the number
+        interpreter.forthRepl.pad.append(digit.toString()) // Convert the digit to a string and append it to PAD
+        interpreter.forthRepl.number = number // Update the number in the interpreter
         return null
     }
 }
