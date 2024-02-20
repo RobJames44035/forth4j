@@ -157,9 +157,10 @@ class ForthInterpreter {
      * @return the forthOutput flag for REPL.
      */
     boolean executeWord(Word word, Word parentWord) {
-        if (word.compileOnly) {
-            throw new ForthInterpreterException("Compile Only.")
-        }
+        // TODO
+//        if (word.compileOnly) {
+//            throw new ForthInterpreterException("Compile Only.")
+//        }
 
         if (word.runtimeClass != null) {
             return executePrimitiveWord(word, parentWord)
