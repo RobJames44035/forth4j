@@ -21,7 +21,7 @@ import com.rajames.forth.runtime.AbstractRuntime
 import com.rajames.forth.runtime.ForthInterpreter
 import com.rajames.forth.runtime.ForthInterpreterException
 
-class DefDump extends AbstractRuntime {
+class See extends AbstractRuntime {
 
     @Override
     Object execute(ForthInterpreter interpreter, Word word, Word parentWord) {

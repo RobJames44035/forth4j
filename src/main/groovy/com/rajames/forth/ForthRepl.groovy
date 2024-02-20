@@ -61,6 +61,8 @@ class ForthRepl {
     Integer BASE = 10
     Integer BLK = 0
     Boolean quit = false
+    String CURRENT
+    String CONTEXT
 
 
     ForthRepl() {

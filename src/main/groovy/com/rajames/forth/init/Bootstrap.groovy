@@ -16,6 +16,7 @@
 
 package com.rajames.forth.init
 
+import com.rajames.forth.ForthRepl
 import com.rajames.forth.dictionary.DictionaryService
 import com.rajames.forth.dictionary.WordService
 import com.rajames.forth.memory.storage.BlockService
@@ -41,6 +42,9 @@ class Bootstrap implements InitializingBean {
     private DatabaseBackupService databaseBackupService
 
     @Autowired
+    ForthRepl forthRepl
+
+    @Autowired
     Bootstrap(DictionaryService dictionaryService, WordService wordService, DatabaseBackupService databaseBackupService, FlushService flushService, BlockService blockService) {
         this.dictionaryService = dictionaryService
         this.wordService = wordService
@@ -55,15 +59,10 @@ class Bootstrap implements InitializingBean {
         log.info("Bootstrap started...")
         println("Bootstrap started...")
 
-        coreName = dictionaryService.createDictionary("Core")
+        coreName = dictionaryService.createDictionary("core")
+        forthRepl.CONTEXT = coreName
+        forthRepl.CURRENT = coreName
 
-        /*
-            Eventually we will have all the core definitions available in the CoreFourth4j.sql file.
-            Since this file will be a bundled resource we will be able to use it in CoreDefinitions to load the Db.
-
-            In the future we will be adding FORTH words to save and load from the running system as well as specifying
-            a commandline option to select a named database to load on startup.
-        */
         CoreDefinitions coreDefinitions = new CoreDefinitions(wordService, databaseBackupService, flushService)
         coreDefinitions.coreName = this.coreName
         coreDefinitions.createCoreDictionary()
