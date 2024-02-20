@@ -31,5 +31,5 @@ interface CompilerDirective {
      * @param interpreter The FORTH interpreter.
      * @return an arbitrary `anything`. Usually null or Boolean false.
      */
-    Boolean execute(Word newWord, ForthCompiler compiler, ForthInterpreter interpreter)
+    Object execute(Word newWord, ForthCompiler compiler, ForthInterpreter interpreter)
 }

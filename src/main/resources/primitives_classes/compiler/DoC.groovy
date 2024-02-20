@@ -58,7 +58,7 @@ class DoC extends AbstractCompilerDirective {
  * @exception ForthCompilerException if there's no matching 'IF' or 'THEN' for 'ELSE'.
  */
     @Override
-    Boolean execute(Word word, ForthCompiler compiler, ForthInterpreter interpreter) {
+    Object execute(Word word, ForthCompiler compiler, ForthInterpreter interpreter) {
         // Fail Fast
         if (!compiler.tokens.contains("loop") && !compiler.tokens.contains("+loop")) {
             interpreter.words.clear()

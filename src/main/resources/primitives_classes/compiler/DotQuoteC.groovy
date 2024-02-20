@@ -34,7 +34,7 @@ class DotQuoteC extends AbstractCompilerDirective {
 
     @Override
     @Transactional
-    Boolean execute(Word word, ForthCompiler compiler, ForthInterpreter interpreter) {
+    Object execute(Word word, ForthCompiler compiler, ForthInterpreter interpreter) {
         ConcurrentLinkedQueue<Word> words = interpreter.words
         StringBuilder sb = new StringBuilder()
         Word nextWord = null

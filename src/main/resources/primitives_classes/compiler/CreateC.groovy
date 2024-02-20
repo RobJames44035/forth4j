@@ -31,7 +31,7 @@ class CreateC extends AbstractCompilerDirective {
      * @return an arbitrary `anything`. Usually null or Boolean false.
      */
     @Override
-    Boolean execute(Word newWord, ForthCompiler compiler, ForthInterpreter interpreter) {
+    Object execute(Word newWord, ForthCompiler compiler, ForthInterpreter interpreter) {
         compiler.newWord.name = compiler.tokens.poll()
         compiler.wordService.save(compiler.newWord)
         return null

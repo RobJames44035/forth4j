@@ -70,7 +70,7 @@ class IfC extends AbstractCompilerDirective {
  * @exception ForthCompilerException if there's no matching 'IF' or 'THEN' for 'ELSE'.
  */
     @Override
-    Boolean execute(Word word, ForthCompiler compiler, ForthInterpreter interpreter) {
+    Object execute(Word word, ForthCompiler compiler, ForthInterpreter interpreter) {
         ConcurrentLinkedQueue<Word> words = interpreter.words
         Word nextWord = null
         // Fail Fast

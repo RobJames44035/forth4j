@@ -35,15 +35,7 @@ class BeginC extends AbstractCompilerDirective {
      * @return an arbitrary `anything`. Usually null or Boolean false.
      */
     @Override
-    Boolean execute(Word word, ForthCompiler compiler, ForthInterpreter interpreter) {
-        // Fail Fast
-//        if (compiler.tokens.contains("while") && !compiler.tokens.contains("repeat")) {
-//            interpreter.words.clear()
-//            throw new ForthCompilerException("No matching 'WHILE' or 'repeat' for 'BEGIN'.")
-//        } else if (!compiler.tokens.contains("until")) {
-//            interpreter.words.clear()
-//            throw new ForthCompilerException("No matching 'UNTIL for 'BEGIN")
-//        }
+    Object execute(Word word, ForthCompiler compiler, ForthInterpreter interpreter) {
 
         ConcurrentLinkedQueue<Word> words = interpreter.words
         Word nextWord = null

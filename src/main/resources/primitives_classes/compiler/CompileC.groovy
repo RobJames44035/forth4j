@@ -32,7 +32,7 @@ class CompileC extends AbstractCompilerDirective {
      */
     // : plus+   [compile]  + ;
     @Override
-    Boolean execute(Word newWord, ForthCompiler compiler, ForthInterpreter interpreter) {
+    Object execute(Word newWord, ForthCompiler compiler, ForthInterpreter interpreter) {
         String token = compiler.tokens.poll()
         Word word = compiler.wordService.findByName(token)
         if (word != null) {

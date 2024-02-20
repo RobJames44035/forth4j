@@ -27,7 +27,7 @@ class VariableC extends AbstractCompilerDirective {
 
     @Override
     @Transactional
-    Boolean execute(Word newWord, ForthCompiler compiler, ForthInterpreter interpreter) {
+    Object execute(Word newWord, ForthCompiler compiler, ForthInterpreter interpreter) {
 
         Integer n1 = 0
         if (interpreter.dataStack.size() > 0) {

@@ -35,7 +35,7 @@ class WhileC extends AbstractCompilerDirective {
      * @return an arbitrary `anything`. Usually null or Boolean false.
      */
     @Override
-    Boolean execute(Word word, ForthCompiler compiler, ForthInterpreter interpreter) {
+    Object execute(Word word, ForthCompiler compiler, ForthInterpreter interpreter) {
         ConcurrentLinkedQueue<Word> words = interpreter.words
         Word nextWord = null
 

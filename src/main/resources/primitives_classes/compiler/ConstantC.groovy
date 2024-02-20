@@ -27,7 +27,7 @@ class ConstantC extends AbstractCompilerDirective {
 
     @Override
     @Transactional
-    Boolean execute(Word newWord, ForthCompiler compiler, ForthInterpreter interpreter) {
+    Object execute(Word newWord, ForthCompiler compiler, ForthInterpreter interpreter) {
         Integer n1 = interpreter.dataStack.pop() as Integer
         compiler.newWord.name = compiler.tokens.poll()
         compiler.newWord.runtimeClass = null

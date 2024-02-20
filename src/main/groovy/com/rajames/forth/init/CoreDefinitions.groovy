@@ -207,7 +207,6 @@ class CoreDefinitions {
         Word doubleLessThan = createPrimitiveWord("d<", "DlessThan")
         Word dnegate = createPrimitiveWord("dnegate", "DNegate")
         Word quit = createPrimitiveWord("quit", "Quit")
-
         Word lbracket = createPrimitiveWord("[", null, "LbracketC", 0, true)
         Word rbracket = createPrimitiveWord("]", null, "RbracketC", 0, true)
         Word bracketCompile = createPrimitiveWord("[compile]", null, "CompileC", 0, true)

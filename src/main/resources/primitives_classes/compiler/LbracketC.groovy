@@ -33,7 +33,7 @@ class LbracketC extends AbstractCompilerDirective {
      */
     // : test1 5 0 do cr [ 1 1 + ." foobar " . ] ." loopy " i . loop ;
     @Override
-    Boolean execute(Word newWord, ForthCompiler compiler, ForthInterpreter interpreter) {
+    Object execute(Word newWord, ForthCompiler compiler, ForthInterpreter interpreter) {
         // Fail Fast
         if (!compiler.tokens.contains("]")) {
             throw new ForthCompilerException("'[' requires ']'.")
