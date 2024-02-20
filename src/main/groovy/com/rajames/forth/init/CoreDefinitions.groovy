@@ -212,12 +212,13 @@ class CoreDefinitions {
         Word doublePlus = createPrimitiveWord("d+", "DPlus")
         Word doubleLessThan = createPrimitiveWord("d<", "DlessThan")
         Word dnegate = createPrimitiveWord("dnegate", "DNegate")
+        Word begin = createPrimitiveWord("begin", "Begin", "BeginC", 0, true)
+        Word until = createPrimitiveWord("until", "Until", null, 0, true)
+        Word whileW = createPrimitiveWord("while", "While", "WhileC", 0, true)
+        Word repeat = createPrimitiveWord("repeat", "Repeat", null, 0, true)
 
 /* TODO after "editor"
-        Word beginWord = createPrimitiveWord("begin")
-        Word againWord = createPrimitiveWord("again")
-        Word whileWord = createPrimitiveWord("while")
-        Word repeatWord = createPrimitiveWord("repeat")
+
         Word trailing = createPrimitiveWord("-trailing", "MinusTrailing")
         ...
 */
