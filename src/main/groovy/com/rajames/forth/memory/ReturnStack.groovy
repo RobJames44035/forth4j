@@ -20,4 +20,14 @@ import org.springframework.stereotype.Component
 
 @Component
 class ReturnStack extends AbstractStack {
+    @Override
+    Object pop() {
+        if (stack.empty()) {
+            println "Warning: Return Stack Underflow"
+            return 0  // Or however you want to handle underflows
+        } else {
+            return stack.pop()
+        }
+    }
+
 }
