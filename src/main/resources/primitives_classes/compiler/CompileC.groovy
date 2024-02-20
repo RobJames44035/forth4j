@@ -37,7 +37,9 @@ class CompileC extends AbstractCompilerDirective {
         Word word = compiler.wordService.findByName(token)
         if (word != null) {
             compiler.forthWordsBuffer.add(word.name)
+            compiler.forthWordsBuffer.remove("[compile]")
         }
+        compiler.buzz = false
         return null
     }
 }

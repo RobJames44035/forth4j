@@ -72,6 +72,7 @@ class ForthCompiler {
     Dictionary dictionary
     List<String> forthWordsBuffer = new ArrayList<>()
     Queue<String> tokens = new ConcurrentLinkedQueue<>()
+    Boolean buzz = true
 
     @Transactional
     Word compile(String line) {
@@ -103,7 +104,11 @@ class ForthCompiler {
                         continue
                     }
                 }
-                this.forthWordsBuffer.add(word.name)
+                if (buzz) {
+                    this.forthWordsBuffer.add(word.name)
+                } else {
+                    buzz = true
+                }
             } else if (canParseToInt(token)) {
                 compileIntegerLiteral(token)
             }
