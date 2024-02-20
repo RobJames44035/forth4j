@@ -223,6 +223,7 @@ class CoreDefinitions {
         Word until = createPrimitiveWord("until", "Until", null, 0, true)
         Word whileW = createPrimitiveWord("while", "While", "WhileC", 0, true)
         Word repeat = createPrimitiveWord("repeat", "Repeat", null, 0, true)
+        Word buffer = createPrimitiveWord("buffer")
 
 /* TODO after "editor"
 
