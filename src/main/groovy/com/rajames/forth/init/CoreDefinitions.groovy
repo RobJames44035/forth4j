@@ -77,7 +77,7 @@ class CoreDefinitions {
         String retVal = null
         if (className != null) {
             String myResourceName = basePath + "/" + className + ".groovy"
-            retVal = CoreDefinitions.class.getClassLoader().getResource(myResourceName).text
+            retVal = CoreDefinitions.class.getClassLoader().getResource(myResourceName)?.text
         }
         return retVal
     }
@@ -207,6 +207,10 @@ class CoreDefinitions {
         Word doubleLessThan = createPrimitiveWord("d<", "DlessThan")
         Word dnegate = createPrimitiveWord("dnegate", "DNegate")
         Word quit = createPrimitiveWord("quit", "Quit")
+
+        Word lbracket = createPrimitiveWord("[", null, "LbracketC", 0, true)
+        Word rbracket = createPrimitiveWord("]", null, "RbracketC", 0, true)
+        Word bracketCompile = createPrimitiveWord("[compile]", null, "CompileC", 0, true)
 
         // Flow control
         Word ifWord = createPrimitiveWord("if", "If", "IfC", 1, true, true)

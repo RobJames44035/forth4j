@@ -75,6 +75,7 @@ class ForthRepl {
         printPreamble()
 
         while (true) {
+            quit = false
             String line = this.scanner.nextLine().trim()
 
             if (line == "bye") {
