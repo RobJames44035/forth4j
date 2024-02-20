@@ -60,6 +60,7 @@ class ForthRepl {
     Double number
     Integer BASE = 10
     Integer BLK = 0
+    Boolean quit = false
 
 
     ForthRepl() {
@@ -76,7 +77,7 @@ class ForthRepl {
         while (true) {
             String line = this.scanner.nextLine().trim()
 
-            if (line == "bye" || line == "quit") {
+            if (line == "bye") {
                 // TODO for state machine when we get there
 //                dataStack.serialize()
 //                returnStack.serialize()
@@ -118,9 +119,12 @@ class ForthRepl {
                 println()
             }
 
-            print("\u001B[1A")  // Move cursor up one line
-            print("\u001B[" + (line.length()) + "C")  // Move cursor to the end of existing user input + 2 spaces
-            print("\033[94m ok\033[0m\n")
+            if (!this.quit) {
+                print("\u001B[1A")  // Move cursor up one line
+                print("\u001B[" + (line.length()) + "C")  // Move cursor to the end of existing user input + 2 spaces
+                print("\033[94m ok\033[0m\n")
+                this.quit = true
+            }
         }
 
         this.scanner.close()

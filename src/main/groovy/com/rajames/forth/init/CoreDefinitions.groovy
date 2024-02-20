@@ -206,6 +206,7 @@ class CoreDefinitions {
         Word doublePlus = createPrimitiveWord("d+", "DPlus")
         Word doubleLessThan = createPrimitiveWord("d<", "DlessThan")
         Word dnegate = createPrimitiveWord("dnegate", "DNegate")
+        Word quit = createPrimitiveWord("quit", "Quit")
 
         // Flow control
         Word ifWord = createPrimitiveWord("if", "If", "IfC", 1, true, true)
