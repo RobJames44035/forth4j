@@ -37,6 +37,10 @@ class Store extends AbstractRuntime {
         Object addr = interpreter.dataStack.pop() as Object
         if (addr instanceof Long) {
             Word variable = interpreter.wordService.getById(addr)
+            if (variable.name == variable.stringLiteral) {
+                interpreter.forthRepl.CURRENT = variable.name
+                return null
+            }
             Integer i = interpreter.dataStack.pop() as Integer
             variable.stackValue = i
             interpreter.wordService.save(variable)

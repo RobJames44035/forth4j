@@ -16,6 +16,7 @@
 
 package com.rajames.forth.dictionary
 
+import com.rajames.forth.ForthRepl
 import com.rajames.forth.compiler.ForthCompilerException
 import com.rajames.forth.runtime.ForthInterpreterException
 import org.apache.logging.log4j.LogManager
@@ -36,13 +37,16 @@ class WordService {
     private final WordRepository wordRepository
     private final DictionaryRepository dictionaryRepository
 
+    ForthRepl forthRepl
+
     @PersistenceContext
     EntityManager entityManager
 
     @Autowired
-    WordService(WordRepository wordRepository, DictionaryRepository dictionaryRepository) {
+    WordService(WordRepository wordRepository, DictionaryRepository dictionaryRepository, ForthRepl forthRepl) {
         this.wordRepository = wordRepository
         this.dictionaryRepository = dictionaryRepository
+        this.forthRepl = forthRepl
     }
 
     Word getById(Long id) {
@@ -61,7 +65,14 @@ class WordService {
     @Transactional
     Word findByName(String name) {
         log.trace("WordService.findByName(String '${name}')")
-        Optional<Word> optional = wordRepository.findFirstByNameOrderByCreateDateTimeDesc(name)
+        String currentDictionaryName = forthRepl.CURRENT
+        Optional<Word> optional = null
+        if (currentDictionaryName != "forth_vocab") {
+            optional = wordRepository.findFirstByNameAndDictionaryNameOrderByCreateDateTimeDesc(name, currentDictionaryName)
+        }
+        if (!optional?.isPresent()) {
+            optional = wordRepository.findFirstByNameAndDictionaryNameOrderByCreateDateTimeDesc(name, "forth_vocab")
+        }
         log.trace("WordService: Optional<Word> optional = ${optional}")
         if (optional.isPresent()) {
             Word word = optional.get()

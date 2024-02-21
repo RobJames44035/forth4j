@@ -41,6 +41,8 @@ class ForthRepl {
 
     private static final Logger log = LogManager.getLogger(this.class.getName())
 
+    public static final FORTH_DICTIONARY_NAME = "forth_vocab"
+
     private Scanner scanner
 
     @Autowired

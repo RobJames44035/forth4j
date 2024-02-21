@@ -109,6 +109,11 @@ class CoreDefinitions {
         log.info("\tBuilding core dictionary...")
         println("\tBuilding core dictionary...")
 
+        Word f = createPrimitiveWord("forth_vocab")
+        f.stackValue = f.id as Integer
+        f.stringLiteral = f.name
+        wordService.save(f)
+
         // Non-Standard words
         Word see = createPrimitiveWord("see", "See")
         Word saveForth = createPrimitiveWord("save-forth", "SaveForth")
@@ -225,11 +230,11 @@ class CoreDefinitions {
         Word dnegate = createPrimitiveWord("dnegate", "DNegate")
 
         // Dictionary words
-        Word definitions = createPrimitiveWord("definitions")
-        Word forth = createPrimitiveWord("forth")
-        Word vocabulary = createPrimitiveWord("vocabulary")
-        Word word1 = createPrimitiveWord("word")
+        Word definitions = createPrimitiveWord("definitions", "Definitions")
+        Word forth = createPrimitiveWord("forth", "Forth")
+        Word vocabulary = createPrimitiveWord("vocabulary", "Vocabulary")
         Word forget = createPrimitiveWord("forget", "Forget")
+        Word current = createPrimitiveWord("current", "Current")
 
         // Unsorted
         Word colon1 = createPrimitiveWord("colon")

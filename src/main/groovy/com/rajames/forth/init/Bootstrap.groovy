@@ -59,7 +59,7 @@ class Bootstrap implements InitializingBean {
         log.info("Bootstrap started...")
         println("Bootstrap started...")
 
-        coreName = dictionaryService.createDictionary("core")
+        coreName = dictionaryService.createDictionary("forth_vocab")
         forthRepl.CONTEXT = coreName
         forthRepl.CURRENT = coreName
 

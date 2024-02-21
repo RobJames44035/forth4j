@@ -20,7 +20,12 @@ package com.rajames.forth.dictionary
 import javax.persistence.*
 
 @Entity
-@Table(name = "word", indexes = [@Index(name = "word_name_index", columnList = "name")])
+@Table(name = "word", indexes = [
+        @Index(name = "word_name_index", columnList = "name"),
+        @Index(name = "word_dictionary_name_index", columnList = "dictionary_id"),
+        @Index(name = "word_create_date_time_index", columnList = "createDateTime")
+])
+
 class Word implements Serializable {
 
     @Id

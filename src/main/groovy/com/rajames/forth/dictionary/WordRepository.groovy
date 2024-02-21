@@ -27,6 +27,8 @@ import org.springframework.transaction.annotation.Transactional
 interface WordRepository extends JpaRepository<Word, Long> {
     Optional<Word> findFirstByNameOrderByCreateDateTimeDesc(String name)
 
+    Optional<Word> findFirstByNameAndDictionaryNameOrderByCreateDateTimeDesc(String name, String dictionaryName)
+
     Optional<Word> findById(Long id)
 
     @Transactional

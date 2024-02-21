@@ -71,11 +71,6 @@ class ForthInterpreter {
     @Autowired
     FlushService flushService
 
-//    StringBuilder pad
-//    Integer padStart
-//    Double number
-//    Integer BASE = 10
-
     String line
     Word word
     String token

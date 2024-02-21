@@ -39,7 +39,7 @@ class DictionaryService {
 
     @Transactional
     String createDictionary(String name) {
-        log.info("Creating ${name} dictionary.")
+        log.trace("Creating ${name} dictionary.")
         Dictionary dictionary = null
         try {
             dictionary = new Dictionary()
@@ -49,7 +49,7 @@ class DictionaryService {
         } catch(Exception e) {
             log.error("Failed to save ${} dictionary", e)
         }
-        log.info("Saved ${name} dictionary.")
+        log.trace("Saved ${name} dictionary.")
         return dictionary?.name
     }
 

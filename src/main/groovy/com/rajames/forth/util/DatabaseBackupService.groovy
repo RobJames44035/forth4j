@@ -18,8 +18,10 @@ package com.rajames.forth.util
 
 import com.rajames.forth.runtime.ForthInterpreterException
 import groovy.sql.Sql
-import org.h2.tools.Script
 import org.springframework.beans.factory.annotation.Autowired
+
+//import org.h2.tools.Script
+
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -55,7 +57,8 @@ class DatabaseBackupService {
 
         entityManager.clear()
         try (final Connection conn = this.dataSource.getConnection()) {
-            Script.process(conn, absolutePath, "", "")
+// TODO
+//            Script.process(conn, absolutePath, "", "")
         }
     }
 
