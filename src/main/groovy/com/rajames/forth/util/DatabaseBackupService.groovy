@@ -44,10 +44,10 @@ class DatabaseBackupService {
     void backupDatabase(String path, String filename) throws SQLException {
         // saving the backup to an SQL file
         if (filename == null || filename.isBlank() || filename.isEmpty()) {
-            filename = "forth4j.sql"
+            filename = "core.sql"
         }
         if (path == null || path.isBlank() || path.isEmpty()) {
-            path = "./forth4jDb"
+            path = "./"
         }
         final String backupFilePath = path + "/" + filename
         File file = new File(backupFilePath)
@@ -63,10 +63,10 @@ class DatabaseBackupService {
     void loadDatabase(String path, String filename) throws SQLException {
         // loading the backup from the SQL file
         if (filename == null || filename.isBlank() || filename.isEmpty()) {
-            filename = "forth4j.sql"
+            filename = "core.sql"
         }
         if (path == null || path.isBlank() || path.isEmpty()) {
-            path = "./forth4jDb"
+            path = "./"
         }
         String backupFilePath = path + "/" + filename
         File file = new File(backupFilePath)

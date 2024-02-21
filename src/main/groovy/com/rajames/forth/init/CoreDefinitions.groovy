@@ -239,17 +239,19 @@ class CoreDefinitions {
         Word constant = createPrimitiveWord("constant", "Constant", "ConstantC")
         Word variable = createPrimitiveWord("variable", "Variable", "VariableC")
         Word pad = createPrimitiveWord("pad", "Pad")
+
         Word create = createPrimitiveWord("create", "Create", "CreateC")
         Word allot = createPrimitiveWord("allot", "Allot")
         Word comma = createPrimitiveWord(",", "Comma")
-        Word base = createPrimitiveWord("base", "Base")
-        Word hex = createPrimitiveWord("hex", "Hex")
-        Word decimal = createPrimitiveWord("decimal", "Decimal")
         Word gtIn = createPrimitiveWord(">in", "GtIn")
         Word tick = createPrimitiveWord("'", "Tick")
         Word execute = createPrimitiveWord("execute", "Execute")
         Word standard79 = createPrimitiveWord("79-standard")
         Word quit = createPrimitiveWord("quit", "Quit")
+
+        Word base = createPrimitiveWord("base", "Base")
+        Word hex = createPrimitiveWord("hex", "Hex")
+        Word decimal = createPrimitiveWord("decimal", "Decimal")
 
 
         // Complex words that are made up of a List<Word> that describes their behavior go here.
