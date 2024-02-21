@@ -256,7 +256,8 @@ class CoreDefinitions {
 
         // Complex words that are made up of a List<Word> that describes their behavior go here.
 
+
         flushService.flush()
-        databaseBackupService.backupDatabase("/home/rajames/PROJECTS/forth4j/src/main/resources", "CoreForth4j.sql")
+        databaseBackupService.backupDatabase(null, null)
     }
 }
