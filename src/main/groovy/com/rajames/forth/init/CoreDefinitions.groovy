@@ -239,7 +239,6 @@ class CoreDefinitions {
         Word constant = createPrimitiveWord("constant", "Constant", "ConstantC")
         Word variable = createPrimitiveWord("variable", "Variable", "VariableC")
         Word pad = createPrimitiveWord("pad", "Pad")
-
         Word create = createPrimitiveWord("create", "Create", "CreateC")
         Word allot = createPrimitiveWord("allot", "Allot")
         Word comma = createPrimitiveWord(",", "Comma")
