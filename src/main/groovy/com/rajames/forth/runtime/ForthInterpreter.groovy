@@ -97,9 +97,7 @@ class ForthInterpreter {
                 words.add(word)
             } else if (canParseToInt(token)) {
                 dataStack.push(Integer.parseInt(token) as Integer)
-            } // TODO figure out a way to throw the exception; This doesn't work! :( else {
-//                throw new ForthInterpreterException("No such word in this dictionary.")
-//            }
+            }
         }
 
         return execution()

@@ -16,6 +16,7 @@
 
 package com.rajames.forth.dictionary
 
+import com.rajames.forth.ForthException
 import com.rajames.forth.ForthRepl
 import com.rajames.forth.compiler.ForthCompilerException
 import com.rajames.forth.runtime.ForthInterpreterException
@@ -79,8 +80,7 @@ class WordService {
             log.trace("WordService: Word word = optional.get() name = '${word.name}' forthWords = ${word.forthWords}")
             return word
         } else {
-            log.trace("NOT FOUND!")
-            return null
+            throw new ForthException("${name}: No such word.")
         }
     }
 

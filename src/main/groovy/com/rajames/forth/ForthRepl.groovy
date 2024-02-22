@@ -25,6 +25,7 @@ import com.rajames.forth.memory.ReturnStack
 import com.rajames.forth.runtime.ForthInterpreter
 import com.rajames.forth.runtime.ForthInterpreterException
 import com.rajames.forth.util.DatabaseBackupService
+import com.rajames.forth.util.State
 import org.apache.groovy.groovysh.Groovysh
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -65,6 +66,7 @@ class ForthRepl {
     Boolean quit = false
     String CURRENT
     String CONTEXT
+    State STATE
 
 
     ForthRepl() {

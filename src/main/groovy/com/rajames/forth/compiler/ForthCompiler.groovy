@@ -17,12 +17,14 @@
 
 package com.rajames.forth.compiler
 
+import com.rajames.forth.ForthRepl
 import com.rajames.forth.dictionary.*
 import com.rajames.forth.init.Bootstrap
 import com.rajames.forth.memory.storage.BlockService
 import com.rajames.forth.runtime.ForthInterpreter
 import com.rajames.forth.util.DatabaseBackupService
 import com.rajames.forth.util.FlushService
+import com.rajames.forth.util.State
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
@@ -66,6 +68,9 @@ class ForthCompiler {
     @Autowired
     FlushService flushService
 
+    @Autowired
+    ForthRepl forthRepl
+
     Word newWord
     Word literal
     String nextTokenToCompile
@@ -77,6 +82,7 @@ class ForthCompiler {
     @Transactional
     Word compile(String line) {
         // Setup
+        forthRepl.STATE = State.COMPILE
         Word newForthWord = null
         line = line.toLowerCase().trim() - ":" - ";" as String
         this.tokens = new LinkedList<>(line.tokenize())
