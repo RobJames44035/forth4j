@@ -95,7 +95,11 @@ class ForthInterpreter {
 
             this.word = wordService.findByName(token)
             if (word != null) {
-                words.add(word)
+                if (word.immediate && forthRepl.STATE == State.COMPILE) {
+                    executeWord(word, word.parentWord)
+                } else {
+                    words.add(word)
+                }
             } else if (canParseToInt(token)) {
                 dataStack.push(Integer.parseInt(token) as Integer)
             }

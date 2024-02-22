@@ -48,6 +48,9 @@ class Word implements Serializable {
     private String compilerDirective
 
     @Column
+    private Boolean immediate = false
+
+    @Column
     private Integer argumentCount = 0
 
     @Column
@@ -87,6 +90,14 @@ class Word implements Serializable {
     }
 
 ////////////////////////////////////////// GETTERS & SETTERS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+    Boolean getImmediate() {
+        return immediate
+    }
+
+    void setImmediate(Boolean immediate) {
+        this.immediate = immediate
+    }
+
     void setArgumentCount(Integer argumentCount) {
         this.argumentCount = argumentCount
     }

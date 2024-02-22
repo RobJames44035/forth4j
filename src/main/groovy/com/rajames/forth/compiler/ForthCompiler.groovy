@@ -94,6 +94,13 @@ class ForthCompiler {
             String token = tokens.poll()
             Word word = wordService.findByName(token)
 
+            // If word is immediate, execute it.
+            if (word != null && word.immediate) {
+                // Execute the immediate word here...
+                interpreter.executeWord(word, word?.parentWord)
+                continue
+            }
+
             if (word != null) {
                 String compilerDirectiveClass = word?.compileClass?.trim()
                 if (compilerDirectiveClass != null && !compilerDirectiveClass.isEmpty() && !compilerDirectiveClass.isBlank()) {

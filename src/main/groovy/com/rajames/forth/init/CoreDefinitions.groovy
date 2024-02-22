@@ -235,6 +235,7 @@ class CoreDefinitions {
         Word vocabulary = createPrimitiveWord("vocabulary", "Vocabulary")
         Word forget = createPrimitiveWord("forget", "Forget")
         Word current = createPrimitiveWord("current", "Current")
+        Word context = createPrimitiveWord("context", "Context")
 
         // Unsorted
         Word colon1 = createPrimitiveWord("colon")
