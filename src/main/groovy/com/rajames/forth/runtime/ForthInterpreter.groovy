@@ -29,6 +29,7 @@ import com.rajames.forth.memory.ReturnStack
 import com.rajames.forth.memory.storage.BlockService
 import com.rajames.forth.util.DatabaseBackupService
 import com.rajames.forth.util.FlushService
+import com.rajames.forth.util.State
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
@@ -86,7 +87,7 @@ class ForthInterpreter {
      * making for a "prettier UI."
      */
     boolean interpretAndExecute(String line) {
-
+        forthRepl.STATE = State.INTERPRET
         configureForthInterpreter(line)
 
         while (!tokens.isEmpty()) {

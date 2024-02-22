@@ -31,7 +31,7 @@ class Dictionary implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id
+    Integer id
 
     @Version
     private int version

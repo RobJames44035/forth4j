@@ -64,7 +64,7 @@ class Word implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "dictionary_id", nullable = false)
-    private Dictionary dictionary
+    Dictionary dictionary
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "forthWords", joinColumns = @JoinColumn(name = "word_id"))

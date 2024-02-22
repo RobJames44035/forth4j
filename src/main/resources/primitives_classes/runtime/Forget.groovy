@@ -32,17 +32,19 @@ class Forget extends AbstractRuntime {
  * should print a newline or not. If you do anything with a returned Object, be sure to set
  * forthOutput to to a Boolean for REPL.
  */
-
     @Override
     Object execute(ForthInterpreter interpreter, Word word, Word parentWord) {
         try {
             String token = interpreter.token
             Word theWord = interpreter.wordService.findByName(token)
-            Date date = theWord.createDateTime
-            interpreter.wordService.deleteAllWithCreationDateOnOrAfter(date)
+            if (theWord != null) {
+                Date date = theWord.createDateTime
+                interpreter.wordService.forget(theWord, date)
+            }
         } catch (Exception e) {
-            throw new ForthInterpreterException("Forth Interpreter says; ${e.message} for ${token}")
+            throw new ForthInterpreterException("Forth Interpreter says; ${e.message} for ${interpreter.token}")
         }
+        interpreter.words.poll()
         return null
     }
 }

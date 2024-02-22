@@ -36,4 +36,13 @@ interface WordRepository extends JpaRepository<Word, Long> {
     @Query("DELETE FROM Word w WHERE w.createDateTime >= :date")
     void deleteAllWithCreationDateOnOrAfter(
             @Param("date") Date date)
+
+    @Transactional
+    @Modifying
+    @Query("DELETE FROM Word w WHERE w.name = :wordName AND w.dictionary.id = :dictionaryId AND w.createDateTime >= :date")
+    void deleteAllByWordNameAndDictionaryIdAndCreationDateOnOrAfter(
+            @Param("wordName") String wordName,
+            @Param("dictionaryId") Integer dictionaryId,
+            @Param("date") Date date
+    )
 }

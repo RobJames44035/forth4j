@@ -141,7 +141,7 @@ class ForthCompiler {
     }
 
     void defineNewWord() {
-        this.dictionary = dictionaryService.findByName(bootstrap.coreName)
+        this.dictionary = dictionaryService.findByName(forthRepl.CURRENT)
         this.newWord = new Word()
         this.newWord.name = this.tokens.poll()
         this.newWord.dictionary = dictionary
