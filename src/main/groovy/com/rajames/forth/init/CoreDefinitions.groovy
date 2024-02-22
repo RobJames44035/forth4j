@@ -204,6 +204,7 @@ class CoreDefinitions {
         Word lbracket = createPrimitiveWord("[", null, "LbracketC", 0, true)
         Word rbracket = createPrimitiveWord("]", null, "RbracketC", 0, true)
         Word bracketCompile = createPrimitiveWord("[compile]", null, "CompileC", 0, true)
+        Word immediate = createPrimitiveWord("immediate", "Immediate")
 
         // Memory words
         Word store = createPrimitiveWord("!", "Store")
