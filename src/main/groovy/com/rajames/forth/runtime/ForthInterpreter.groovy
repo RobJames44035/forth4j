@@ -159,7 +159,7 @@ class ForthInterpreter {
 //        if (word.compileOnly) {
 //            throw new ForthInterpreterException("Compile Only.")
 //        }
-
+        forthRepl.STATE = State.INTERPRET
         if (word.runtimeClass != null) {
             return executePrimitiveWord(word, parentWord)
         } else if (word.forthWords.size() > 0) {
@@ -176,6 +176,7 @@ class ForthInterpreter {
      * @return The boolean flag for REPL.
      */
     private boolean executePrimitiveWord(Word word, Word parentWord) {
+        forthRepl.STATE = State.INTERPRET
         Boolean forthOutput = false
         try {
             String runtimeBehaviorClass = word?.runtimeClass?.trim()
@@ -206,6 +207,7 @@ class ForthInterpreter {
      * @return same old boolean flag for REPL.
      */
     boolean executeComplexWord(Word word, Word parentWord) {
+        forthRepl.STATE = State.INTERPRET
         word.executionIndex = 0
         Boolean output = false
         while (word.executionIndex < word.forthWords.size()) {

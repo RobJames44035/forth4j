@@ -33,8 +33,6 @@ import org.springframework.transaction.annotation.Transactional
 
 import java.util.concurrent.ConcurrentLinkedQueue
 
-//import org.hibernate.Session
-
 @Component
 @Transactional
 class ForthCompiler {
@@ -148,6 +146,7 @@ class ForthCompiler {
     }
 
     void defineNewWord() {
+        forthRepl.STATE = State.COMPILE
         this.dictionary = dictionaryService.findByName(forthRepl.CURRENT)
         this.newWord = new Word()
         this.newWord.name = this.tokens.poll()
@@ -156,6 +155,7 @@ class ForthCompiler {
     }
 
     void compileIntegerLiteral(String token) {
+        forthRepl.STATE = State.COMPILE
         try {
             Word literal = wordService.findByName("literal")
             Word integerLiteral = new Word()
@@ -172,6 +172,7 @@ class ForthCompiler {
     }
 
     void compileIntegerVariable(String token) {
+        forthRepl.STATE = State.COMPILE
         try {
             Word lit = wordService.findByName("lit")
             Word variable = new Word()
@@ -188,6 +189,7 @@ class ForthCompiler {
     }
 
     void compileLiteral(String compileLiteral) {
+        forthRepl.STATE = State.COMPILE
         try {
             Word literal = wordService.findByName("literal")
             Word stringLiteral = new Word()
