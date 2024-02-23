@@ -206,6 +206,9 @@ class CoreDefinitions {
         Word bracketCompile = createPrimitiveWord("[compile]", null, "CompileC", 0, true)
         Word compile = createPrimitiveWord("compile", null, "CompileC", 0, true)
         Word immediate = createPrimitiveWord("immediate", "Immediate")
+        Word constant = createPrimitiveWord("constant", "Constant", "ConstantC")
+        Word variable = createPrimitiveWord("variable", "Variable", "VariableC")
+        Word create = createPrimitiveWord("create", "Create", "CreateC")
 
         // Memory words
         Word store = createPrimitiveWord("!", "Store")
@@ -244,10 +247,7 @@ class CoreDefinitions {
         Word comment = createPrimitiveWord("(", "Comment")
         Word i = createPrimitiveWord("i", "I")
         Word j = createPrimitiveWord("j", "J")
-        Word constant = createPrimitiveWord("constant", "Constant", "ConstantC")
-        Word variable = createPrimitiveWord("variable", "Variable", "VariableC")
         Word pad = createPrimitiveWord("pad", "Pad")
-        Word create = createPrimitiveWord("create", "Create", "CreateC")
         Word allot = createPrimitiveWord("allot", "Allot")
         Word comma = createPrimitiveWord(",", "Comma")
         Word gtIn = createPrimitiveWord(">in", "GtIn")

@@ -27,6 +27,7 @@
         <maven.compiler.target>11</maven.compiler.target>
         <java.version>11</java.version>
         <groovy.version>4.0.18</groovy.version>
+        <pi4j.version>2.4.0</pi4j.version>
     </properties>
     <url>http://maven.apache.org</url>
     <dependencies>
@@ -122,6 +123,25 @@
             <groupId>com.googlecode.lanterna</groupId>
             <artifactId>lanterna</artifactId>
             <version>3.1.2</version>
+        </dependency>
+
+        <!-- include Pi4J Core -->
+        <dependency>
+            <groupId>com.pi4j</groupId>
+            <artifactId>pi4j-core</artifactId>
+            <version>${pi4j.version}</version>
+        </dependency>
+
+        <!-- include Pi4J Plugins (Platforms and I/O Providers) -->
+        <dependency>
+            <groupId>com.pi4j</groupId>
+            <artifactId>pi4j-plugin-raspberrypi</artifactId>
+            <version>${pi4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.pi4j</groupId>
+            <artifactId>pi4j-plugin-pigpio</artifactId>
+            <version>${pi4j.version}</version>
         </dependency>
 
     </dependencies>
