@@ -20,7 +20,7 @@ import com.rajames.forth.dictionary.Word
 import com.rajames.forth.runtime.AbstractRuntime
 import com.rajames.forth.runtime.ForthInterpreter
 
-class BlockWord extends AbstractRuntime {
+class Block extends AbstractRuntime {
 
 /**
  * Execute the FORTH word from the interpreter.

@@ -198,12 +198,13 @@ class CoreDefinitions {
         // Compiler words
         Word colon = createPrimitiveWord(":", "Colon")
         Word semicolon = createPrimitiveWord(";")
-        Word literal = createPrimitiveWord("literal", "Literal", null, 0, true)
+        Word literal = createPrimitiveWord("literal", "Literal", "LiteralC", 0, true)
         Word lit = createPrimitiveWord("lit", "Lit", null, 0, true)
         Word abort = createPrimitiveWord("abort", "Abort")
         Word lbracket = createPrimitiveWord("[", null, "LbracketC", 0, true)
         Word rbracket = createPrimitiveWord("]", null, "RbracketC", 0, true)
         Word bracketCompile = createPrimitiveWord("[compile]", null, "CompileC", 0, true)
+        Word compile = createPrimitiveWord("compile", null, "CompileC", 0, true)
         Word immediate = createPrimitiveWord("immediate", "Immediate")
 
         // Memory words
@@ -218,7 +219,7 @@ class CoreDefinitions {
 
         // Mass storage words
         Word buffer = createPrimitiveWord("buffer")
-        Word block = createPrimitiveWord("block", "BlockWord")
+        Word block = createPrimitiveWord("block", "Block")
         Word list = createPrimitiveWord("list", "List")
         Word load = createPrimitiveWord("load", "Load")
         Word emptyBuffers = createPrimitiveWord("empty-buffers", "EmptyBuffers")
